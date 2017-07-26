@@ -20,10 +20,7 @@ public class MainActivity extends Activity {
     private void init() {
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.main_gl);
         mGLSurfaceView.setEGLContextClientVersion(2);
-        Log.i(TAG,"已设置opengl版本");
         mGLSurfaceView.setRenderer(new MyRender());
-        Log.i(TAG,"已设置渲染器");
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        Log.i(TAG,"已设置渲染模式");
     }
 }
