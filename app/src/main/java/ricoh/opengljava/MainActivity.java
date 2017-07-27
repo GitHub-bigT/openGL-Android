@@ -8,8 +8,8 @@ import android.util.Log;
 
 public class MainActivity extends Activity {
     private GLSurfaceView mGLSurfaceView;
+    private GLSurfaceView mGLSurfaceView2;
     private static final String TAG = "ooopppp";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,5 +22,10 @@ public class MainActivity extends Activity {
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setRenderer(new MyRender());
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+        mGLSurfaceView2 = (GLSurfaceView) findViewById(R.id.main_gl2);
+        mGLSurfaceView2.setEGLContextClientVersion(2);
+        mGLSurfaceView2.setRenderer(new NativeRender());
+        mGLSurfaceView2.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 }

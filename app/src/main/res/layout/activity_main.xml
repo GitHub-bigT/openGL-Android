@@ -9,5 +9,11 @@
     <android.opengl.GLSurfaceView
         android:id="@+id/main_gl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="200.0dip" />
+    <android.opengl.GLSurfaceView
+        android:id="@+id/main_gl2"
+        android:layout_width="match_parent"
+        android:layout_height="200.0dip"
+        android:layout_below="@id/main_gl"
+        android:layout_marginTop="20.0dip"/>
 </RelativeLayout>

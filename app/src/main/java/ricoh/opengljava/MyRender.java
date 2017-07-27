@@ -52,6 +52,8 @@ public class MyRender implements GLSurfaceView.Renderer {
     //系统在每次重绘GLSurfaceView时调用此方法．此方法是绘制图形对象的主要的执行点
     @Override
     public void onDrawFrame(GL10 gl) {
+        GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         mTriangle1.draw(coord1,color1);
     }
 
@@ -64,12 +66,12 @@ public class MyRender implements GLSurfaceView.Renderer {
                         "void main() {" +
                         "  gl_Position = vPosition;" +
                         "}";
-//        private String fragmentShaderCode =
-//                "precision mediump float;" +
-//                        "uniform vec4 vColor;" +
-//                        "void main() {" +
-//                        "  gl_FragColor = vColor;" +
-//                        "}";
+        private String fragmentShaderCode =
+                "precision mediump float;" +
+                        "uniform vec4 vColor;" +
+                        "void main() {" +
+                        "  gl_FragColor = vColor;" +
+                        "}";
         private int mProgram = GLES20.glCreateProgram();
         private int mPositionHandler;
         private float trianglecoords[] ;
@@ -77,13 +79,13 @@ public class MyRender implements GLSurfaceView.Renderer {
         //数组中每个顶点的坐标数
         int COORDS_PER_VERTEX = 3;
 //        private final int vertexStride = COORDS_PER_VERTEX * 4; // bytes per vertex
-//        private int mColorHandle;
-//        float color[] ;
+        private int mColorHandle;
+        float color[] ;
 
 
         public void draw(float coords[],float c[]) {
             this.trianglecoords  = coords;
-//            this.color = c;
+            this.color = c;
             int vertexCount = trianglecoords.length / COORDS_PER_VERTEX;
             /*
             //为三角形初始化顶点字节缓冲区
@@ -114,24 +116,24 @@ public class MyRender implements GLSurfaceView.Renderer {
 
             //准备渲染和openGL程序
             int vertexShader = MyRender.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-//            int fragmentShader = MyRender.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            int fragmentShader = MyRender.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 //            Log.i(TAG, "vertex shader: " + vertexShader);
 //            Log.i(TAG, "fragment shader: " + fragmentShader);
             mProgram = GLES20.glCreateProgram();
             GLES20.glAttachShader(mProgram, vertexShader);
-//            GLES20.glAttachShader(mProgram, fragmentShader);
+            GLES20.glAttachShader(mProgram, fragmentShader);
             //创建opengl程序的可执行文件/
             GLES20.glLinkProgram(mProgram);
             GLES20.glUseProgram(mProgram);
 
-//            mPositionHandler = GLES20.glGetAttribLocation(mProgram, "vPosition");
+            mPositionHandler = GLES20.glGetAttribLocation(mProgram, "vPosition");
             Log.i(TAG , "mPositionHandler: "+mPositionHandler);
             GLES20.glEnableVertexAttribArray(0);
             GLES20.glVertexAttribPointer(0, COORDS_PER_VERTEX,GLES20.GL_FLOAT,true,0,vertexBuffer);
             //设置颜色
-//            mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
+            mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
 //            Log.i(TAG , "mColorHandle: "+mColorHandle);
-//            GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+            GLES20.glUniform4fv(mColorHandle, 1, color, 0);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
             // Disable vertex array
             GLES20.glDisableVertexAttribArray(mPositionHandler);
