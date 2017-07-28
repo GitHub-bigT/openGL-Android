@@ -1,5 +1,5 @@
 ./obj/local/armeabi-v7a/objs/interface/interface.o: jni/interface.cpp \
-  jni\interface.h jni/Debug.hpp \
+  jni\interface.h \
   D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\string \
   D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_prolog.h \
   D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_cprolog.h \
@@ -89,11 +89,10 @@
   D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_num_get.c \
   D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_string_io.c \
   D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_epilog.h \
-  D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_config_compat_post.h
+  D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_config_compat_post.h \
+  jni/Debug.hpp
 
 jni\interface.h:
-
-jni/Debug.hpp:
 
 D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\string:
 
@@ -274,3 +273,5 @@ D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_string_io.c
 D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_epilog.h:
 
 D:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_config_compat_post.h:
+
+jni/Debug.hpp:
