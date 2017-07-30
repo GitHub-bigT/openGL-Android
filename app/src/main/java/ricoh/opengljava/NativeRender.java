@@ -12,7 +12,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class NativeRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        NativeMethod.onSurfaceCreated();
+        //NativeMethod.onSurfaceCreated();
     }
 
     @Override

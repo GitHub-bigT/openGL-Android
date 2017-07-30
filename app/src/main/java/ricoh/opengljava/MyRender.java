@@ -48,12 +48,21 @@ public class MyRender implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width ,height);
     }
-
+    float grey = 0.0f;
     //系统在每次重绘GLSurfaceView时调用此方法．此方法是绘制图形对象的主要的执行点
     @Override
     public void onDrawFrame(GL10 gl) {
-        GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        grey += 0.01f;
+        if (grey > 1.0f) {
+            grey = 0.0f;
+        }
+        GLES20.glClearColor(grey, grey, grey, 1.0f);
+        //checkGlError("glClearColor");
+        GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+        //GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        //GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+        Log.i("sdasda","draw  "+grey);
         mTriangle1.draw(coord1,color1);
     }
 
@@ -117,8 +126,8 @@ public class MyRender implements GLSurfaceView.Renderer {
             //准备渲染和openGL程序
             int vertexShader = MyRender.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             int fragmentShader = MyRender.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
-//            Log.i(TAG, "vertex shader: " + vertexShader);
-//            Log.i(TAG, "fragment shader: " + fragmentShader);
+            Log.i(TAG, "vertex shader: " + vertexShader);
+            Log.i(TAG, "fragment shader: " + fragmentShader);
             mProgram = GLES20.glCreateProgram();
             GLES20.glAttachShader(mProgram, vertexShader);
             GLES20.glAttachShader(mProgram, fragmentShader);
