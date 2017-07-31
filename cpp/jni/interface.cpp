@@ -10,9 +10,10 @@ const char*  vertexSource = "attribute vec4 vPostion;\n"
 //    "  gl_Position = vPosition;\n"
 //    "}\n";
 		
-const char* fragmentSource = 
+const char* fragmentSource = "precision mediump float;\n"
+								"uniform vec4 vColor;\n"
 								"void main(){\n"
-									"gl_FragColor = vec4(1.0f,0.0f,0.0f,1.0f);"	
+									"gl_FragColor = vColor;\n"	
 								"}\n";
 //auto gFragmentShader =
 //    "precision mediump float;\n"
@@ -22,11 +23,16 @@ const char* fragmentSource =
 								
 GLuint gProgram;
 GLuint gPostionHandle;
+GLuint gColorHandle;
+
 GLfloat vertices[] = {
 		0.0f,1.0f,0.0f,
 		-1.0f,-1.0f,0.0f,
 		1.0f,0.0f,0.0f,
 		};
+GLfloat color[] = {
+	0.0f,0.0f,1.0f,1.0f
+};
 		
 JNIEXPORT void JNICALL
 Java_ricoh_opengljava_NativeMethod_onSurfaceCreated(JNIEnv *,jclass){
@@ -39,13 +45,28 @@ Java_ricoh_opengljava_NativeMethod_onSurfaceChanged(JNIEnv *,jclass,int width,in
 	init(width,height);
 }
 
+float grey = 0.0f;
+bool isPlus = true;
+
 JNIEXPORT void JNICALL
 Java_ricoh_opengljava_NativeMethod_onDrawFrame(JNIEnv *,jclass){
-	//LOGI("here is interface.cpp 3 ");
-	glClearColor(0.0f,1.0f,0.0f,1.0f);
+	if(grey>=1.00f){
+		isPlus = false;
+	}
+	if(grey<=0.0f){
+		isPlus = true;
+	}
+	if(isPlus){
+		grey+=0.01f;
+	}else{
+		grey -= 0.01f;
+	}
+	//LOGI("grey   %f",grey);
+	glClearColor(grey,grey,grey,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(gProgram);
 	glVertexAttribPointer(gPostionHandle, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+	glUniform4fv(gColorHandle,1,color);
 	glEnableVertexAttribArray(gPostionHandle);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
@@ -62,6 +83,7 @@ void init(int w, int h){
 		
 		gProgram = createProgram(vertexSource,fragmentSource);
 		gPostionHandle = glGetAttribLocation(gProgram,"vPostion");
+		gColorHandle = glGetUniformLocation(gProgram,"vColor");	
 }
 
 GLuint createProgram(const char*pVertexSource , const char* pFragmentSource){
