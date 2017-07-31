@@ -14,7 +14,7 @@ static void printGLString(const char *name, GLenum s) {
 ```
 ## 检查shader错误
 ```
-GLint compiled = 0;
+        GLint compiled = 0;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
         if (!compiled) {
             GLint infoLen = 0;
@@ -34,7 +34,7 @@ GLint compiled = 0;
 ```
 ## 检查program错误
 ```
-GLint linkStatus = GL_FALSE;
+        GLint linkStatus = GL_FALSE;
         glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
         if (linkStatus != GL_TRUE) {
             GLint bufLength = 0;
