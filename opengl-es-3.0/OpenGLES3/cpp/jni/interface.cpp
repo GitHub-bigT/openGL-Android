@@ -1,39 +1,51 @@
 #include "interface.h"
 
 GLuint program;
-GLfloat coords[] = {
-	1.0f,1.0f,
-	-1.0f,0.0f,
-	0.0f,-0.1f
-};
-GLfloat colors[] = {
-	1.0f,0.0f,0.0f,1.0f,
-	0.0f,1.0f,0.0f,1.0f,
-	0.0f,0.0f,1.0f,1.0f
-};
-GLuint locationHandler;
-GLuint colorHandler;
+//GLfloat coords[] = {
+//	1.0f,1.0f,
+//	-1.0f,0.0f,
+//	0.0f,-0.1f
+//};
+//GLfloat colors[] = {
+//	1.0f,0.0f,0.0f,1.0f,
+//	0.0f,1.0f,0.0f,1.0f,
+//	0.0f,0.0f,1.0f,1.0f
+//};
 
-const char* vertexShaderSource = "attributee vec2e vPosition;"
-								 "void maine() {" 
-									"gl_Positione = vec4(vPosition,0.0f,0.0f,0.0f)"
+//GLuint locationHandler;
+//GLuint colorHandler;
+
+const char* vertexShaderSource = "attribute vec2 vPosition;"
+								 "void main() {" 
+									"gl_Position = vec4(vPosition,0.0f,0.0f);"
 								 "}";
-const char* fragmentShaderSource = "";
+const char* fragmentShaderSource = "void main() {"
+									"gl_FragColor = vec4(0.0f,1.0f,0.0f,1.0f);"
+									"}"
+									;
 
 enum VAO_IDs {Triangles , NumVAOs};
+enum Buffer_IDs {ArrayBuffer , NumBuffers};
+//enum Attrib_IDs {vPosition = 0};
+GLuint vPosition;
+
 GLuint VAOs[NumVAOs];
+GLuint Buffers[NumBuffers];
+
+const GLuint NumVertices = 6;
 
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height){
 	LOGI("width: %d , height: %d",width,height);
-	program = createProgram();
+	
 	//LOGI("program: %d " , program);
 	//printGLString("Version", GL_VERSION);
     //printGLString("Vendor", GL_VENDOR);
     //printGLString("Renderer", GL_RENDERER);
     //printGLString("Extensions", GL_EXTENSIONS);
-    //printGLString("GL_SHADING_LANGUAGE_VERSION : ", GL_SHADING_LANGUAGE_VERSION);
+    printGLString("GL_SHADING_LANGUAGE_VERSION : ", GL_SHADING_LANGUAGE_VERSION);
 	
+	// init vao
 	LOGI("Triangles: %d , NumVAOs: %d",Triangles,NumVAOs);
 	LOGI("VAOs: %d ",VAOs[Triangles]);
 	glGenVertexArrays(NumVAOs , VAOs);
@@ -42,7 +54,37 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	glBindVertexArray(VAOs[Triangles]);
 	//
 	GLboolean b = glIsVertexArray(VAOs[Triangles]);
-	LOGI("GLboolean: %d ",b);
+	LOGE("vao bind: %d ",b);
+	
+	GLfloat vertices[NumVertices][2] = {
+		{0.0f,1.0f},
+		{-1.0f,0.0f},
+		{1.0f,1.0f},
+		{1.0f,0.0f},
+		{-1.0f,-1.0f},
+		{0.0f,-1.0f}
+	};
+	
+	LOGI(" vertices size of :%lu",sizeof(vertices) );
+	
+	//init buffer
+	glGenBuffers(NumBuffers,Buffers);
+	glBindBuffer(GL_ARRAY_BUFFER,Buffers[ArrayBuffer]);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+	
+	GLboolean b1 = glIsBuffer (Buffers[ArrayBuffer]);
+	LOGE("buffer bind: %d ",b1);
+	
+	//create program
+	program = createProgram();
+	
+	glUseProgram(program);
+	
+	vPosition = glGetAttribLocation(program,"vPosition");
+	LOGI(" vPosition :%d" , vPosition );
+	
+	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,0,0);
+	glEnableVertexAttribArray(vPosition);
 }
 
 GLuint createProgram(){
@@ -63,7 +105,7 @@ GLuint createProgram(){
 		
 		LOGE("program ---- linkStatus: %d", linkStatus);
 		
-        if (linkStatus != GL_TRUE) {
+       if (linkStatus != GL_TRUE) {
             GLint bufLength = 0;
             glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
 			
@@ -88,9 +130,10 @@ GLuint createProgram(){
 
 GLuint loadShder(GLenum type , const char* source){
 	GLuint shader = glCreateShader(type);
+	glShaderSource(shader,1,&source,NULL);
 	glCompileShader(shader);
 	
-	LOGE("shader ---- : %d", shader);
+	//LOGE("shader ---- : %d", shader);
 	
 	//check
 	GLint compiled = 0;
@@ -120,6 +163,12 @@ GLuint loadShder(GLenum type , const char* source){
 
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_step(JNIEnv * , jclass){
+	glClearColor(0.0f,0.0f,1.0f,1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	glBindVertexArray(VAOs[Triangles]);
+	glDrawArrays(GL_TRIANGLES,0,NumVertices);
+	glFlush();
 	
 }
 
