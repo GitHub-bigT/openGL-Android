@@ -15,19 +15,22 @@ GLuint program;
 //GLuint locationHandler;
 //GLuint colorHandler;
 
-const char* vertexShaderSource = "attribute vec2 vPosition;"
-								 "void main() {" 
-									"gl_Position = vec4(vPosition,0.0f,0.0f);"
-								 "}";
-const char* fragmentShaderSource = "void main() {"
-									"gl_FragColor = vec4(0.0f,1.0f,0.0f,1.0f);"
-									"}"
+const char* vertexShaderSource = "#version 300 es\n"
+									"layout(location=0) in vec2 vPosition;\n"
+								 "void main() {\n" 
+									"gl_Position = vec4(vPosition,0.0f,1.0f);\n"
+								 "}\n";
+const char* fragmentShaderSource = "#version 300 es\n"
+									"out vec4 fColor;"
+									"void main() {\n"
+									"fColor = vec4(0.0f,1.0f,0.0f,1.0f);\n"
+									"}\n"
 									;
 
 enum VAO_IDs {Triangles , NumVAOs};
 enum Buffer_IDs {ArrayBuffer , NumBuffers};
-//enum Attrib_IDs {vPosition = 0};
-GLuint vPosition;
+enum Attrib_IDs {vPosition = 0};
+//GLuint vPosition;
 
 GLuint VAOs[NumVAOs];
 GLuint Buffers[NumBuffers];
@@ -80,7 +83,7 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	
 	glUseProgram(program);
 	
-	vPosition = glGetAttribLocation(program,"vPosition");
+	//vPosition = glGetAttribLocation(program,"vPosition");
 	LOGI(" vPosition :%d" , vPosition );
 	
 	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,0,0);
