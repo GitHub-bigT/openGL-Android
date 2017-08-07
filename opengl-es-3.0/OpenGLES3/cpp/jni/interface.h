@@ -6,6 +6,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif	
+
+struct Vertex {
+	float pos[2];
+	float color[4];
+};
 	
 JNIEXPORT void JNICALL
 

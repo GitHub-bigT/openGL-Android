@@ -16,20 +16,25 @@ GLuint program;
 //GLuint colorHandler;
 
 const char* vertexShaderSource = "#version 300 es\n"
-									"layout(location=0) in vec2 vPosition;\n"
+									"layout(location=1) in vec2 vPosition;\n"
+									"layout(location=2) in vec4 iColor;\n"
+									"out vec4 oColor;\n"
 								 "void main() {\n" 
 									"gl_Position = vec4(vPosition,0.0f,1.0f);\n"
+									"oColor = iColor;\n"
 								 "}\n";
 const char* fragmentShaderSource = "#version 300 es\n"
-									"out vec4 fColor;"
+									"in vec4 oColor;\n"
+									"out vec4 fColor;\n"
 									"void main() {\n"
-									"fColor = vec4(0.0f,1.0f,0.0f,1.0f);\n"
+									
+									"fColor = oColor;\n"
 									"}\n"
 									;
 
 enum VAO_IDs {Triangles , NumVAOs};
 enum Buffer_IDs {ArrayBuffer , NumBuffers};
-enum Attrib_IDs {vPosition = 0};
+enum Attrib_IDs {vPosition = 1 , iColor = 2};
 //GLuint vPosition;
 
 GLuint VAOs[NumVAOs];
@@ -59,13 +64,13 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	GLboolean b = glIsVertexArray(VAOs[Triangles]);
 	LOGE("vao bind: %d ",b);
 	
-	GLfloat vertices[NumVertices][2] = {
-		{0.0f,1.0f},
-		{-1.0f,0.0f},
-		{1.0f,1.0f},
-		{1.0f,0.0f},
-		{-1.0f,-1.0f},
-		{0.0f,-1.0f}
+	Vertex vertices[] = {
+		{{0.0f,1.0f},{1.0f,0.0f,0.0f,1.0f}},
+		{{-1.0f,0.0f},{0.0f,1.0f,0.0f,1.0f}},
+		{{1.0f,1.0f},{0.0f,1.0f,0.0f,1.0f}},
+		{{1.0f,0.0f},{0.0f,0.0f,1.0f,1.0f}},
+		{{-1.0f,-1.0f},{0.0f,1.0f,1.0f,1.0f}},
+		{{0.0f,-1.0f},{0.0f,1.0f,1.0f,1.0f}}
 	};
 	
 	LOGI(" vertices size of :%lu",sizeof(vertices) );
@@ -74,6 +79,7 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	glGenBuffers(NumBuffers,Buffers);
 	glBindBuffer(GL_ARRAY_BUFFER,Buffers[ArrayBuffer]);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER,sizeof(colors),colors,GL_STATIC_DRAW);
 	
 	GLboolean b1 = glIsBuffer (Buffers[ArrayBuffer]);
 	LOGE("buffer bind: %d ",b1);
@@ -84,10 +90,12 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	glUseProgram(program);
 	
 	//vPosition = glGetAttribLocation(program,"vPosition");
-	LOGI(" vPosition :%d" , vPosition );
+	//LOGI(" vPosition :%d" , vPosition );
 	
-	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,0,0);
+	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),0);
+	glVertexAttribPointer(iColor,4,GL_FLOAT,GL_FALSE,sizeof(Vertex),(const GLvoid*)8);
 	glEnableVertexAttribArray(vPosition);
+	glEnableVertexAttribArray(iColor);
 }
 
 GLuint createProgram(){
@@ -166,7 +174,7 @@ GLuint loadShder(GLenum type , const char* source){
 
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_step(JNIEnv * , jclass){
-	glClearColor(0.0f,0.0f,1.0f,1.0f);
+	glClearColor(0.0f,0.0f,0.0f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glBindVertexArray(VAOs[Triangles]);
