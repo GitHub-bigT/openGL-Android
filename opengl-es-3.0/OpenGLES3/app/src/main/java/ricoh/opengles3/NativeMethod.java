@@ -10,4 +10,8 @@ public class NativeMethod {
     }
     public native static void init(int width , int height);
     public native static void step();
+
+    public native static void switchVAO(int index);
+
+
 }
