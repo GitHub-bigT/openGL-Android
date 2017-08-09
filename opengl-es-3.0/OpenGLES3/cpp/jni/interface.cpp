@@ -14,8 +14,8 @@ const char* fragmentShaderSource = "#version 300 es\n"
 									"in vec4 oColor;\n"
 									"out vec4 fColor;\n"
 									"void main() {\n"
-									
 									"fColor = oColor;\n"
+									//"fColor = vec4(0.0f,1.0f,0.0f,1.0f);\n"
 									"}\n"
 									;
 
@@ -40,18 +40,16 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	printGLString("GL_SHADING_LANGUAGE_VERSION : ", GL_SHADING_LANGUAGE_VERSION);
 	
 	glGenVertexArrays(NumVAOs , VAOs);
-	LOGE("Triangles : %d",VAOs[Triangles]);
-	LOGE("OtherTriangles : %d",VAOs[OtherTriangles]);
-	current = VAOs[Triangles];
+	current = VAOs[OtherTriangles];
 	glGenBuffers(NumBuffers,Buffers);
 	
-	initVAO1();	
-	initVAO2();
+	//initVAO1();	
+	initVAO2(width , height);
 
-	GLboolean b = glIsVertexArray(VAOs[Triangles]);
-	LOGE("vao1 Triangles bind: %d ",b);
-	GLboolean b1 = glIsVertexArray(VAOs[OtherTriangles]);
-	LOGE("vao2 OtherTriangles bind: %d ",b1);
+	GLboolean b = glIsBuffer(Buffers[ArrayBuffer]);
+	LOGE("ArrayBuffer bind: %d ",b);
+	GLboolean b1 = glIsBuffer(Buffers[OtherBuffer]);
+	LOGE("OtherBuffer bind: %d ",b1);
 	//create program
 	program = createProgram();
 	glUseProgram(program);
@@ -64,7 +62,7 @@ void initVAO1(){
 	// init vao
 	glBindVertexArray(VAOs[Triangles]);
 	Vertex vertices[] = {
-		{{0.0f,1.0f},{1.0f,0.0f,0.0f,1.0f}},
+		{{0.0f,0.0f},{1.0f,0.0f,0.0f,1.0f}},
 		{{-1.0f,0.0f},{0.0f,1.0f,0.0f,1.0f}},
 		{{1.0f,1.0f},{0.0f,1.0f,0.0f,1.0f}},
 		{{1.0f,0.0f},{0.0f,0.0f,1.0f,1.0f}},
@@ -84,29 +82,57 @@ void initVAO1(){
 	
 }
 
-void initVAO2(){
+void initVAO2(int width , int height){
 
 	glBindVertexArray(VAOs[OtherTriangles]);
 	
+	//圆心
+	GLfloat vCenter[] = {0.0f, 0.0f};
+    //半径
+	GLfloat vRadius[] = {1.0f, 1.0f * width/height};
+	//362个点  1个原点 + 0-360个点
+    GLfloat vVertices[724];
+    vVertices[0] = 0.0f;
+    vVertices[1] = 0.0f;
 	
-	Vertex vertices[] = {
-		{{-0.5f,0.5f},{1.0f,0.0f,0.0f,1.0f}},
-		{{-0.5f,-0.5f},{1.0f,1.0f,0.0f,1.0f}},
-		{{0.5f,0.5f},{1.0f,0.0f,1.0f,1.0f}},
-		{{0.5f,0.5f},{1.0f,0.0f,0.0f,1.0f}},
-		{{-0.5f,-0.5f},{1.0f,1.0f,0.0f,1.0f}},
-		{{0.5f,-0.5f},{1.0f,0.0f,1.0f,1.0f}}
-	};
-		
+    GLfloat colors[1448];
+	colors[0] = 1.0f;
+	colors[1] = 0.0f;
+	colors[2] = 0.0f;
+	colors[3] = 1.0f;
+
+	for (int i = 0; i <= 360; i++) {
+		//弧度
+        GLfloat radians = M_PI * i / 180.0f;
+        vVertices[i*2+2] = vCenter[0] + cos(radians) * vRadius[0];
+        vVertices[i*2+3] = vCenter[1] + sin(radians) * vRadius[1];
+		//LOGI(" circle coord : (%f,%f) \n",vVertices[i*2],vVertices[i*2+1]);
+		//第偶数个顶点颜色为蓝
+		if(i%2==0){
+			colors[i*4+4] = 0.0f;
+			colors[i*4+5] = 0.0f;
+			colors[i*4+6] = 1.0f;
+			colors[i*4+7] = 1.0f;
+		}else{
+			colors[i*4+4] = 0.0f;
+			colors[i*4+5] = 1.0f;
+			colors[i*4+6] = 0.0f;
+			colors[i*4+7] = 1.0f;
+		}
+    }
+	
 	//init buffer
+	glBindBuffer(GL_ARRAY_BUFFER,Buffers[ArrayBuffer]);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(vVertices),vVertices,GL_STATIC_DRAW);
+	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,0,0);
+	
+	
 	glBindBuffer(GL_ARRAY_BUFFER,Buffers[OtherBuffer]);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-
-	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),0);
-	glVertexAttribPointer(iColor,4,GL_FLOAT,GL_FALSE,sizeof(Vertex),(const GLvoid*)8);
-	glEnableVertexAttribArray(vPosition);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(colors),colors,GL_STATIC_DRAW);
+	glVertexAttribPointer(iColor,4,GL_FLOAT,GL_FALSE,0,0);
+	
 	glEnableVertexAttribArray(iColor);
-
+	glEnableVertexAttribArray(vPosition);
 	
 }
 
@@ -191,37 +217,35 @@ JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_step(JNIEnv * , jclass){
 	if(gray >= 1.0f) {
 		add = false;
-		current = VAOs[Triangles];
+	//	current = VAOs[Triangles];
 	}
 	if(gray<=0.0f) {
 		add = true;
-		current = VAOs[OtherTriangles];
+	//	current = VAOs[OtherTriangles];
 	}
 	if(add) {
 		gray += 0.01;
 	}else{
 		gray -= 0.01;
 	}
-	LOGI("gray : %f ",gray);
+	//LOGI("gray : %f ",gray);
 	glClearColor(gray,gray,gray,1.0f);
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	//LOGI("current %d",current);
 	glBindVertexArray(current);
-	glDrawArrays(GL_TRIANGLES,0,NumVertices);
+	glDrawArrays(GL_TRIANGLE_FAN,0,362);
 	glFlush();
 }
-
-
 
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_switchVAO(JNIEnv * , jclass , int index){
 	
-	if(index == VAOs[Triangles]) {
-		current = VAOs[OtherTriangles];
-	}else {
-		current = VAOs[Triangles];
-	}
+	//if(index == VAOs[Triangles]) {
+	//	current = VAOs[OtherTriangles];
+	//}else {
+	//	current = VAOs[Triangles];
+	//}
 }
 
 void printGLString(const char *name, GLenum s) {

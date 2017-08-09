@@ -2,6 +2,7 @@
 #include <GLES3/gl3.h>
 #include <string>
 #include "debug.h"
+#include <math.h> 
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,7 +31,7 @@ void printGLString(const char *name, GLenum s);
 
 void initVAO1();
 
-void initVAO2();
+void initVAO2(int ,int );
 
 #ifdef __cplusplus
 }
