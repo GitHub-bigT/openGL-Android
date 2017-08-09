@@ -15,4 +15,5 @@
 
 <div>
   <img src="https://github.com/GitHub-bigT/openGL-Android/blob/master/images/vaovbo1.png" width="150px"/>
+  <img src="https://github.com/GitHub-bigT/openGL-Android/blob/master/images/vaogif.gif" width="150px"/>
 </div>
