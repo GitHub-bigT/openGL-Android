@@ -3,15 +3,17 @@
 GLVAO * glvao;
 GLShader * glshader;
 GLProgram * glprogram;
-	void GLProcess::init(){
+	void GLProcess::init(int width , int height){
 		glvao = new GLVAO();
 		glshader = new GLShader();
 		glprogram = new GLProgram();
 		
-		glvao->setVAO();
-		glshader->compileShader();
-		glprogram->linkProgram();
+		GLProcess::width = width;
+		GLProcess::height = height;
 	}
 	void GLProcess::step(){
-		
+		//¶¥µãÊý×é
+		glvao->setVAO(GLProcess::width,GLProcess::height);
+		glshader->compileShader();
+		glprogram->linkProgram();
 	}

@@ -1,4 +1,4 @@
 #include "GL.h"
 void GLShader::compileShader(){
-	LOGE("compile shader");
+	//LOGE("compile shader");
 }

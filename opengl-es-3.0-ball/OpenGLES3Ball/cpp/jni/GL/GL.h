@@ -3,6 +3,8 @@
 
 #include "../Debug/debug.h"
 
+#include <GLES3/gl3.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,7 +18,7 @@ class GLShader{
 };
 class GLVAO{
 	public:
-	void setVAO();
+	void setVAO(int width , int height);
 };
 #ifdef __cplusplus	
 }

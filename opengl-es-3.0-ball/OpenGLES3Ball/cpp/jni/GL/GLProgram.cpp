@@ -1,5 +1,5 @@
 #include "GL.h"
 
 void GLProgram::linkProgram(){
-	LOGE("link program");
+	//LOGE("link program");
 }

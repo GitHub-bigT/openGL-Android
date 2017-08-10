@@ -9,7 +9,10 @@ extern "C" {
 #endif
 class GLProcess {
 	public:
-	void init();
+	//手机的宽高
+	int width ;
+	int height;
+	void init(int width , int height);
 	void step();
 };
 #ifdef __cplusplus	

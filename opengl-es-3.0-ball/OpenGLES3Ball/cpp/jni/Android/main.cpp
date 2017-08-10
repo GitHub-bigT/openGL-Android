@@ -12,10 +12,12 @@ Java_ricoh_opengles3ball_NativeMethod_init(JNIEnv* , jclass , int width, int hei
     //tools->printGLString("Renderer", GL_RENDERER);
     //tools->printGLString("Extensions", GL_EXTENSIONS);
     //tools->printGLString("Shader language version", GL_SHADING_LANGUAGE_VERSION);
-	process->init();
+	process = new GLProcess();
+	process->init(width,height);
 }
 
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3ball_NativeMethod_step(JNIEnv* , jclass){
 	//LOGI("here is step");
+	process->step();
 }
