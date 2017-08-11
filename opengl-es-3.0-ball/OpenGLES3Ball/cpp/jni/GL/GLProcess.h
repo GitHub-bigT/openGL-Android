@@ -1,8 +1,10 @@
+
 #ifndef _GLProcess_h_
 #define _GLProcess_h_
 
 #include <GLES3/gl3.h>
 #include "../Debug/debug.h"
+
 
 #ifdef __cplusplus
 extern "C" {

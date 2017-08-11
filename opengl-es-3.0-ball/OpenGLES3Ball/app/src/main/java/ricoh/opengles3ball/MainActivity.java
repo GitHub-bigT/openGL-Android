@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "cell-phone support opengl es 3", Toast.LENGTH_SHORT).show();
             mGL.setEGLContextClientVersion(GL_VERSION);
             mGL.setRenderer(new MyRender());
+            mGL.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }else {
             Toast.makeText(this, "cell-phone don't support opengl es 3", Toast.LENGTH_SHORT).show();
         }

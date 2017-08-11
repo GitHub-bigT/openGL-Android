@@ -1,19 +1,16 @@
 #include "GLProcess.h"
 #include "GL.h"
 GLVAO * glvao;
-GLShader * glshader;
-GLProgram * glprogram;
+
 	void GLProcess::init(int width , int height){
-		glvao = new GLVAO();
-		glshader = new GLShader();
-		glprogram = new GLProgram();
+		//glvao = new GLVAO();
+
 		
-		GLProcess::width = width;
-		GLProcess::height = height;
+		//GLProcess::width = width;
+		//GLProcess::height = height; 
 	}
 	void GLProcess::step(){
-		//¶¥µãÊý×é
-		glvao->setVAO(GLProcess::width,GLProcess::height);
-		glshader->compileShader();
-		glprogram->linkProgram();
+		//é¡¶ç‚¹æ•°ç»„
+		//glvao->setVAO(GLProcess::width,GLProcess::height);
+		
 	}

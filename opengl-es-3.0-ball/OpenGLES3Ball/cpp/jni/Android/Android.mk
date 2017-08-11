@@ -10,5 +10,7 @@ LOCAL_SRC_FILES += ../GL/GLProcess.cpp
 LOCAL_SRC_FILES += ../GL/GLVAO.cpp
 LOCAL_SRC_FILES += ../GL/GLShader.cpp
 LOCAL_SRC_FILES += ../GL/GLProgram.cpp
+LOCAL_SRC_FILES += ../GLSL/vertexShader.cpp
+LOCAL_SRC_FILES += ../GLSL/fragmentShader.cpp
 
 include $(BUILD_SHARED_LIBRARY)

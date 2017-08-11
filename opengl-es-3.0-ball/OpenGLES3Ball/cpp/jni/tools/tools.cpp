@@ -7,9 +7,14 @@ void Tools::printGLString(const char *name, GLenum s){
 }
 
 //检查shader是否编译成功
-GLuint checkShader(GLuint shader , GLenum shaderType){
+GLuint Tools::checkShader(GLuint shader , GLenum shaderType){
+	//check
+
 	GLint compiled = 0;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+		
+	LOGE("shader ---- shader compile status: %d",compiled);
+		
         if (!compiled) {
             GLint infoLen = 0;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
@@ -29,9 +34,13 @@ GLuint checkShader(GLuint shader , GLenum shaderType){
 }
 
 //检查program是否link成功
-GLuint checkProgram(GLuint program){
+GLuint Tools::checkProgram(GLuint program){
+	
 	 GLint linkStatus = GL_FALSE;
         glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+		
+		LOGE("program ---- program link status: %d",linkStatus);
+		
         if (linkStatus != GL_TRUE) {
             GLint bufLength = 0;
             glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
@@ -47,4 +56,17 @@ GLuint checkProgram(GLuint program){
             program = 0;
         }
 	return program;
+}
+
+//检查VAO是否bind成功
+GLboolean Tools::checkIsBindVertexArray(GLuint index){
+	GLboolean b = glIsVertexArray(index);
+	LOGE("vao bind status:%d",b);
+	return b;
+}
+//检查VBO是否bind成功
+GLboolean Tools::checkIsBindBuffer(GLuint index){
+	GLboolean b = glIsBuffer(index);
+	LOGE("vbo bind status:%d",b);
+	return b;
 }
