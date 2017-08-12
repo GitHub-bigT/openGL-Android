@@ -1,6 +1,6 @@
 # Question center
 
-* 未使用glClear(GL_COLOR_BUFFER_BIT);
+* 未使用 `glClear(GL_COLOR_BUFFER_BIT);`
 
 <div>
   <img src="https://github.com/GitHub-bigT/openGL-Android/blob/master/images/question/question1.png" width="150px"/>
