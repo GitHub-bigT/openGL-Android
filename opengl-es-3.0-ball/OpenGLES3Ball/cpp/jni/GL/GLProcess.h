@@ -4,6 +4,8 @@
 
 #include <GLES3/gl3.h>
 #include "../Debug/debug.h"
+#include "../GLSL/fragmentShader.h"
+#include "../GLSL/vertexShader.h"
 
 
 #ifdef __cplusplus

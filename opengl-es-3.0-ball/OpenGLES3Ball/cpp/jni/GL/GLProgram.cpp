@@ -2,11 +2,15 @@
 
 GLuint GLProgram::linkProgram(GLuint vertexShader , GLuint fragmentShader){
 	//LOGE("link program");
-	GLuint program = glCreateProgram();
-	glAttachShader(program,vertexShader);
-	glAttachShader(program,fragmentShader);
-	glLinkProgram(program);
+	GLProgram::programId = glCreateProgram();
+	glAttachShader(GLProgram::programId,vertexShader);
+	glAttachShader(GLProgram::programId,fragmentShader);
+	glLinkProgram(GLProgram::programId);
 	//check program link
-	tools->checkProgram(program);
-	return program;
+	tools->checkProgram(GLProgram::programId);
+	return GLProgram::programId;
+}
+
+void GLProgram::useProgram(){
+	glUseProgram(GLProgram::programId);
 }

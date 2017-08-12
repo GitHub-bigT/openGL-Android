@@ -16,7 +16,11 @@ extern Tools* tools;
 
 class GLProgram{
 	public:
+	
+	GLuint programId;
+	
 	GLuint linkProgram(GLuint vertexShader , GLuint fragmentShader);
+	void useProgram();
 };
 class GLShader{
 	private:
@@ -29,11 +33,10 @@ class GLVAO{
 	//生成球顶点坐标
 	void generateBallVertexCoord(int width , int height);
 	public:
-	//顶点数据
-	float vertexData[24][3];
-	//顶点着色器attr索引
-	enum{vPosition=1};
+	
 	void setVAO(int width , int height);
+	
+	void drawVAO();
 };
 #ifdef __cplusplus	
 }
