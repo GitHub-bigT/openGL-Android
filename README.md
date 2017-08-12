@@ -15,7 +15,7 @@
 
 ### openGL ES 3.0
 
-* ndk （es 3.0，画一个圆）
+* ndk （es 3.0，三角形 && 圆）
 
 <div>
   <img src="https://github.com/GitHub-bigT/openGL-Android/blob/master/images/vaovbo1.png" width="150px"/>
