@@ -29,7 +29,7 @@ GLuint loadShder(GLenum type , const char* source);
 
 void printGLString(const char *name, GLenum s);
 
-void initVAO1();
+void initVAO1(int ,int );
 
 void initVAO2(int ,int );
 

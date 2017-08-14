@@ -40,11 +40,11 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	printGLString("GL_SHADING_LANGUAGE_VERSION : ", GL_SHADING_LANGUAGE_VERSION);
 	
 	glGenVertexArrays(NumVAOs , VAOs);
-	current = VAOs[OtherTriangles];
+	current = VAOs[Triangles];
 	glGenBuffers(NumBuffers,Buffers);
 	
-	//initVAO1();	
-	initVAO2(width , height);
+	initVAO1(width,height);	
+	//initVAO2(width , height);
 
 	GLboolean b = glIsBuffer(Buffers[ArrayBuffer]);
 	LOGE("ArrayBuffer bind: %d ",b);
@@ -56,18 +56,16 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	
 }
 
-void initVAO1(){
+void initVAO1(int width, int height){
 	LOGI(" init VAO 1");
-	
+	float proportion = (float)width / (float)height;
 	// init vao
 	glBindVertexArray(VAOs[Triangles]);
 	Vertex vertices[] = {
-		{{0.0f,0.0f},{1.0f,0.0f,0.0f,1.0f}},
-		{{-1.0f,0.0f},{0.0f,1.0f,0.0f,1.0f}},
-		{{1.0f,1.0f},{0.0f,1.0f,0.0f,1.0f}},
-		{{1.0f,0.0f},{0.0f,0.0f,1.0f,1.0f}},
-		{{-1.0f,-1.0f},{0.0f,1.0f,1.0f,1.0f}},
-		{{0.0f,-1.0f},{0.0f,1.0f,1.0f,1.0f}}
+		{{0.0f,0.5f*proportion},{0.0f,1.0f,0.0f,1.0f}},
+		{{-0.5f,0.0f},{0.0f,0.0f,1.0f,1.0f}},
+		{{0.5f,0.0f},{1.0f,0.0f,0.0f,1.0f}},
+		{{0.0f,-0.5f*proportion},{1.0f,1.0f,1.0f,1.0f}}
 	};
 	
 	//init buffer
@@ -215,26 +213,25 @@ bool add = true;
 
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_step(JNIEnv * , jclass){
-	if(gray >= 1.0f) {
-		add = false;
+	//if(gray >= 1.0f) {
+	//	add = false;
 	//	current = VAOs[Triangles];
-	}
-	if(gray<=0.0f) {
-		add = true;
+	//}
+	//if(gray<=0.0f) {
+	//	add = true;
 	//	current = VAOs[OtherTriangles];
-	}
-	if(add) {
-		gray += 0.01;
-	}else{
-		gray -= 0.01;
-	}
+	//}
+	//if(add) {
+	//	gray += 0.01;
+	//}else{
+	//	gray -= 0.01;
+	//}
 	//LOGI("gray : %f ",gray);
 	glClearColor(gray,gray,gray,1.0f);
-	
 	glClear(GL_COLOR_BUFFER_BIT);
 	//LOGI("current %d",current);
 	glBindVertexArray(current);
-	glDrawArrays(GL_TRIANGLE_FAN,0,362);
+	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 	glFlush();
 }
 
