@@ -22,6 +22,12 @@
  <img src="https://github.com/GitHub-bigT/openGL-Android/blob/master/images/vaovbo2.png" width="150px"/>
 </div>
 
+* 视图变换
+
+* 模型变换
+
+* 投影变换
+
 * 球
 <div>
   <img src="https://github.com/GitHub-bigT/openGL-Android/blob/master/images/ball1.png" width="150px"/>
