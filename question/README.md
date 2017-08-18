@@ -9,6 +9,8 @@
 
 * mat可以通过glVertexAttribPointer传给vertex shader吗？
 ```
+glm::mat4 model;    
+model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 glBindBuffer(GL_ARRAY_BUFFER,Buffers[MatBuffer]);
 glBufferData(GL_ARRAY_BUFFER,sizeof(model),&model,GL_DYNAMIC_DRAW);
 glVertexAttribPointer(3,4,GL_FLOAT,GL_FALSE,sizeof(model),0);
