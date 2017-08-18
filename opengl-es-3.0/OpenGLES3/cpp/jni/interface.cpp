@@ -79,14 +79,7 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	
 	glUseProgram(program);
 	
-	glm::mat4 model;    
-    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	
-	GLint modelIndex = glGetUniformLocation(program,"model");
-	LOGE("model index : %d",modelIndex);
-	LOGE("GL_INVALID_VALUE : %d",GL_INVALID_VALUE);
-	LOGE("GL_INVALID_OPERATION : %d",GL_INVALID_OPERATION);
-	glUniformMatrix4fv(modelIndex,1,GL_FALSE,glm::value_ptr(model));
 	
 }
 
@@ -248,6 +241,8 @@ GLuint loadShder(GLenum type , const char* source){
 float gray = 0.0f;
 bool add = true;
 
+float angle = 0.0f;
+
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_step(JNIEnv * , jclass){
 	//if(gray >= 1.0f) {
@@ -264,10 +259,26 @@ Java_ricoh_opengles3_NativeMethod_step(JNIEnv * , jclass){
 	//	gray -= 0.01;
 	//}
 	//LOGI("gray : %f ",gray);
+	
+	
+	angle += 0.1f;
+	LOGE("angle : %f",angle);
+	
+	glm::mat4 model;    
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+	GLint modelIndex = glGetUniformLocation(program,"model");
+	
+	//LOGE("GL_INVALID_VALUE : %d",GL_INVALID_VALUE);
+	//LOGE("GL_INVALID_OPERATION : %d",GL_INVALID_OPERATION);
+	glUniformMatrix4fv(modelIndex,1,GL_FALSE,glm::value_ptr(model));
+	
 	glClearColor(gray,gray,gray,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//LOGI("current %d",current);
 	glBindVertexArray(current);
+	
+
+	
 	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 	glFlush();
 }
