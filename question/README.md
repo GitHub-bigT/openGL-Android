@@ -13,5 +13,9 @@ glBindBuffer(GL_ARRAY_BUFFER,Buffers[MatBuffer]);
 glBufferData(GL_ARRAY_BUFFER,sizeof(model),&model,GL_DYNAMIC_DRAW);
 glVertexAttribPointer(3,4,GL_FLOAT,GL_FALSE,sizeof(model),0);
 ```
+glBufferData的第三个参数和glVertexAttribPointer的第二个参数该怎么写？
+```
+"layout(location=3) in mat4 mattest;\n"
+```
 
 
