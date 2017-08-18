@@ -5,10 +5,11 @@ GLuint program;
 const char* vertexShaderSource = "#version 300 es\n"
 									"layout(location=1) in vec2 vPosition;\n"
 									"layout(location=2) in vec4 iColor;\n"
+									//"layout(location=3) in mat4 mattest;\n"
 									"out vec4 oColor;\n"
 									"uniform mat4 model;"
 								 "void main() {\n" 
-								 "float radian = radians(30.0f);\n"
+								 "float radian = radians(90.0f);\n"
 								 " mat4 sr = mat4(cos(radian),sin(radian),0.0f,0.0f,"
 												" -sin(radian),cos(radian),0.0f,0.0f,"
 												" 0.0f,0.0f,1.0f,0.0f,"
@@ -31,7 +32,7 @@ const char* fragmentShaderSource = "#version 300 es\n"
 									;
 
 enum VAO_IDs {Triangles ,OtherTriangles, NumVAOs};
-enum Buffer_IDs {ArrayBuffer ,OtherBuffer, NumBuffers};
+enum Buffer_IDs {ArrayBuffer ,OtherBuffer ,MatBuffer, NumBuffers};
 enum Attrib_IDs {vPosition = 1 , iColor = 2};
 //GLuint vPosition;
 
@@ -58,6 +59,8 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
     //printGLString("Extensions", GL_EXTENSIONS);
 	printGLString("GL_SHADING_LANGUAGE_VERSION : ", GL_SHADING_LANGUAGE_VERSION);
 	
+
+
 	glGenVertexArrays(NumVAOs , VAOs);
 	current = VAOs[Triangles];
 	glGenBuffers(NumBuffers,Buffers);
@@ -69,12 +72,10 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	LOGE("ArrayBuffer bind: %d ",b);
 	GLboolean b1 = glIsBuffer(Buffers[OtherBuffer]);
 	LOGE("OtherBuffer bind: %d ",b1);
-	
-	
-	
+	GLboolean b2 = glIsBuffer(Buffers[MatBuffer]);
+	LOGE("MatBuffer bind: %d ",b2);
 	//create program
 	program = createProgram();
-	
 	
 	
 	glUseProgram(program);
@@ -96,7 +97,8 @@ void initVAO1(int width, int height){
 		{{0.0f,-1.0f},{1.0f,1.0f,1.0f,1.0f}}
 	};
 	
-	
+	glm::mat4 model;    
+    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	
 	//init buffer
 	glBindBuffer(GL_ARRAY_BUFFER,Buffers[ArrayBuffer]);
@@ -104,8 +106,19 @@ void initVAO1(int width, int height){
 	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),0);
 	glVertexAttribPointer(iColor,4,GL_FLOAT,GL_FALSE,sizeof(Vertex),(const GLvoid*)8);
 	
+	//glBindBuffer(GL_ARRAY_BUFFER,Buffers[MatBuffer]);
+	//glBufferData(GL_ARRAY_BUFFER,sizeof(model),&model,GL_DYNAMIC_DRAW);
+	//glVertexAttribPointer(3,4,GL_FLOAT,GL_FALSE,sizeof(model),0);
+	
+	
+	//glVertexAttribPointer(3,4,GL_FLOAT,GL_FALSE,sizeof(Vertex),(const GLvoid*)8);
+	
+	
+	
+	
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(iColor);
+	glEnableVertexAttribArray(3);
 	
 	
 }
@@ -185,7 +198,7 @@ GLuint createProgram(){
        if (linkStatus != GL_TRUE) {
             GLint bufLength = 0;
             glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
-			
+	
 			LOGE("program ---- 得到logo日志的长度: %d", bufLength);
 			
             if (bufLength) {
@@ -261,16 +274,17 @@ Java_ricoh_opengles3_NativeMethod_step(JNIEnv * , jclass){
 	//LOGI("gray : %f ",gray);
 	
 	
-	angle += 0.1f;
-	LOGE("angle : %f",angle);
-	
+	angle += 0.05f;
+	//LOGE("angle : %f",angle);
 	glm::mat4 model;    
     model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
 	GLint modelIndex = glGetUniformLocation(program,"model");
-	
+	//LOGE("modelIndex : %d",modelIndex);
 	//LOGE("GL_INVALID_VALUE : %d",GL_INVALID_VALUE);
 	//LOGE("GL_INVALID_OPERATION : %d",GL_INVALID_OPERATION);
+	
 	glUniformMatrix4fv(modelIndex,1,GL_FALSE,glm::value_ptr(model));
+	
 	
 	glClearColor(gray,gray,gray,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
