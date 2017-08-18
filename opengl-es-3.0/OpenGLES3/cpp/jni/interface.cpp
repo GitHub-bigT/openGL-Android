@@ -6,12 +6,19 @@ const char* vertexShaderSource = "#version 300 es\n"
 									"layout(location=1) in vec2 vPosition;\n"
 									"layout(location=2) in vec4 iColor;\n"
 									"out vec4 oColor;\n"
+									"uniform mat4 model;"
 								 "void main() {\n" 
-								 " mat4 sr = mat4(1.0f,0.0f,0.0f,0.5f,"
-												" 0.0f,1.0f,0.0f,0.5f,"
+								 "float radian = radians(30.0f);\n"
+								 " mat4 sr = mat4(cos(radian),sin(radian),0.0f,0.0f,"
+												" -sin(radian),cos(radian),0.0f,0.0f,"
 												" 0.0f,0.0f,1.0f,0.0f,"
 												" 0.0f,0.0f,0.0f,1.0f);\n"
-									"gl_Position = vec4(vPosition,0.0f,1.0f)*sr;\n"
+								" mat4 sr1 = mat4(1.0f,0.0f,0.0f,0.0f,"
+											   " 0.0f,0.633803,0.0f,0.0f,"
+											   " 0.0f,0.0f,1.0f,0.0f,"
+											   " 0.0f,0.0f,0.0f,1.0f);\n"
+											   
+									"gl_Position = vec4(vPosition,0.0f,1.0f)*model*sr1;\n"
 									"oColor = iColor;\n"
 								 "}\n";
 const char* fragmentShaderSource = "#version 300 es\n"
@@ -34,6 +41,14 @@ GLuint Buffers[NumBuffers];
 const GLuint NumVertices = 6;
 int current ;
 
+GLfloat ssr[16] = {1.0f,0.0f,0.0f,0.0f,
+0.0f,0.633803,0.0f,0.0f,
+0.0f,0.0f,1.0f,0.0f,
+0.0f,0.0f,0.0f,1.0f
+};
+
+
+
 JNIEXPORT void JNICALL
 Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height){
 	//LOGI("program: %d " , program);
@@ -54,30 +69,48 @@ Java_ricoh_opengles3_NativeMethod_init(JNIEnv * , jclass , int width, int height
 	LOGE("ArrayBuffer bind: %d ",b);
 	GLboolean b1 = glIsBuffer(Buffers[OtherBuffer]);
 	LOGE("OtherBuffer bind: %d ",b1);
+	
+	
+	
 	//create program
 	program = createProgram();
+	
+	
+	
 	glUseProgram(program);
+	
+	glm::mat4 model;    
+    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	
+	GLint modelIndex = glGetUniformLocation(program,"model");
+	LOGE("model index : %d",modelIndex);
+	LOGE("GL_INVALID_VALUE : %d",GL_INVALID_VALUE);
+	LOGE("GL_INVALID_OPERATION : %d",GL_INVALID_OPERATION);
+	glUniformMatrix4fv(modelIndex,1,GL_FALSE,glm::value_ptr(model));
 	
 }
 
 void initVAO1(int width, int height){
 	LOGI(" init VAO 1");
 	float proportion = (float)width / (float)height;
+	LOGE("proportion ---- %f",proportion);
 	// init vao
 	glBindVertexArray(VAOs[Triangles]);
 	Vertex vertices[] = {
-		{{0.0f,0.5f*proportion},{0.0f,1.0f,0.0f,1.0f}},
-		{{-0.5f,0.0f},{0.0f,0.0f,1.0f,1.0f}},
-		{{0.5f,0.0f},{1.0f,0.0f,0.0f,1.0f}},
-		{{0.0f,-0.5f*proportion},{1.0f,1.0f,1.0f,1.0f}}
+		{{0.0f,1.0f},{0.0f,1.0f,0.0f,1.0f}},
+		{{-1.0f,0.0f},{0.0f,0.0f,1.0f,1.0f}},
+		{{1.0f,0.0f},{1.0f,0.0f,0.0f,1.0f}},
+		{{0.0f,-1.0f},{1.0f,1.0f,1.0f,1.0f}}
 	};
+	
+	
 	
 	//init buffer
 	glBindBuffer(GL_ARRAY_BUFFER,Buffers[ArrayBuffer]);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-	
 	glVertexAttribPointer(vPosition,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),0);
 	glVertexAttribPointer(iColor,4,GL_FLOAT,GL_FALSE,sizeof(Vertex),(const GLvoid*)8);
+	
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(iColor);
 	

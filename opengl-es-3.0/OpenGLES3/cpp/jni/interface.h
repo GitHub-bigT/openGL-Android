@@ -1,8 +1,12 @@
+
 #include <jni.h>
 #include <GLES3/gl3.h>
 #include <string>
 #include "debug.h"
-#include <math.h> 
+
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 
 #ifdef __cplusplus
 extern "C" {
