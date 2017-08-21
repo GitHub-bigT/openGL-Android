@@ -1,4 +1,4 @@
-﻿Build started 2017/8/21 11:04:31.
+﻿Build started 2017/8/21 12:34:55.
      1>Project "E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\opengl-study.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
@@ -8,11 +8,9 @@
          Debug\BTGLhandle.obj
          Debug\BTprogram.obj
          Debug\Source.obj
-     1>LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-     1>glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'E:\vsprojects\github-bigT\opengl-pc\opengl-study\Debug\vc120.pdb'; linking object as if no debug info
          opengl-study.vcxproj -> E:\vsprojects\github-bigT\opengl-pc\opengl-study\Debug\opengl-study.exe
      1>Done Building Project "E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\opengl-study.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.68
+Time Elapsed 00:00:00.89
