@@ -2,7 +2,7 @@
 #define _BTGLHANDLE_H_
 
 #include <iostream>
-#include <GL\glut.h>
+#include <GL\glew.h>
 
 class Handle
 {
@@ -10,7 +10,7 @@ public:
 	Handle();
 	~Handle();
 	//画一个三角形
-	void initTriangles();
+	void drawTriangles();
 private:
 	enum VAO_IDs{TriangleAO,NumVaoIds};
 	enum VBO_IDs{TriangleBO,NumVBOIds};

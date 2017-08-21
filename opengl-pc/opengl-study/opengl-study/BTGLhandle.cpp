@@ -1,5 +1,5 @@
 #include "BTGLHandle.h"
-void Handle::initTriangles(){
+void Handle::drawTriangles(){
 	printf("here is draw triangles\n");
 	
 }
