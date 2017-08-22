@@ -3,19 +3,18 @@
 
 #include <iostream>
 #include <GL\glew.h>
+#include "BTGL.h"
 
 class Handle
 {
 public:
 	Handle();
 	~Handle();
+	void init();
 	//画一个三角形
 	void drawTriangles();
 private:
-	enum VAO_IDs{TriangleAO,NumVaoIds};
-	enum VBO_IDs{TriangleBO,NumVBOIds};
-	GLuint VAOs[NumVaoIds];
-	GLuint VBOs[NumVaoIds];
+	BTVaoVbo* btVaoVbo;
 };
 
 

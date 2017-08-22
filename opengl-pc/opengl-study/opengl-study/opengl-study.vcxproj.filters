@@ -36,6 +36,9 @@
     <ClCompile Include="BTGLhandle.cpp">
       <Filter>Source Files\Entrance</Filter>
     </ClCompile>
+    <ClCompile Include="ReadFile.cpp">
+      <Filter>Source Files\GL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTGL.h">
@@ -44,5 +47,16 @@
     <ClInclude Include="BTGLHandle.h">
       <Filter>Source Files\Entrance</Filter>
     </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>Source Files\GL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="v_shader.vert">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
+    <None Include="f_shader.frag">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

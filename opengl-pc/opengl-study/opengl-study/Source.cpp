@@ -40,14 +40,12 @@ int main(){
 	glfwSetKeyCallback(window,key_callback);
 	//渲染三角形
 	Handle* handle = new Handle();
+	handle->init();
 	while (!glfwWindowShouldClose(window))
 	{
 		//检查触发事件
 		//键盘输入、鼠标移动等
 		glfwPollEvents();
-		//渲染指令
-		glClearColor(0.3f,0.6f,0.7f,1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		//三角形
 		handle->drawTriangles();
 		//双缓存技术,交换缓冲

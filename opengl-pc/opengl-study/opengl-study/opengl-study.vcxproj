@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -83,11 +83,17 @@
     <ClCompile Include="BTbind.cpp" />
     <ClCompile Include="BTGLhandle.cpp" />
     <ClCompile Include="BTprogram.cpp" />
+    <ClCompile Include="ReadFile.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTGL.h" />
     <ClInclude Include="BTGLHandle.h" />
+    <ClInclude Include="File.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="f_shader.frag" />
+    <None Include="v_shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
