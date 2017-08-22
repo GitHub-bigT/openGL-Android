@@ -9,12 +9,13 @@ public:
 	void initVaoVbo();
 	void drawArrays();
 private:
-	enum VAO_IDs{ TriangleAO, NumVaoIds };
-	enum VBO_IDs{ TriangleBO, NumVBOIds };
+	enum VAO_IDs{ TriangleVAO, NumVaoIds };
+	enum VBO_IDs{ TriangleVBO, NumVBOIds };
+	enum EBO_IDs{ TriangleEBO, NumEBOIds };
 	enum Attrib_IDs{vPosition = 1, vColor = 2};
 	GLuint VAOs[NumVaoIds];
 	GLuint VBOs[NumVaoIds];
-	
+	GLuint EBOs[NumEBOIds];
 };
 
 class BTprogram {

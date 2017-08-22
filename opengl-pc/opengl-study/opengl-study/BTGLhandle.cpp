@@ -14,7 +14,7 @@ void Handle::drawTriangles(){
 }
 Handle::Handle()
 {
-	//printf("here is constructor\n");
+	printf("here is constructor\n");
 }
 
 Handle::~Handle()

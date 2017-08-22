@@ -1,4 +1,4 @@
-#define GLEW_STATIC
+
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <iostream>
@@ -25,7 +25,7 @@ int main(){
 	//通知GLFW将窗口的上下文设置为当前线程的主上下文
 	glfwMakeContextCurrent(window);
 	//
-	glewExperimental = GL_TRUE;
+	glewExperimental = true;
 	if (glewInit() != GLEW_OK)
 	{
 		std::cout << "failed to initialize GLEW" << std::endl;
