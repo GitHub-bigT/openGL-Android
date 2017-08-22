@@ -10,7 +10,6 @@
 * ig75icd32.dll
 ```
 Unhandled exception at 0x0F399885 (ig75icd32.dll) in opengl-study.exe: 0xC0000005: Access violation reading location 0x00000000.
-glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,0);
 ```
 
 
