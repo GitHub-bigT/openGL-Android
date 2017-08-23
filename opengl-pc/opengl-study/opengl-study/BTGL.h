@@ -8,25 +8,26 @@
 class BTVaoVbo{
 public:
 	void initVaoVbo();
-	void drawArrays();
+	void drawArrays(GLuint programId);
 private:
 	enum VAO_IDs{ TriangleVAO, NumVaoIds };
 	enum VBO_IDs{ TriangleVBO, NumVBOIds };
 	enum EBO_IDs{ TriangleEBO, NumEBOIds };
+	enum TEX_IDs{ Pic1, Pic2, NumTexIds};
 	enum Attrib_IDs{ vPosition = 1, vColor = 2, vTexCoord = 3};
 	GLuint VAOs[NumVaoIds];
 	GLuint VBOs[NumVaoIds];
 	GLuint EBOs[NumEBOIds];
-	GLuint texture;
+	GLuint TEXs[NumTexIds];
 };
 
 class BTprogram {
 public:
 	GLuint loadShader(GLenum type, const char* shaderSource);
-	void createProgram();
+	GLuint createProgram();
 	void useProgram();
-private:
 	GLuint programId;
+private:
 	GLuint v_shader_Id;
 	GLuint f_shader_Id;
 };

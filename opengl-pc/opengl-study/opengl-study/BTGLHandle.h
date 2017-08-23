@@ -15,6 +15,7 @@ public:
 	void drawTriangles();
 private:
 	BTVaoVbo* btVaoVbo;
+	GLuint programId;
 };
 
 

@@ -5,12 +5,12 @@ void Handle::init(){
 	btVaoVbo = new BTVaoVbo();
 	btVaoVbo->initVaoVbo();
 	BTprogram* btProgram = new BTprogram();
-	btProgram->createProgram();
+	programId = btProgram->createProgram();
 	btProgram->useProgram();
 }
 void Handle::drawTriangles(){
 	//std::cout << "draw triangle" << std::endl;
-	btVaoVbo->drawArrays();
+	btVaoVbo->drawArrays(programId);
 }
 Handle::Handle()
 {

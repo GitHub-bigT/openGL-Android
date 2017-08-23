@@ -9,5 +9,5 @@ void main(){
 	gl_Position = vec4(vPosition,0.0f,1.0f);
 	fColor = vColor;
 	fPostion = vec3(vPosition,0.0f);
-	fTexCoord = vTexCoord;
+	fTexCoord = vec2(vTexCoord.x,1.0f-vTexCoord.y);
 }

@@ -1,6 +1,6 @@
 #include "BTGL.h"
 
-void BTprogram::createProgram(){
+GLuint BTprogram::createProgram(){
 	//std::cout << "create program" << std::endl;
 	TextFile* textFile = new TextFile();
 	char* v_shader = textFile->readFile("v_shader.vert");
@@ -46,6 +46,7 @@ void BTprogram::createProgram(){
 			programId = 0;
 		}
 	}
+	return programId;
 }
 
 void BTprogram::useProgram(){

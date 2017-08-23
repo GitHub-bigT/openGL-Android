@@ -22,13 +22,32 @@ void BTVaoVbo::initVaoVbo(){
 			1.0f, 0.0f, 0.0f, 1.0f
 	};
 	GLfloat triangleTexture[8] = {
-			1.0f,1.0f,
-			1.0f,0.0f,
-			0.0f,0.0f,
-			0.0f,1.0f
+			1.0f, 1.0f,
+			1.0f, 0.0f,
+			0.0f, 0.0f,
+			0.0f, 1.0f
 	};
 	
-	
+	//图1 纹理
+	int width1, height1;
+	unsigned char* image1 = SOIL_load_image("./sImage/wx8.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
+	glGenTextures(NumTexIds, TEXs);
+	glBindTexture(GL_TEXTURE_2D, TEXs[Pic1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, image1);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	//释放图像的内存、解绑纹理
+	SOIL_free_image_data(image1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	//图2 纹理
+	int width2, height2;
+	unsigned char* image2 = SOIL_load_image("./sImage/container.jpg", &width2, &height2, 0 ,SOIL_LOAD_RGB);
+	printf("image2  ==== :%s\n",image2);
+	glBindTexture(GL_TEXTURE_2D,TEXs[Pic2]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	//释放图像内存、解绑纹理
+	SOIL_free_image_data(image2);
+	glBindTexture(GL_TEXTURE_2D,0);
 
 	//1.绑定VBO
 	glGenBuffers(NumVBOIds, VBOs);
@@ -42,13 +61,7 @@ void BTVaoVbo::initVaoVbo(){
 	printf("triangle vbo bind: %d\n", b);
 	//(ig75icd32.dll) 崩溃
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//纹理
-	int width, height;
-	unsigned char* image = SOIL_load_image("wall.jpg", &width, &height, 0, SOIL_LOAD_RGB);
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
+
 
 	//1.绑定VAO
 	glGenVertexArrays(NumVaoIds, VAOs);
@@ -75,13 +88,20 @@ void BTVaoVbo::initVaoVbo(){
 	glBindVertexArray(0);
 }
 
-void BTVaoVbo::drawArrays(){
+void BTVaoVbo::drawArrays(GLuint programId){
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, TEXs[Pic1]);
+	//printf("programId----:%d\n", programId);
+	//glUniform1i(glGetUniformLocation(programId, "ourTexture1"), 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, TEXs[Pic2]);
+	glUniform1i(glGetUniformLocation(programId, "ourTexture2"), 1);
+
 	glBindVertexArray(VAOs[TriangleVAO]);	
-	glBindTexture(GL_TEXTURE_2D, texture);
 	//GL_FILL 默认模式  
 	//GL_LINE 线框模式
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
