@@ -3,6 +3,7 @@
 #include <GL\glew.h>
 #include <iostream>
 #include "File.h"
+#include <SOIL.h>
 
 class BTVaoVbo{
 public:
@@ -12,10 +13,11 @@ private:
 	enum VAO_IDs{ TriangleVAO, NumVaoIds };
 	enum VBO_IDs{ TriangleVBO, NumVBOIds };
 	enum EBO_IDs{ TriangleEBO, NumEBOIds };
-	enum Attrib_IDs{vPosition = 1, vColor = 2};
+	enum Attrib_IDs{ vPosition = 1, vColor = 2, vTexCoord = 3};
 	GLuint VAOs[NumVaoIds];
 	GLuint VBOs[NumVaoIds];
 	GLuint EBOs[NumEBOIds];
+	GLuint texture;
 };
 
 class BTprogram {
