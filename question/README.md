@@ -63,8 +63,11 @@ draw()的时候就只可以bind VAO
 以下摘抄自：https://learnopengl-cn.github.io/01%20Getting%20started/04%20Hello%20Triangle/
 
 原因：
-```
-glDrawElements函数从当前绑定到GL_ELEMENT_ARRAY_BUFFER目标的EBO中获取索引。这意味着我们必须在每次要用索引渲染一个物体时绑定相应的EBO，这还是有点麻烦。不过顶点数组对象同样可以保存索引缓冲对象的绑定状态。VAO绑定时正在绑定的索引缓冲对象会被保存为VAO的元素缓冲对象。绑定VAO的同时也会自动绑定EBO。
-```
+`glDrawElements函数从当前绑定到GL_ELEMENT_ARRAY_BUFFER目标的EBO中获取索引。`
+`这意味着我们必须在每次要用索引渲染一个物体时绑定相应的EBO，这还是有点麻烦。`
+`不过顶点数组对象同样可以保存索引缓冲对象的绑定状态。`
+`VAO绑定时正在绑定的索引缓冲对象会被保存为VAO的元素缓冲对象。`
+`绑定VAO的同时也会自动绑定EBO。`
+
 
 
