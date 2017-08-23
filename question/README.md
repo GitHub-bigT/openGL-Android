@@ -13,7 +13,7 @@ Unhandled exception at 0x0F399885 (ig75icd32.dll) in opengl-study.exe: 0xC000000
 ```
 
 * 关于EBO的问题
-bindxxx():
+1. bindxxx():
 
 绑定的顺序为：VBO  EBO  VAO
 ```
@@ -56,5 +56,10 @@ bindxxx():
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[TriangleEBO]);
 ```
+2.建议绑定的顺序为 VAO VBO EBO
+
+以下摘抄自：https://learnopengl-cn.github.io/01%20Getting%20started/04%20Hello%20Triangle/
+
+原因：
 
 
