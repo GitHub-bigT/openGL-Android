@@ -14,6 +14,8 @@ Unhandled exception at 0x0F399885 (ig75icd32.dll) in opengl-study.exe: 0xC000000
 
 * 关于EBO的问题
 bindxxx():
+
+绑定的顺序为：VBO  EBO  VAO
 ```
 	//1.绑定VBO
 	glGenBuffers(NumVBOIds, VBOs);
@@ -34,7 +36,7 @@ bindxxx():
 	printf("triangle ebo bind: %d\n", b2);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(triangleIndex),triangleIndex,GL_STATIC_DRAW);
  
-//1.绑定VAO
+	//1.绑定VAO
 	glGenVertexArrays(NumVaoIds, VAOs);
 	glBindVertexArray(VAOs[TriangleVAO]);
 	GLboolean b1 = glIsVertexArray(VAOs[TriangleVAO]);
@@ -48,6 +50,8 @@ bindxxx():
 	glBindVertexArray(0);
 ```
  draw():
+ 
+ 则draw的时候必须先bind VAO在bind EBO
 ```
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[TriangleEBO]);
