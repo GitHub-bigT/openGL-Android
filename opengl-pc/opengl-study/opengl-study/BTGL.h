@@ -10,7 +10,7 @@ class BTVaoVbo{
 public:
 	void initVaoVbo();
 	void initSampler(GLuint programId);
-	void drawArrays(GLuint programId);
+	void drawArrays(GLuint programId, float alpha);
 private:
 	enum VAO_IDs{ TriangleVAO, NumVaoIds };
 	enum VBO_IDs{ TriangleVBO, NumVBOIds };

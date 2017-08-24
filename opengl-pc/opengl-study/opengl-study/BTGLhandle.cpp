@@ -9,9 +9,9 @@ void Handle::init(){
 	btProgram->useProgram();
 	btVaoVbo->initSampler(programId);
 }
-void Handle::drawTriangles(){
+void Handle::drawTriangles(float alpha){
 	//std::cout << "draw triangle" << std::endl;
-	btVaoVbo->drawArrays(programId);
+	btVaoVbo->drawArrays(programId,alpha);
 }
 Handle::Handle()
 {

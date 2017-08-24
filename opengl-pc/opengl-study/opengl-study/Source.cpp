@@ -5,6 +5,8 @@
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
+float alpha = 1.0f;
+
 int main(){
 	glfwInit();
 	//设置opengl的主版本和次版本（3.3）
@@ -46,7 +48,7 @@ int main(){
 		//键盘输入、鼠标移动等
 		glfwPollEvents();
 		//三角形
-		handle->drawTriangles();
+		handle->drawTriangles(alpha);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
@@ -59,7 +61,24 @@ void key_callback(GLFWwindow* window, int key , int scancode , int action , int 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
 		std::cout << "account press ESC" << std::endl;
-		glfwSetWindowShouldClose(window,GL_TRUE);
+		glfwSetWindowShouldClose(window,GL_TRUE);	
 	}
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+	{
+		alpha += 0.1f;
+		if (alpha >= 1.0f)
+		{
+			alpha = 1.0f;
+		}
+	}
+	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+	{
+		alpha -= 0.1f;
+		if (alpha <= 0.0f)
+		{
+			alpha = 0.0f;
+		}
+	}
+	printf("alpha ----- : %f\n", alpha);
 };
 

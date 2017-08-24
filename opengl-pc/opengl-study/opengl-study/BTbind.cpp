@@ -34,8 +34,8 @@ void BTVaoVbo::initVaoVbo(){
 	glGenTextures(NumTexIds, TEXs);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic1]);
 	//设置纹理环绕方式
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	//设置纹理过滤
 	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -49,10 +49,13 @@ void BTVaoVbo::initVaoVbo(){
 	int width2, height2;
 	unsigned char* image2 = SOIL_load_image("./sImage/png1.png", &width2, &height2, 0 ,SOIL_LOAD_RGBA);
 	//unsigned char* image2 = SOIL_load_image("./sImage/biaoqing3.jpg", &width2, &height2, 0, SOIL_LOAD_RGB);
-	//printf("image2  ==== :%s\n",image2);
+	printf("image2  ==== :%s\n",image2);
 	glBindTexture(GL_TEXTURE_2D,TEXs[Pic2]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -97,7 +100,7 @@ void BTVaoVbo::initVaoVbo(){
 	glBindVertexArray(0);
 }
 
-void BTVaoVbo::drawArrays(GLuint programId){
+void BTVaoVbo::drawArrays(GLuint programId, float alpha){
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -106,6 +109,7 @@ void BTVaoVbo::drawArrays(GLuint programId){
 	//GL_LINE 线框模式
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	//glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+	glUniform1f(glGetUniformLocation(programId, "update_alpha"), alpha);
 	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,0);
 	glBindVertexArray(0);
 	

@@ -12,7 +12,7 @@ public:
 	~Handle();
 	void init();
 	//画一个三角形
-	void drawTriangles();
+	void drawTriangles(float alpha);
 private:
 	BTVaoVbo* btVaoVbo;
 	GLuint programId;
