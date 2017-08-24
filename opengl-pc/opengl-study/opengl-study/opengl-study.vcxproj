@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\SOIL\include;E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\glfw-3.2.1.bin.WIN32\include;E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\glew-2.1.0\include;$(IncludePath)</IncludePath>
+    <IncludePath>E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\glm;E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\SOIL\include;E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\glfw-3.2.1.bin.WIN32\include;E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\glew-2.1.0\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\SOIL\lib;E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\glfw-3.2.1.bin.WIN32\lib-vc2013;E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

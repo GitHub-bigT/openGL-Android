@@ -4,10 +4,12 @@
 #include <iostream>
 #include "File.h"
 #include <SOIL.h>
+#include <glm.hpp>
 
 class BTVaoVbo{
 public:
 	void initVaoVbo();
+	void initSampler(GLuint programId);
 	void drawArrays(GLuint programId);
 private:
 	enum VAO_IDs{ TriangleVAO, NumVaoIds };

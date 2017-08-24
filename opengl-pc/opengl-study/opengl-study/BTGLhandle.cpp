@@ -7,6 +7,7 @@ void Handle::init(){
 	BTprogram* btProgram = new BTprogram();
 	programId = btProgram->createProgram();
 	btProgram->useProgram();
+	btVaoVbo->initSampler(programId);
 }
 void Handle::drawTriangles(){
 	//std::cout << "draw triangle" << std::endl;

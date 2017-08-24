@@ -2,10 +2,10 @@
 void BTVaoVbo::initVaoVbo(){
 	//std::cout << "init vao vbo" << std::endl;
 	GLfloat triangleVertex[8] = {
-			0.5f, 0.5f, //右上
-			0.5f, -0.5f, //右下
-			-0.5f, -0.5f, //左下
-			- 0.5f, 0.5f, //左上
+		0.5f, 0.5f, //右上
+		0.5f, -0.5f, //右下
+		-0.5f, -0.5f, //左下
+		-0.5f, 0.5f, //左上
 	};
 	GLushort triangleIndex[6] = {
 			0,1,3,
@@ -30,20 +30,31 @@ void BTVaoVbo::initVaoVbo(){
 	
 	//图1 纹理
 	int width1, height1;
-	unsigned char* image1 = SOIL_load_image("./sImage/wx8.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
+	unsigned char* image1 = SOIL_load_image("./sImage/container.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
 	glGenTextures(NumTexIds, TEXs);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic1]);
+	//设置纹理环绕方式
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//设置纹理过滤
+	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, image1);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//释放图像的内存、解绑纹理
 	SOIL_free_image_data(image1);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 	//图2 纹理
 	int width2, height2;
-	unsigned char* image2 = SOIL_load_image("./sImage/container.jpg", &width2, &height2, 0 ,SOIL_LOAD_RGB);
-	printf("image2  ==== :%s\n",image2);
+	unsigned char* image2 = SOIL_load_image("./sImage/png1.png", &width2, &height2, 0 ,SOIL_LOAD_RGBA);
+	//unsigned char* image2 = SOIL_load_image("./sImage/biaoqing3.jpg", &width2, &height2, 0, SOIL_LOAD_RGB);
+	//printf("image2  ==== :%s\n",image2);
 	glBindTexture(GL_TEXTURE_2D,TEXs[Pic2]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//释放图像内存、解绑纹理
 	SOIL_free_image_data(image2);
@@ -75,8 +86,6 @@ void BTVaoVbo::initVaoVbo(){
 	printf("triangle ebo bind: %d\n", b2);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(triangleIndex),triangleIndex,GL_STATIC_DRAW);
 
-	
-
 	//2.设置顶点属性指针
 	glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (const void*)sizeof(triangleVertex));
@@ -92,6 +101,18 @@ void BTVaoVbo::drawArrays(GLuint programId){
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	glBindVertexArray(VAOs[TriangleVAO]);	
+	//GL_FILL 默认模式  
+	//GL_LINE 线框模式
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,0);
+	glBindVertexArray(0);
+	
+	glFlush();
+}
+
+void BTVaoVbo::initSampler(GLuint programId){
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic1]);
 	//printf("programId----:%d\n", programId);
@@ -100,14 +121,4 @@ void BTVaoVbo::drawArrays(GLuint programId){
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic2]);
 	glUniform1i(glGetUniformLocation(programId, "ourTexture2"), 1);
-
-	glBindVertexArray(VAOs[TriangleVAO]);	
-	//GL_FILL 默认模式  
-	//GL_LINE 线框模式
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,0);
-	glBindVertexArray(0);
-	
-	glFlush();
 }

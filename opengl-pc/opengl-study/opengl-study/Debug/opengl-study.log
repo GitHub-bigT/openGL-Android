@@ -1,4 +1,4 @@
-﻿Build started 2017/8/24 3:59:47.
+﻿Build started 2017/8/24 11:13:54.
      1>Project "E:\vsprojects\github-bigT\opengl-pc\opengl-study\opengl-study\opengl-study.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm- /EHsc /MDd /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt BTbind.cpp
@@ -14,4 +14,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.78
+Time Elapsed 00:00:01.07
