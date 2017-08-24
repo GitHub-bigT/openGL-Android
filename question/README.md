@@ -7,7 +7,10 @@
  <img src="https://github.com/GitHub-bigT/openGL-Android/blob/master/images/question/question2.png" width="150px"/>
 </div>
 
-* ig75icd32.dll
+* -----ig75icd32.dll
+
+win7 vs2013
+
 ```
 Unhandled exception at 0x0F399885 (ig75icd32.dll) in opengl-study.exe: 0xC0000005: Access violation reading location 0x00000000.
 ```
@@ -74,9 +77,17 @@ draw()的时候就只可以bind VAO
 
 `绑定VAO的同时也会自动绑定EBO。`
 
-* SOIL 问题
+* -----SOIL 问题
 
-1. 读取不到800kb+图片
+1. 读取不到800kb+图片，崩溃
+
+同ig75icd32.dll问题
+
+```
+Unhandled exception at 0x779497AD (ig75icd32.dll) in opengl-study.exe: 0xC0000005: Access violation reading location 0x0619D000.
+```
+
 2. 读取不到手机上传的非原图图片（windows下旋转了下图片才能读取到）
+3. awesomeface.png 有黑背景
 
 
