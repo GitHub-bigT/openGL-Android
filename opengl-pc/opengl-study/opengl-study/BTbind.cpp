@@ -1,11 +1,23 @@
 #include "BTGL.h"
+
+int getLen(const unsigned char s[])
+{
+	int nLen = 0;
+	const unsigned char* p = s;
+	while (*p != 0){
+		nLen++;
+		p++;
+	}
+	return nLen;
+}
+
 void BTVaoVbo::initVaoVbo(){
 	//std::cout << "init vao vbo" << std::endl;
 	GLfloat triangleVertex[8] = {
-		0.5f, 0.5f, //右上
-		0.5f, -0.5f, //右下
-		-0.5f, -0.5f, //左下
-		-0.5f, 0.5f, //左上
+		1.0f, 1.0f, //右上
+		1.0f, -1.0f, //右下
+		-1.0f, -1.0f, //左下
+		-1.0f, 1.0f, //左上
 	};
 	GLushort triangleIndex[6] = {
 			0,1,3,
@@ -29,8 +41,12 @@ void BTVaoVbo::initVaoVbo(){
 	};
 	
 	//图1 纹理
-	int width1, height1;
-	unsigned char* image1 = SOIL_load_image("./sImage/container.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
+	int width1, height1, nrChannels1;
+	unsigned char *image1 = stbi_load("./sImage/biaoqing2.jpg", &width1, &height1, &nrChannels1, 0);
+	//unsigned char* image1 = SOIL_load_image("./sImage/biaoqing3.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
+
+	printf("image1  ==== :%s\n", image1);
+	printf("char[] length:=====%d\n", getLen(image1));
 	glGenTextures(NumTexIds, TEXs);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic1]);
 	//设置纹理环绕方式
@@ -39,17 +55,28 @@ void BTVaoVbo::initVaoVbo(){
 	//设置纹理过滤
 	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	printf("width1  ==== :%d\n", width1);
+	printf("height1  ==== :%d\n", height1);
+	printf("nrChannels1  ==== :%d\n", nrChannels1);
+	printf("image : -=================================\n");
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, image1);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//释放图像的内存、解绑纹理
-	SOIL_free_image_data(image1);
+	//SOIL_free_image_data(image1);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//图2 纹理
-	int width2, height2;
-	unsigned char* image2 = SOIL_load_image("./sImage/png1.png", &width2, &height2, 0 ,SOIL_LOAD_RGBA);
+	int width2, height2, nrChannels2;
+	unsigned char *image2 = stbi_load("./sImage/awesomeface.png", &width2, &height2, &nrChannels2, 0);
+	//unsigned char* image2 = SOIL_load_image("./sImage/wx4.jpg", &width2, &height2, 0 ,SOIL_LOAD_RGB);
+	printf("char[] length:=====%ld\n", strlen((char *)image2));
+	printf("width2  ==== :%d\n", width2);
+	printf("height2  ==== :%d\n", height2);
+	printf("nrChannels2  ==== :%d\n", nrChannels2);
+
 	//unsigned char* image2 = SOIL_load_image("./sImage/biaoqing3.jpg", &width2, &height2, 0, SOIL_LOAD_RGB);
-	printf("image2  ==== :%s\n",image2);
+	//printf("image2  ==== :%s\n",image2);
 	glBindTexture(GL_TEXTURE_2D,TEXs[Pic2]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -57,10 +84,16 @@ void BTVaoVbo::initVaoVbo(){
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	printf("error %d----", glGetError());
+	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2);
+	printf("error %d----", glGetError());
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//释放图像内存、解绑纹理
-	SOIL_free_image_data(image2);
+	//SOIL_free_image_data(image2);
 	glBindTexture(GL_TEXTURE_2D,0);
 
 	//1.绑定VBO
@@ -75,7 +108,6 @@ void BTVaoVbo::initVaoVbo(){
 	printf("triangle vbo bind: %d\n", b);
 	//(ig75icd32.dll) 崩溃
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 
 	//1.绑定VAO
 	glGenVertexArrays(NumVaoIds, VAOs);

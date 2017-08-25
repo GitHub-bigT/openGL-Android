@@ -3,8 +3,9 @@
 #include <GL\glew.h>
 #include <iostream>
 #include "File.h"
-#include <SOIL.h>
+//#include <SOIL.h>
 #include <glm.hpp>
+#include "stdImage\stb_image.h"
 
 class BTVaoVbo{
 public:

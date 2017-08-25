@@ -2,12 +2,22 @@
 #include <GLFW\glfw3.h>
 #include <iostream>
 #include "BTGLHandle.h"
+#include "stdImage\stb_image.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-float alpha = 1.0f;
+float alpha = 0.5f;
 
 int main(){
+	/*
+	int width1, height1, nrChannels1;
+	unsigned char* image1 = stbi_load("./sImage/wx4.jpg", &width1, &height1, &nrChannels1, 0);
+	printf("image : %s\n", image1);
+	printf("image : -=================================\n");
+	int i;
+	std::cin>>i;
+	*/
+	
 	glfwInit();
 	//设置opengl的主版本和次版本（3.3）
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
@@ -54,6 +64,7 @@ int main(){
 	}
 	//释放资源
 	glfwTerminate();
+	
 	return 0;
 }
 
