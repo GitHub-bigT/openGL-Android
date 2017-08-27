@@ -64,5 +64,11 @@
     <None Include="f_shader.frag">
       <Filter>Source Files\GLSL</Filter>
     </None>
+    <None Include="f_shader_ball.frag">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
+    <None Include="v_shader_ball.vert">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

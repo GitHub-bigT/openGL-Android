@@ -4,9 +4,11 @@ layout(location = 2) in vec4 vColor;
 layout(location = 3) in vec2 vTexCoord;
 out vec4 fColor;
 out vec2 fTexCoord;
+uniform mat4 rotate;
+uniform mat4 scale;
 void main(){
 	gl_Position = vec4(vPosition ,0.0f,1.0f);
 	fColor = vColor;
 	//fTexCoord = vTexCoord  ;
-	fTexCoord = vec2(1.0f - vTexCoord.x, vTexCoord.y) ;
+	fTexCoord = vec2(vTexCoord.x, vTexCoord.y) ;
 }

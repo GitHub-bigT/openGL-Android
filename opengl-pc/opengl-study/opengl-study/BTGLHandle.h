@@ -10,9 +10,11 @@ class Handle
 public:
 	Handle();
 	~Handle();
-	void init();
+	void init(int type);
 	//画一个三角形
-	void drawTriangles(float alpha);
+	void drawTriangles(int type, float alpha, float rotateAngle);
+	//画一个球
+	void drawBall();
 private:
 	BTVaoVbo* btVaoVbo;
 	GLuint programId;

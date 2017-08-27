@@ -97,7 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="f_shader.frag" />
+    <None Include="f_shader_ball.frag" />
     <None Include="v_shader.vert" />
+    <None Include="v_shader_ball.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

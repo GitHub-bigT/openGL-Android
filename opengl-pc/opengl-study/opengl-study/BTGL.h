@@ -4,22 +4,28 @@
 #include <iostream>
 #include "File.h"
 //#include <SOIL.h>
-#include <glm.hpp>
 #include "stdImage\stb_image.h"
+#include <glm.hpp>
+#include <gtc\matrix_transform.hpp>
+#include <gtc\type_ptr.hpp>
+#define M_PI 3.1415926 
 
 class BTVaoVbo{
 public:
+	//Èý½ÇÐÎ
 	void initVaoVbo();
+	//Çò
+	void initBallVaoVbo();
 	void initSampler(GLuint programId);
-	void drawArrays(GLuint programId, float alpha);
+	void drawArrays(int type, GLuint programId, float alpha, float rotateAngle);
 private:
-	enum VAO_IDs{ TriangleVAO, NumVaoIds };
-	enum VBO_IDs{ TriangleVBO, NumVBOIds };
+	enum VAO_IDs{ TriangleVAO,BallVAO, NumVaoIds };
+	enum VBO_IDs{ TriangleVBO,BallVBO, NumVBOIds };
 	enum EBO_IDs{ TriangleEBO, NumEBOIds };
 	enum TEX_IDs{ Pic1, Pic2, NumTexIds};
 	enum Attrib_IDs{ vPosition = 1, vColor = 2, vTexCoord = 3};
 	GLuint VAOs[NumVaoIds];
-	GLuint VBOs[NumVaoIds];
+	GLuint VBOs[NumVBOIds];
 	GLuint EBOs[NumEBOIds];
 	GLuint TEXs[NumTexIds];
 };

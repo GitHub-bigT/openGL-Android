@@ -23,15 +23,10 @@ void BTVaoVbo::initVaoVbo(){
 			0,1,3,
 			1,2,3
 	};
-	GLfloat triangleColor[32] = {
+	GLfloat triangleColor[12] = {
 			1.0f, 0.0f, 0.0f, 1.0f,
 			0.0f, 1.0f, 0.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f
 	};
 	GLfloat triangleTexture[8] = {
 			1.0f, 1.0f,
@@ -64,13 +59,15 @@ void BTVaoVbo::initVaoVbo(){
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//释放图像的内存、解绑纹理
 	//SOIL_free_image_data(image1);
+	stbi_image_free(image1);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//图2 纹理
 	int width2, height2, nrChannels2;
-	unsigned char *image2 = stbi_load("./sImage/awesomeface.png", &width2, &height2, &nrChannels2, 0);
+	unsigned char *image2 = stbi_load("./sImage/wx10.jpg", &width2, &height2, &nrChannels2, 0);
 	//unsigned char* image2 = SOIL_load_image("./sImage/wx4.jpg", &width2, &height2, 0 ,SOIL_LOAD_RGB);
 	printf("char[] length:=====%ld\n", strlen((char *)image2));
+	printf("size of >>>>> %ld\n", sizeof(image2));
 	printf("width2  ==== :%d\n", width2);
 	printf("height2  ==== :%d\n", height2);
 	printf("nrChannels2  ==== :%d\n", nrChannels2);
@@ -78,22 +75,31 @@ void BTVaoVbo::initVaoVbo(){
 	//unsigned char* image2 = SOIL_load_image("./sImage/biaoqing3.jpg", &width2, &height2, 0, SOIL_LOAD_RGB);
 	//printf("image2  ==== :%s\n",image2);
 	glBindTexture(GL_TEXTURE_2D,TEXs[Pic2]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	GLfloat borderColor[] = {0.0f,0.0f,0.0f,1.0f};
+	glTexParameterfv(GL_TEXTURE_2D,GL_TEXTURE_BORDER_COLOR,borderColor);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	printf("error %d----", glGetError());
+	printf("sizeof char --> %d \n" , sizeof(char));
+	printf("sizeof unsigned char --> %d \n", sizeof(unsigned char));
+	printf("sizeof char* --> %d \n", sizeof(char*));
+	printf("sizeof unsigned char* --> %d \n", sizeof(unsigned char*));
+	printf("sizeof int --> %d \n", sizeof(int));
+	printf("sizeof short --> %d \n", sizeof(short));
+	printf("sizeof float --> %d \n", sizeof(float));
+	printf("sizeof double --> %d \n", sizeof(double));
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2);
-	printf("error %d----", glGetError());
+	//glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	//glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+	//glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//释放图像内存、解绑纹理
 	//SOIL_free_image_data(image2);
+	stbi_image_free(image2);
 	glBindTexture(GL_TEXTURE_2D,0);
 
 	//1.绑定VBO
@@ -132,21 +138,118 @@ void BTVaoVbo::initVaoVbo(){
 	glBindVertexArray(0);
 }
 
-void BTVaoVbo::drawArrays(GLuint programId, float alpha){
-	glClearColor(0.5f,0.5f,0.5f,1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+void BTVaoVbo::initBallVaoVbo(){
+	//x y轴夹角的变换角度大小。值越小越像趋于球体
+	int step = 3;
+	int vertexCount = 14400;
+	//顶点数据
+	float vertexData[14400][3];
+	//LOGE("vao ::: %d,%d",width,height);
+	/**
+	* 球的坐标
+	* x = R*cos(a)*sin(b)
+	* y = R*sin(a)
+	* z = R*cos(a)*cos(b)
+	*/
+	//宽高比例
+	//float whProportion = (float)width / (float)height;
+	float whProportion = 800.0f / 600.0f;
+	//球的半径
+	//float radius[3] = { 1.0f, 1.0f * whProportion, 1.0f };
+	float radius[3] = { 1.0f, 1.0f, 1.0f };
+	//球坐标
+	float x1, x2, y1, y2, z1, z2;
+	//x z轴上的斜边(R*cos(a))
+	GLfloat hypotenuse1, hypotenuse2;
 
-	glBindVertexArray(VAOs[TriangleVAO]);	
-	//GL_FILL 默认模式  
-	//GL_LINE 线框模式
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-	glUniform1f(glGetUniformLocation(programId, "update_alpha"), alpha);
-	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,0);
+	/**画球的思想
+	* 纬度方向 -90度 - 90度旋转出一个扇形
+	* 经度方向旋转360度画出球
+	* 这里采用的办法是每两条相邻的纬度画出一个体
+	*/
+	int n = 0;
+	for (int angleA = -90; angleA<90; angleA += step){
+		//纬度方向
+		//x z轴上的斜边(R*cos(a))
+		hypotenuse1 = radius[0] * cos(M_PI * angleA / 180.0f);
+		hypotenuse2 = radius[0] * cos(M_PI * (angleA + step) / 180.0f);
+		y1 = radius[1] * sin(M_PI * angleA / 180.0f);
+		y2 = radius[1] * sin(M_PI * (angleA + step) / 180.0f);
+		for (int angleB = 0; angleB<360; angleB += step){
+			//经度方向
+			x1 = hypotenuse1 * sin(M_PI * angleB / 180.0f);
+			x2 = hypotenuse2 * sin(M_PI * angleB / 180.0f);
+			z1 = hypotenuse1 * cos(M_PI * angleB / 180.0f);
+			z2 = hypotenuse2 * cos(M_PI * angleB / 180.0f);
+			//LOGI("index:%d,latitude:%d,longitude:%d ,ball coord:x1,y1,z1: %f,%f,%f" , n,angleA,angleB,x1,y1,z1);
+			//LOGI("index:%d,latitude:%d,longitude:%d ,ball coord:x2,y2,z2: %f,%f,%f" , n,angleA+step,angleB+step,x2,y2,z2);	
+			vertexData[n][0] = x1;
+			vertexData[n][1] = y1;
+			vertexData[n][2] = z1;
+			vertexData[n + 1][0] = x2;
+			vertexData[n + 1][1] = y2;
+			vertexData[n + 1][2] = z2;
+			n += 2;
+		}
+	}
+	glGenVertexArrays(NumVaoIds, VAOs);
+	glGenBuffers(NumVBOIds, VBOs);
+
+	glBindVertexArray(VAOs[BallVAO]);
+	GLboolean b1 = glIsVertexArray(VAOs[BallVAO]);
+	printf("ball vao bind: %d\n", b1);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[BallVAO]);
+	GLboolean b2 = glIsBuffer(VBOs[BallVAO]);
+	printf("ball vbo bind: %d\n", b2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+
+	//transmission data
+	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//enable
+	glEnableVertexAttribArray(vPosition);
+}
+
+void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle){
+	//glClearColor(0.5f,0.5f,0.5f,1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	//三角形
+	if (type == 1)
+	{
+		glBindVertexArray(VAOs[TriangleVAO]);
+		glm::mat4 rotate;
+		rotate = glm::rotate(rotate, glm::radians(rotateAngle), glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(glGetUniformLocation(programId, "rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
+
+		glm::mat4 scale;
+		scale = glm::scale(scale, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(glGetUniformLocation(programId, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
+		//GL_FILL 默认模式  
+		//GL_LINE 线框模式
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+		glUniform1f(glGetUniformLocation(programId, "update_alpha"), alpha);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	}
+	//球
+	if (type == 2)
+	{
+		glBindVertexArray(VAOs[BallVAO]);
+		glm::mat4 rotate;
+		rotate = glm::rotate(rotate, glm::radians(rotateAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(programId, "rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
+
+		glm::mat4 scale;
+		scale = glm::scale(scale, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(glGetUniformLocation(programId, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
+		glDrawArrays(GL_LINE_STRIP, 0, 14400);
+	}
 	glBindVertexArray(0);
 	
 	glFlush();
 }
+
 
 void BTVaoVbo::initSampler(GLuint programId){
 	glActiveTexture(GL_TEXTURE0);

@@ -10,9 +10,10 @@ uniform float update_alpha;
 
 void main(){
 	//oColor = fColor;
-	vec4 texColor = mix(texture(ourTexture1,fTexCoord),texture(ourTexture2, 1 - fTexCoord), update_alpha);
+	vec4 texColor = mix(texture(ourTexture1,fTexCoord),texture(ourTexture2, fTexCoord), update_alpha);
 	//if(texColor.a<0.1) discard;
-	oColor = texColor;
+	//oColor = texColor;
+	oColor = texture(ourTexture2, fTexCoord);
 	//oColor = vec4(vec3(texture(ourTexture2,fTexCoord)),0.5f);
 	//oColor = ;
 }

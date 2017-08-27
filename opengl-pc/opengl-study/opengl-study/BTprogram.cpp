@@ -3,10 +3,10 @@
 GLuint BTprogram::createProgram(){
 	//std::cout << "create program" << std::endl;
 	TextFile* textFile = new TextFile();
-	char* v_shader = textFile->readFile("v_shader.vert");
+	char* v_shader = textFile->readFile("v_shader_ball.vert");
 	v_shader_Id = loadShader(GL_VERTEX_SHADER, v_shader);
 
-	char* f_shader = textFile->readFile("f_shader.frag");
+	char* f_shader = textFile->readFile("f_shader_ball.frag");
 	f_shader_Id = loadShader(GL_FRAGMENT_SHADER, f_shader);
 
 	programId = glCreateProgram();

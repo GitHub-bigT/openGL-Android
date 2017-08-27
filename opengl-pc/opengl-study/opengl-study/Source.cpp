@@ -7,6 +7,8 @@
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 float alpha = 0.5f;
+float rotateAngle = 0.0f;
+enum {triangle = 1 , ball = 2};
 
 int main(){
 	/*
@@ -51,14 +53,16 @@ int main(){
 	glfwSetKeyCallback(window,key_callback);
 	//渲染三角形
 	Handle* handle = new Handle();
-	handle->init();
+	handle->init(ball);
 	while (!glfwWindowShouldClose(window))
 	{
 		//检查触发事件
 		//键盘输入、鼠标移动等
 		glfwPollEvents();
+		//旋转角度
+		rotateAngle += 0.1f;
 		//三角形
-		handle->drawTriangles(alpha);
+		handle->drawTriangles(ball, alpha, rotateAngle);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
