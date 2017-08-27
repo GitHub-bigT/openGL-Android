@@ -15,6 +15,8 @@ win7 vs2013
 Unhandled exception at 0x0F399885 (ig75icd32.dll) in opengl-study.exe: 0xC0000005: Access violation reading location 0x00000000.
 ```
 
+错误原因：仔细检查代码  233333
+
 * 关于EBO的问题  drawElements();
 1. bindxxx():
 
@@ -77,9 +79,7 @@ draw()的时候就只可以bind VAO
 
 `绑定VAO的同时也会自动绑定EBO。`
 
-* -----SOIL 问题
-
-1. glTexImage2D 指定二维纹理图像时崩溃
+* glTexImage2D 指定二维纹理图像时崩溃
 
 ```
 Unhandled exception at 0x779497AD (ig75icd32.dll) in opengl-study.exe: 0xC0000005: Access violation reading location 0x0619D000.
