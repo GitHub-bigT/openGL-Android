@@ -90,9 +90,9 @@ Unhandled exception at 0x779497AD (ig75icd32.dll) in opengl-study.exe: 0xC000000
 https://stackoverflow.com/questions/7380773/glteximage2d-segfault-related-to-width-height
 ```
 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+//glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+//glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+//glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 glTexImage2D前设置
 ```
 
