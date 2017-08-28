@@ -10,6 +10,10 @@
 #include <gtc\type_ptr.hpp>
 #include <GLFW\glfw3.h>
 #define M_PI 3.1415926 
+//相邻维度之间的变换角度大小。值越小越像趋于球体
+#define STEP 12
+//顶点个数
+#define VERTEX_COUNT (int)(180.0f / STEP * 360.0 / STEP * 2)
 
 class BTVaoVbo{
 public:

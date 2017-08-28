@@ -166,12 +166,8 @@ void BTVaoVbo::initVaoVbo(){
 }
 
 void BTVaoVbo::initBallVaoVbo(){
-	
-	//x y轴夹角的变换角度大小。值越小越像趋于球体
-	int step = 3;
-	int vertexCount = 14400;
 	//顶点数据
-	float vertexData[14400][3];
+	float vertexData[VERTEX_COUNT][3];
 	//LOGE("vao ::: %d,%d",width,height);
 	/**
 	* 球的坐标
@@ -179,12 +175,8 @@ void BTVaoVbo::initBallVaoVbo(){
 	* y = R*sin(a)
 	* z = R*cos(a)*cos(b)
 	*/
-	//宽高比例
-	//float whProportion = (float)width / (float)height;
-	float whProportion = 800.0f / 600.0f;
 	//球的半径
-	//float radius[3] = { 1.0f, 1.0f * whProportion, 1.0f };
-	float radius[3] = { 1.0f, 1.0f, 1.0f };
+	float radius[3] = { 0.5f, 0.5f, 0.5f };
 	//球坐标
 	float x1, x2, y1, y2, z1, z2;
 	//x z轴上的斜边(R*cos(a))
@@ -196,21 +188,21 @@ void BTVaoVbo::initBallVaoVbo(){
 	* 这里采用的办法是每两条相邻的纬度画出一个体
 	*/
 	int n = 0;
-	for (int angleA = -90; angleA<90; angleA += step){
+	for (int angleA = -90; angleA<90; angleA += STEP){
 		//纬度方向
 		//x z轴上的斜边(R*cos(a))
 		hypotenuse1 = radius[0] * cos(M_PI * angleA / 180.0f);
-		hypotenuse2 = radius[0] * cos(M_PI * (angleA + step) / 180.0f);
+		hypotenuse2 = radius[0] * cos(M_PI * (angleA + STEP) / 180.0f);
 		y1 = radius[1] * sin(M_PI * angleA / 180.0f);
-		y2 = radius[1] * sin(M_PI * (angleA + step) / 180.0f);
-		for (int angleB = 0; angleB<360; angleB += step){
+		y2 = radius[1] * sin(M_PI * (angleA + STEP) / 180.0f);
+		for (int angleB = 0; angleB<360; angleB += STEP){
 			//经度方向
 			x1 = hypotenuse1 * sin(M_PI * angleB / 180.0f);
 			x2 = hypotenuse2 * sin(M_PI * angleB / 180.0f);
 			z1 = hypotenuse1 * cos(M_PI * angleB / 180.0f);
 			z2 = hypotenuse2 * cos(M_PI * angleB / 180.0f);
-			printf("index:%d,latitude:%d,longitude:%d ,ball coord:x1,y1,z1: %f,%f,%f\n" , n,angleA,angleB,x1,y1,z1);
-			printf("index:%d,latitude:%d,longitude:%d ,ball coord:x2,y2,z2: %f,%f,%f\n" , n,angleA+step,angleB+step,x2,y2,z2);	
+			printf("index:%d,latitude:%d,longitude:%d ,ball coord:x1,y1,z1: %f,%f,%f\n" , n,angleA , angleB,x1,y1,z1);
+			printf("index:%d,latitude:%d,longitude:%d ,ball coord:x2,y2,z2: %f,%f,%f\n", n, angleA + STEP, angleB + STEP, x2, y2, z2);
 			vertexData[n][0] = x1;
 			vertexData[n][1] = y1;
 			vertexData[n][2] = z1;
@@ -236,8 +228,6 @@ void BTVaoVbo::initBallVaoVbo(){
 	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	//enable
 	glEnableVertexAttribArray(vPosition);
-
-	printf("acos ---- %f\n", glm::acos(glm::radians(143.0f)));
 }
 
 void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle){
@@ -299,7 +289,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		glm::mat4 scale;
 		scale = glm::scale(scale, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(glGetUniformLocation(programId, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
-		glDrawArrays(GL_LINE_STRIP, 0, 14400);
+		glDrawArrays(GL_LINE_STRIP, 0, VERTEX_COUNT);
 	}
 	glBindVertexArray(0);
 	
