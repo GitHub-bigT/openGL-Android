@@ -8,6 +8,7 @@
 #include <glm.hpp>
 #include <gtc\matrix_transform.hpp>
 #include <gtc\type_ptr.hpp>
+#include <GLFW\glfw3.h>
 #define M_PI 3.1415926 
 
 class BTVaoVbo{

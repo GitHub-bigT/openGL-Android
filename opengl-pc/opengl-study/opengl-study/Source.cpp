@@ -11,6 +11,7 @@ float rotateAngle = 0.0f;
 enum {triangle = 1 , ball = 2};
 
 int main(){
+	
 	/*
 	int width1, height1, nrChannels1;
 	unsigned char* image1 = stbi_load("./sImage/wx4.jpg", &width1, &height1, &nrChannels1, 0);
@@ -53,16 +54,17 @@ int main(){
 	glfwSetKeyCallback(window,key_callback);
 	//渲染三角形
 	Handle* handle = new Handle();
-	handle->init(ball);
+	handle->init(triangle);
 	while (!glfwWindowShouldClose(window))
 	{
+		printf("time:%f\n", (GLfloat)glfwGetTime());
 		//检查触发事件
 		//键盘输入、鼠标移动等
 		glfwPollEvents();
 		//旋转角度
 		rotateAngle += 0.1f;
 		//三角形
-		handle->drawTriangles(ball, alpha, rotateAngle);
+		handle->drawTriangles(triangle, alpha, rotateAngle);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}

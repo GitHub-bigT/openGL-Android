@@ -14,10 +14,10 @@ int getLen(const unsigned char s[])
 void BTVaoVbo::initVaoVbo(){
 	//std::cout << "init vao vbo" << std::endl;
 	GLfloat triangleVertex[8] = {
-		1.0f, 1.0f, //右上
-		1.0f, -1.0f, //右下
-		-1.0f, -1.0f, //左下
-		-1.0f, 1.0f, //左上
+		0.5f, 0.5f, //右上
+		0.5f, -0.5f, //右下
+		-0.5f, -0.5f, //左下
+		-0.5f, 0.5f, //左上
 	};
 	GLushort triangleIndex[6] = {
 			0,1,3,
@@ -37,7 +37,7 @@ void BTVaoVbo::initVaoVbo(){
 	
 	//图1 纹理
 	int width1, height1, nrChannels1;
-	unsigned char *image1 = stbi_load("./sImage/biaoqing2.jpg", &width1, &height1, &nrChannels1, 0);
+	unsigned char *image1 = stbi_load("./sImage/container.jpg", &width1, &height1, &nrChannels1, 0);
 	//unsigned char* image1 = SOIL_load_image("./sImage/biaoqing3.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
 
 	printf("image1  ==== :%s\n", image1);
@@ -64,7 +64,7 @@ void BTVaoVbo::initVaoVbo(){
 
 	//图2 纹理
 	int width2, height2, nrChannels2;
-	unsigned char *image2 = stbi_load("./sImage/wx10.jpg", &width2, &height2, &nrChannels2, 0);
+	unsigned char *image2 = stbi_load("./sImage/awesomeface.png", &width2, &height2, &nrChannels2, 0);
 	//unsigned char* image2 = SOIL_load_image("./sImage/wx4.jpg", &width2, &height2, 0 ,SOIL_LOAD_RGB);
 	printf("char[] length:=====%ld\n", strlen((char *)image2));
 	printf("size of >>>>> %ld\n", sizeof(image2));
@@ -95,7 +95,7 @@ void BTVaoVbo::initVaoVbo(){
 	//glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	//glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
 	//glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	//释放图像内存、解绑纹理
 	//SOIL_free_image_data(image2);
@@ -139,6 +139,7 @@ void BTVaoVbo::initVaoVbo(){
 }
 
 void BTVaoVbo::initBallVaoVbo(){
+	
 	//x y轴夹角的变换角度大小。值越小越像趋于球体
 	int step = 3;
 	int vertexCount = 14400;
@@ -181,8 +182,8 @@ void BTVaoVbo::initBallVaoVbo(){
 			x2 = hypotenuse2 * sin(M_PI * angleB / 180.0f);
 			z1 = hypotenuse1 * cos(M_PI * angleB / 180.0f);
 			z2 = hypotenuse2 * cos(M_PI * angleB / 180.0f);
-			//LOGI("index:%d,latitude:%d,longitude:%d ,ball coord:x1,y1,z1: %f,%f,%f" , n,angleA,angleB,x1,y1,z1);
-			//LOGI("index:%d,latitude:%d,longitude:%d ,ball coord:x2,y2,z2: %f,%f,%f" , n,angleA+step,angleB+step,x2,y2,z2);	
+			printf("index:%d,latitude:%d,longitude:%d ,ball coord:x1,y1,z1: %f,%f,%f\n" , n,angleA,angleB,x1,y1,z1);
+			printf("index:%d,latitude:%d,longitude:%d ,ball coord:x2,y2,z2: %f,%f,%f\n" , n,angleA+step,angleB+step,x2,y2,z2);	
 			vertexData[n][0] = x1;
 			vertexData[n][1] = y1;
 			vertexData[n][2] = z1;
@@ -208,6 +209,8 @@ void BTVaoVbo::initBallVaoVbo(){
 	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	//enable
 	glEnableVertexAttribArray(vPosition);
+
+	printf("acos ---- %f\n", glm::acos(glm::radians(143.0f)));
 }
 
 void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle){
@@ -218,18 +221,25 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 	if (type == 1)
 	{
 		glBindVertexArray(VAOs[TriangleVAO]);
-		glm::mat4 rotate;
-		rotate = glm::rotate(rotate, glm::radians(rotateAngle), glm::vec3(1.0f, 1.0f, 1.0f));
-		glUniformMatrix4fv(glGetUniformLocation(programId, "rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
-
-		glm::mat4 scale;
-		scale = glm::scale(scale, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(glGetUniformLocation(programId, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
+		glm::mat4 trans;
+		//缩放 * 旋转 * 平移
+		//
+		
+		trans = glm::rotate(trans, glm::radians(10.0f) * (GLfloat)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(programId, "trans"), 1, GL_FALSE, glm::value_ptr(trans));
 		//GL_FILL 默认模式  
 		//GL_LINE 线框模式
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-		glUniform1f(glGetUniformLocation(programId, "update_alpha"), alpha);
+		//glUniform1f(glGetUniformLocation(programId, "update_alpha"), alpha);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+		GLfloat scaleAmount = sin(glfwGetTime());
+		trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+		//trans = glm::scale(trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+		
+		glUniformMatrix4fv(glGetUniformLocation(programId, "trans"), 1, GL_FALSE, glm::value_ptr(trans));
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 	}
 	//球
