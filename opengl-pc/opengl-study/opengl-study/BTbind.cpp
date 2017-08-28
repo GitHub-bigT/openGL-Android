@@ -288,7 +288,10 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		glUniformMatrix4fv(glGetUniformLocation(programId,"view"),1,GL_FALSE,glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;
+			//透视投影	
 		projection = glm::perspective(45.0f , 800.0f / 600.0f , 0.01f , 100.0f);
+			//正交投影
+		//projection = glm::ortho(0.0f,800.0f,0.0f,600.0f,0.1f,100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glDrawArrays(GL_LINE_STRIP, 0, VERTEX_COUNT);
 	}
