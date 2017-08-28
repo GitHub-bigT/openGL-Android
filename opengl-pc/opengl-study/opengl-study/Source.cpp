@@ -54,7 +54,7 @@ int main(){
 	glfwSetKeyCallback(window,key_callback);
 	//渲染三角形
 	Handle* handle = new Handle();
-	handle->init(triangle);
+	handle->init(ball);
 	while (!glfwWindowShouldClose(window))
 	{
 		//printf("time:%f\n", (GLfloat)glfwGetTime());
@@ -62,9 +62,9 @@ int main(){
 		//键盘输入、鼠标移动等
 		glfwPollEvents();
 		//旋转角度
-		rotateAngle += 0.1f;
+		rotateAngle += 0.01f;
 		//三角形
-		handle->drawTriangles(triangle, alpha, rotateAngle);
+		handle->drawTriangles(ball, alpha, rotateAngle);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}

@@ -260,7 +260,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(45.0f),800.0f / 600.0f , 0.1f,100.0f);
+		projection = glm::perspective(glm::radians(45.0f),800.0f / 600.0f , 0.01f,100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 		//GL_FILL 默认模式  
@@ -275,7 +275,14 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 			//缩放 * 旋转 * 平移
 			model = glm::translate(model, cubePositions[i]);
 			GLfloat angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.2f));
+			if (i>=0 && i<3){
+				model = glm::rotate(model, glm::radians(30.0f) * (GLfloat) glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.2f));
+			}
+			else
+			{
+				model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.2f));
+			}
+			
 			glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
