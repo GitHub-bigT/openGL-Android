@@ -240,10 +240,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 	if (type == 1)
 	{
 		glBindVertexArray(VAOs[TriangleVAO]);
-		
-		
 		//model = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		
 		// ”Õºæÿ’Û
 		glm::mat4 view;
 		view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
@@ -272,7 +269,6 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 			{
 				model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.2f));
 			}
-			
 			glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -282,17 +278,21 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 	if (type == 2)
 	{
 		glBindVertexArray(VAOs[BallVAO]);
-		glm::mat4 rotate;
-		rotate = glm::rotate(rotate, glm::radians(rotateAngle), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(programId, "rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
-
-		glm::mat4 scale;
-		scale = glm::scale(scale, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(glGetUniformLocation(programId, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
+		//ƒ£–Õæÿ’Û
+		glm::mat4 model;
+		model = glm::rotate(model, glm::radians(rotateAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		// ”Õºæÿ’Û
+		glm::mat4 view;
+		view = glm::translate(view,glm::vec3(0.0f,0.0f,-3.0f));
+		glUniformMatrix4fv(glGetUniformLocation(programId,"view"),1,GL_FALSE,glm::value_ptr(view));
+		//Õ∂”∞æÿ’Û
+		glm::mat4 projection;
+		projection = glm::perspective(45.0f , 800.0f / 600.0f , 0.01f , 100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glDrawArrays(GL_LINE_STRIP, 0, VERTEX_COUNT);
 	}
 	glBindVertexArray(0);
-	
 	glFlush();
 }
 
