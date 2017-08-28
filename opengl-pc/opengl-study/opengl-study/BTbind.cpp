@@ -1,5 +1,18 @@
 #include "BTGL.h"
 
+glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f, 0.0f, 0.0f),
+	glm::vec3(2.0f, 5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f, 3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f, 2.0f, -2.5f),
+	glm::vec3(1.5f, 0.2f, -1.5f),
+	glm::vec3(-1.3f, 1.0f, -1.5f)
+};
+
 int getLen(const unsigned char s[])
 {
 	int nLen = 0;
@@ -13,26 +26,52 @@ int getLen(const unsigned char s[])
 
 void BTVaoVbo::initVaoVbo(){
 	//std::cout << "init vao vbo" << std::endl;
-	GLfloat triangleVertex[8] = {
-		0.5f, 0.5f, //右上
-		0.5f, -0.5f, //右下
-		-0.5f, -0.5f, //左下
-		-0.5f, 0.5f, //左上
+	GLfloat triangleVertex[] = {
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+
+		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 	};
 	GLushort triangleIndex[6] = {
 			0,1,3,
 			1,2,3
-	};
-	GLfloat triangleColor[12] = {
-			1.0f, 0.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-	};
-	GLfloat triangleTexture[8] = {
-			1.0f, 1.0f,
-			1.0f, 0.0f,
-			0.0f, 0.0f,
-			0.0f, 1.0f
 	};
 	
 	//图1 纹理
@@ -82,15 +121,6 @@ void BTVaoVbo::initVaoVbo(){
 
 	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	printf("sizeof char --> %d \n" , sizeof(char));
-	printf("sizeof unsigned char --> %d \n", sizeof(unsigned char));
-	printf("sizeof char* --> %d \n", sizeof(char*));
-	printf("sizeof unsigned char* --> %d \n", sizeof(unsigned char*));
-	printf("sizeof int --> %d \n", sizeof(int));
-	printf("sizeof short --> %d \n", sizeof(short));
-	printf("sizeof float --> %d \n", sizeof(float));
-	printf("sizeof double --> %d \n", sizeof(double));
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 	//glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	//glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
@@ -106,10 +136,9 @@ void BTVaoVbo::initVaoVbo(){
 	glGenBuffers(NumVBOIds, VBOs);
 	glBindBuffer(GL_ARRAY_BUFFER,VBOs[TriangleVBO]);
 	//2.将数据传给显存当中的ARRAY_BUFFER缓冲块中
-	glBufferData(GL_ARRAY_BUFFER,sizeof(triangleVertex)+sizeof(triangleColor)+sizeof(triangleTexture),NULL,GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(triangleVertex),triangleVertex);
-	glBufferSubData(GL_ARRAY_BUFFER,sizeof(triangleVertex), sizeof(triangleColor), triangleColor);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(triangleVertex) + sizeof(triangleColor), sizeof(triangleTexture), triangleTexture);
+	printf("size size size ///////  %d \n" , sizeof(triangleVertex));
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertex), triangleVertex, GL_STATIC_DRAW);
+
 	GLboolean b = glIsBuffer(VBOs[TriangleVBO]);
 	printf("triangle vbo bind: %d\n", b);
 	//(ig75icd32.dll) 崩溃
@@ -121,18 +150,16 @@ void BTVaoVbo::initVaoVbo(){
 	GLboolean b1 = glIsVertexArray(VAOs[TriangleVAO]);
 	printf("triangle vao bind: %d\n", b1);
 	//1.绑定EBO or IBO 
-	glGenBuffers(NumEBOIds , EBOs);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , EBOs[TriangleEBO]);
-	GLboolean b2 = glIsBuffer(EBOs[TriangleEBO]);
-	printf("triangle ebo bind: %d\n", b2);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(triangleIndex),triangleIndex,GL_STATIC_DRAW);
+	//glGenBuffers(NumEBOIds , EBOs);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , EBOs[TriangleEBO]);
+	//GLboolean b2 = glIsBuffer(EBOs[TriangleEBO]);
+	//printf("triangle ebo bind: %d\n", b2);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(triangleIndex),triangleIndex,GL_STATIC_DRAW);
 
 	//2.设置顶点属性指针
-	glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (const void*)sizeof(triangleVertex));
-	glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 0, (const void*)(sizeof(triangleVertex)+sizeof(triangleColor)));
+	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5 , 0);
+	glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (GLvoid *)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(vPosition);
-	glEnableVertexAttribArray(vColor);
 	glEnableVertexAttribArray(vTexCoord);
 	//3.解绑vao,避免在其他地方错误的配置
 	glBindVertexArray(0);
@@ -214,33 +241,45 @@ void BTVaoVbo::initBallVaoVbo(){
 }
 
 void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle){
-	//glClearColor(0.5f,0.5f,0.5f,1.0f);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
+	glClearColor(0.5f,0.5f,0.5f,1.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//三角形
 	if (type == 1)
 	{
 		glBindVertexArray(VAOs[TriangleVAO]);
-		glm::mat4 trans;
-		//缩放 * 旋转 * 平移
-		//
 		
-		trans = glm::rotate(trans, glm::radians(10.0f) * (GLfloat)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(programId, "trans"), 1, GL_FALSE, glm::value_ptr(trans));
+		
+		//model = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		
+		//视图矩阵
+		glm::mat4 view;
+		view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		//投影矩阵
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(45.0f),800.0f / 600.0f , 0.1f,100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
 		//GL_FILL 默认模式  
 		//GL_LINE 线框模式
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-		//glUniform1f(glGetUniformLocation(programId, "update_alpha"), alpha);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-
-		GLfloat scaleAmount = sin(glfwGetTime());
-		trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
-		//trans = glm::scale(trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
 		
-		glUniformMatrix4fv(glGetUniformLocation(programId, "trans"), 1, GL_FALSE, glm::value_ptr(trans));
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		glUniform1f(glGetUniformLocation(programId, "update_alpha"), alpha);
+		for (GLint i = 0; i < 10; i++)
+		{
+			//模型矩阵
+			glm::mat4 model;
+			//缩放 * 旋转 * 平移
+			model = glm::translate(model, cubePositions[i]);
+			GLfloat angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(0.5f, 1.0f, 0.2f));
+			glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+		
 	}
 	//球
 	if (type == 2)

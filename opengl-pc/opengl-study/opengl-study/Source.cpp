@@ -57,7 +57,7 @@ int main(){
 	handle->init(triangle);
 	while (!glfwWindowShouldClose(window))
 	{
-		printf("time:%f\n", (GLfloat)glfwGetTime());
+		//printf("time:%f\n", (GLfloat)glfwGetTime());
 		//检查触发事件
 		//键盘输入、鼠标移动等
 		glfwPollEvents();
