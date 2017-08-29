@@ -7,7 +7,7 @@
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void do_movement();
 
-float alpha = 0.5f;
+float alpha = 1.0f;
 float rotateAngle = 0.0f;
 enum {triangle = 1 , ball = 2};
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -103,7 +103,7 @@ void do_movement(){
 }
 
 void key_callback(GLFWwindow* window, int key , int scancode , int action , int mode){
-	printf("key:%d\n",key);
+	
 	if (action == GLFW_PRESS)
 	{
 		keys[key] = true;
@@ -119,19 +119,21 @@ void key_callback(GLFWwindow* window, int key , int scancode , int action , int 
 	}
 	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
 	{
-		alpha += 0.1f;
-		if (alpha >= 1.0f)
-		{
-			alpha = 1.0f;
-		}
+		alpha += 1.0f;
+		printf("alpha:%f\n", alpha);
+		//if (alpha >= 1.0f)
+		//{
+		//	alpha = 1.0f;
+		//}
 	}
 	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
 	{
-		alpha -= 0.1f;
-		if (alpha <= 0.0f)
-		{
-			alpha = 0.0f;
-		}
+		alpha -= 1.0f;
+		printf("alpha:%f\n", alpha);
+		//if (alpha <= 0.0f)
+		//{
+		//	alpha = 0.0f;
+		//}
 	}
 };
 

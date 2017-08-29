@@ -9,8 +9,8 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main(){
-	gl_Position = projection * view * model * vec4(vPosition ,1.0f) ;
+	gl_Position = projection * view *  model * vec4(vPosition ,1.0f) ;
 
 	//fTexCoord = vTexCoord  ;
-	fTexCoord = vec2(vTexCoord.x, 1.0f - vTexCoord.y) ;
+	fTexCoord = vec2(vTexCoord.x,  vTexCoord.y) ;
 }
