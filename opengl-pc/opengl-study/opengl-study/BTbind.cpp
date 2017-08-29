@@ -163,6 +163,16 @@ void BTVaoVbo::initVaoVbo(){
 	glEnableVertexAttribArray(vTexCoord);
 	//3.解绑vao,避免在其他地方错误的配置
 	glBindVertexArray(0);
+	//摄像机方向(z)
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 directionVector = glm::normalize(cameraPos - cameraTarget);
+	//右轴(x)(向量叉乘)
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 cameraRight = glm::normalize(glm::cross(up, directionVector));
+	printf("cameraRight : x:%f,y:%f,z:%f\n", cameraRight.x, cameraRight.y, cameraRight.z);
+	//上轴
+	glm::vec3 cameraUp = glm::normalize(glm::cross(cameraRight,directionVector));
 }
 
 void BTVaoVbo::initBallVaoVbo(){
@@ -230,12 +240,14 @@ void BTVaoVbo::initBallVaoVbo(){
 	glEnableVertexAttribArray(vPosition);
 }
 
-void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle){
+void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp){
 	glEnable(GL_DEPTH_TEST);
 
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
 	//三角形
 	if (type == 1)
 	{
@@ -243,7 +255,13 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		//model = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
 		//视图矩阵
 		glm::mat4 view;
-		view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+		//view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+		
+		//look at 位置 目标 上向量
+		GLfloat radius = 10.0f;
+		GLfloat camX = sin(glfwGetTime()) * radius;
+		GLfloat camZ = cos(glfwGetTime()) * radius;
+		view = glm::lookAt(cameraPos, cameraPos+cameraFront, cameraUp);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;
@@ -289,7 +307,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		//投影矩阵
 		glm::mat4 projection;
 			//透视投影	
-		projection = glm::perspective(45.0f , 800.0f / 600.0f , 0.01f , 100.0f);
+		projection = glm::perspective(45.0f , 800.0f / 600.0f , 0.1f , 100.0f);
 			//正交投影
 		//projection = glm::ortho(0.0f,800.0f,0.0f,600.0f,0.1f,100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
