@@ -240,20 +240,12 @@ void BTVaoVbo::initBallVaoVbo(){
 	glEnableVertexAttribArray(vPosition);
 }
 
-GLfloat test = 0.0f;
-GLfloat near = 0.1f;
-GLfloat far = 100.0f;
-
 void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp){
 	glEnable(GL_DEPTH_TEST);
-
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	test += 0.01f;
-	near += 0.0001f;
-	far += 0.01f;
 	//printf("test test test ------------->>>> %f\n", far);
 	//三角形
 	if (type == 1)
@@ -269,8 +261,8 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		GLfloat camX = sin(glfwGetTime()) * radius;
 		GLfloat camZ = cos(glfwGetTime()) * radius;
 		//view = glm::lookAt(cameraPos, cameraPos+cameraFront, cameraUp);
+		//第二个参数设置为两向量相加cameraFront + cameraPos目的是为了保证注视点和摄像机镜头平行
 		view = glm::lookAt(cameraPos, cameraFront + cameraPos, cameraUp);
-		printf("cameraFront x:%f,y:%f,z:%f\n",cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;

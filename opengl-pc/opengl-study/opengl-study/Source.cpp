@@ -6,6 +6,7 @@
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void do_movement();
+void mouse_callback(GLFWwindow *window , double xpos , double ypos);
 
 float alpha = 0.0f;
 float rotateAngle = 0.0f;
@@ -13,18 +14,11 @@ enum {triangle = 1 , ball = 2};
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -3.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//俯仰角 偏航角
+GLfloat pitch = 0.0f;
+GLfloat yaw = -90.0f;
 
 int main(){
-	
-	/*
-	int width1, height1, nrChannels1;
-	unsigned char* image1 = stbi_load("./sImage/wx4.jpg", &width1, &height1, &nrChannels1, 0);
-	printf("image : %s\n", image1);
-	printf("image : -=================================\n");
-	int i;
-	std::cin>>i;
-	*/
-	
 	glfwInit();
 	//设置opengl的主版本和次版本（3.3）
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
@@ -61,13 +55,21 @@ int main(){
 	handle->init(triangle);
 	while (!glfwWindowShouldClose(window))
 	{
-		//printf("time:%f\n", (GLfloat)glfwGetTime());
 		//检查触发事件
-		//键盘输入、鼠标移动等
 		glfwPollEvents();
+		//键盘输入
 		do_movement();
+		//隐藏光标
+		glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+		//鼠标移动（采用欧拉角）
+		glfwSetCursorPosCallback(window,mouse_callback);
 		//旋转角度
 		rotateAngle += 0.01f;
+		glm::vec3 front; 
+		front.y = sin(glm::radians(pitch));
+		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+		cameraFront = glm::normalize(front);
 		//三角形
 		handle->drawTriangles(triangle, alpha, rotateAngle, cameraPos, cameraFront, cameraUp);
 		//双缓存技术,交换缓冲
@@ -77,6 +79,35 @@ int main(){
 	glfwTerminate();
 	
 	return 0;
+}
+
+//设置鼠标默认位置为窗口中心
+GLfloat lastX = 400;
+GLfloat lastY = 300;
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos){
+	GLfloat xoffset = xpos - lastX;
+	//y向下为增 向上为-  与坐标系相反  所以在这反减
+	GLfloat yoffset = lastY - ypos;
+	printf("xoffset : %f , yoffset:%f\n",xoffset , yoffset);
+	lastX = xpos;
+	lastY = ypos;
+	//定义一个灵敏度，不然鼠标移动太大
+	GLfloat sensitivity = 0.05f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+	pitch += yoffset;
+	yaw += xoffset;
+	printf("pitch:%f , yaw:%f\n",pitch , yaw);
+	//俯仰角移动范围 -89° ~ 89°
+	if (pitch > 89.0f)
+	{
+		pitch = 89.0f;
+	}
+	if (pitch < -89.0f)
+	{
+		pitch = -89.0f;
+	}
 }
 
 //存储按键状态的数组
@@ -100,33 +131,15 @@ void do_movement(){
 	}
 	if (keys[GLFW_KEY_S])
 	{
-		if (cameraPos.z >= 13.0f)
-		{
-			cameraPos.z = 13.0f;
-		}
-		else{
 			cameraPos -= cameraSpeed * cameraFront;
-		}
 	}
 	if (keys[GLFW_KEY_A])
 	{
-		if (cameraPos.x <= -3.0f)
-		{
-			cameraPos.x = -3.0f;
-		}
-		else{
 			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-		}	
 	}
 	if (keys[GLFW_KEY_D])
 	{
-		if (cameraPos.x >= 3.0f)
-		{
-			cameraPos.x = 3.0f;
-		}
-		else{
 			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-		}
 	}
 }
 
