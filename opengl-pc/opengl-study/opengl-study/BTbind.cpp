@@ -265,10 +265,12 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
 		
 		//look at 位置 目标 上向量
-		GLfloat radius = 10.0f;
+		GLfloat radius = 30.0f;
 		GLfloat camX = sin(glfwGetTime()) * radius;
 		GLfloat camZ = cos(glfwGetTime()) * radius;
 		//view = glm::lookAt(cameraPos, cameraPos+cameraFront, cameraUp);
+		view = glm::lookAt(cameraPos, cameraFront + cameraPos, cameraUp);
+		printf("cameraFront x:%f,y:%f,z:%f\n",cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;
@@ -286,7 +288,6 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 			//模型矩阵
 			glm::mat4 model;
 			//缩放 * 旋转 * 平移
-			//model = glm::translate(model, cubePositions[i]);
 			model = glm::translate(model, cubePositions[i]);
 			GLfloat angle = 20.0f * i;
 			if (i>=0 && i<3){
@@ -312,7 +313,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		//视图矩阵
 		glm::mat4 view;
-		view = glm::translate(view,glm::vec3(0.0f,0.0f,-3.0f));
+		view = glm::translate(view,glm::vec3(0.0f,0.0f,-1.0f));
 		glUniformMatrix4fv(glGetUniformLocation(programId,"view"),1,GL_FALSE,glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;

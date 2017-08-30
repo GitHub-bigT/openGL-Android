@@ -7,11 +7,11 @@
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void do_movement();
 
-float alpha = 1.0f;
+float alpha = 0.0f;
 float rotateAngle = 0.0f;
 enum {triangle = 1 , ball = 2};
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -3.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 int main(){
@@ -69,7 +69,7 @@ int main(){
 		//旋转角度
 		rotateAngle += 0.01f;
 		//三角形
-		handle->drawTriangles(triangle, alpha, rotateAngle , cameraPos,cameraFront,cameraUp);
+		handle->drawTriangles(triangle, alpha, rotateAngle, cameraPos, cameraFront, cameraUp);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
@@ -79,26 +79,54 @@ int main(){
 	return 0;
 }
 
+//存储按键状态的数组
 bool keys[1024];
-
+//当前帧遇上上一帧的时间增量
+GLfloat deltaTime = 0.0f;
+//上一帧的时间
+GLfloat lastFrame = 0.0f;
+//
 void do_movement(){
+	GLfloat currentTime = glfwGetTime();
+	deltaTime = currentTime - lastFrame;
+	lastFrame = currentTime;
+	//为了保证在不同机器上，保持摄像机移动速度一致d
+	GLfloat cameraSpeed = 5.0f * deltaTime;
 	//摄像机控制
-	GLfloat cameraSpeed = 0.01f;
 	if (keys[GLFW_KEY_W])
 	{
+
 		cameraPos += cameraSpeed * cameraFront;
 	}
 	if (keys[GLFW_KEY_S])
 	{
-		cameraPos -= cameraSpeed * cameraFront;
+		if (cameraPos.z >= 13.0f)
+		{
+			cameraPos.z = 13.0f;
+		}
+		else{
+			cameraPos -= cameraSpeed * cameraFront;
+		}
 	}
 	if (keys[GLFW_KEY_A])
 	{
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		if (cameraPos.x <= -3.0f)
+		{
+			cameraPos.x = -3.0f;
+		}
+		else{
+			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		}	
 	}
 	if (keys[GLFW_KEY_D])
 	{
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		if (cameraPos.x >= 3.0f)
+		{
+			cameraPos.x = 3.0f;
+		}
+		else{
+			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		}
 	}
 }
 
