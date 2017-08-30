@@ -98,4 +98,6 @@ glTexImage2D前设置
 
 2. awesomeface.png 有黑背景
 
+* 正射投影的使用
+
 
