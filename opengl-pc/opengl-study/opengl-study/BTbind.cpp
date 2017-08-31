@@ -12,6 +12,7 @@ glm::vec3 cubePositions[] = {
 	glm::vec3(1.5f, 0.2f, -1.5f),
 	glm::vec3(-1.3f, 1.0f, -1.5f)
 };
+glm::mat4 calculate_lookAt_matrix(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp);
 
 int getLen(const unsigned char s[])
 {
@@ -239,8 +240,10 @@ void BTVaoVbo::initBallVaoVbo(){
 	//enable
 	glEnableVertexAttribArray(vPosition);
 }
+//球的旋转角度
+GLfloat rotateAngle = 0.0f;
 
-void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateAngle, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp){
+void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp){
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -261,8 +264,9 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		GLfloat camX = sin(glfwGetTime()) * radius;
 		GLfloat camZ = cos(glfwGetTime()) * radius;
 		//view = glm::lookAt(cameraPos, cameraPos+cameraFront, cameraUp);
-		//第二个参数设置为两向量相加cameraFront + cameraPos目的是为了保证注视点和摄像机镜头平行
-		view = glm::lookAt(cameraPos, cameraFront + cameraPos, cameraUp);
+		//第二个参数设置为两向量相加cameraFront + cameraPos目的是为了保证不管怎么移动。摄像机都能注视前方 z轴的方向不变 vPos - vPos - vTar
+		//view = glm::lookAt(cameraPos, cameraPos + cameraFront , cameraUp);
+		view = calculate_lookAt_matrix(cameraPos, cameraPos + cameraFront, cameraUp);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;
@@ -301,6 +305,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, float rotateA
 		glBindVertexArray(VAOs[BallVAO]);
 		//模型矩阵
 		glm::mat4 model;
+		rotateAngle += 0.01f;
 		model = glm::rotate(model, glm::radians(rotateAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		//视图矩阵
@@ -330,4 +335,36 @@ void BTVaoVbo::initSampler(GLuint programId){
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic2]);
 	glUniform1i(glGetUniformLocation(programId, "ourTexture2"), 1);
+}
+
+// Custom implementation of the LookAt function
+glm::mat4 calculate_lookAt_matrix(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp)
+{
+	// 1. Position = known
+	// 2. Calculate cameraDirection
+	glm::vec3 zaxis = glm::normalize(position - target);
+	// 3. Get positive right axis vector
+	glm::vec3 xaxis = glm::normalize(glm::cross(glm::normalize(worldUp), zaxis));
+	// 4. Calculate camera up vector
+	glm::vec3 yaxis = glm::cross(zaxis, xaxis);
+
+	// Create translation and rotation matrix
+	// In glm we access elements as mat[col][row] due to column-major layout
+	glm::mat4 translation; // Identity matrix by default
+	translation[3][0] = -position.x; // Third column, first row
+	translation[3][1] = -position.y;
+	translation[3][2] = -position.z;
+	glm::mat4 rotation;
+	rotation[0][0] = xaxis.x; // First column, first row
+	rotation[1][0] = xaxis.y;
+	rotation[2][0] = xaxis.z;
+	rotation[0][1] = yaxis.x; // First column, second row
+	rotation[1][1] = yaxis.y;
+	rotation[2][1] = yaxis.z;
+	rotation[0][2] = zaxis.x; // First column, third row
+	rotation[1][2] = zaxis.y;
+	rotation[2][2] = zaxis.z;
+
+	// Return lookAt matrix as combination of translation and rotation matrix
+	return rotation * translation; // Remember to read from right to left (first translation then rotation)
 }

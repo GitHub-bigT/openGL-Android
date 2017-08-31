@@ -9,12 +9,11 @@ void do_movement();
 void mouse_callback(GLFWwindow *window , double xpos , double ypos);
 
 float alpha = 0.0f;
-float rotateAngle = 0.0f;
 enum {triangle = 1 , ball = 2};
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront;
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-//俯仰角 偏航角
+//俯仰角 偏航角(!!!不是针对于摄像机坐标系。针对于物体的坐标系)
 GLfloat pitch = 0.0f;
 GLfloat yaw = -90.0f;
 
@@ -63,15 +62,13 @@ int main(){
 		glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 		//鼠标移动（采用欧拉角）
 		glfwSetCursorPosCallback(window,mouse_callback);
-		//旋转角度
-		rotateAngle += 0.01f;
 		glm::vec3 front; 
 		front.y = sin(glm::radians(pitch));
 		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 		cameraFront = glm::normalize(front);
 		//三角形
-		handle->drawTriangles(triangle, alpha, rotateAngle, cameraPos, cameraFront, cameraUp);
+		handle->drawTriangles(triangle, alpha, cameraPos, cameraFront, cameraUp);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
@@ -121,7 +118,7 @@ void do_movement(){
 	GLfloat currentTime = glfwGetTime();
 	deltaTime = currentTime - lastFrame;
 	lastFrame = currentTime;
-	//为了保证在不同机器上，保持摄像机移动速度一致d
+	//为了保证在不同机器上，保持摄像机移动速度一致
 	GLfloat cameraSpeed = 5.0f * deltaTime;
 	//摄像机控制
 	if (keys[GLFW_KEY_W])
