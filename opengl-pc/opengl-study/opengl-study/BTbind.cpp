@@ -243,7 +243,7 @@ void BTVaoVbo::initBallVaoVbo(){
 //球的旋转角度
 GLfloat rotateAngle = 0.0f;
 
-void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp){
+void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, GLfloat aspect){
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -270,7 +270,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::vec3 cam
 		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(aspect), 800.0f / 600.0f, 0.1f, 100.0f);
 		//projection = glm::ortho(0.0f,800.0f,0.0f,600.0f,0.1f,100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 

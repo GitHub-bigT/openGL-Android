@@ -7,6 +7,7 @@
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void do_movement();
 void mouse_callback(GLFWwindow *window , double xpos , double ypos);
+void scroll_callback(GLFWwindow *window , double xoffset, double yoffset);
 
 float alpha = 0.0f;
 enum {triangle = 1 , ball = 2};
@@ -16,6 +17,10 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 //俯仰角 偏航角(!!!不是针对于摄像机坐标系。针对于物体的坐标系)
 GLfloat pitch = 0.0f;
 GLfloat yaw = -90.0f;
+//fov
+//滚轮向下滑动 ++  向上--
+//默认为最大视野
+GLfloat aspect = 45.0f;
 
 int main(){
 	glfwInit();
@@ -67,8 +72,10 @@ int main(){
 		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 		cameraFront = glm::normalize(front);
+		//滚轮缩放大小
+		glfwSetScrollCallback(window , scroll_callback);
 		//三角形
-		handle->drawTriangles(triangle, alpha, cameraPos, cameraFront, cameraUp);
+		handle->drawTriangles(triangle, alpha, cameraPos, cameraFront, cameraUp, aspect);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
@@ -105,6 +112,22 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos){
 	{
 		pitch = -89.0f;
 	}
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
+	if (aspect >= 1.0f && aspect <= 45.0f)
+	{
+		aspect -= yoffset;
+	}
+	if (aspect <= 1.0f)
+	{
+		aspect = 1.0f;
+	}
+	if (aspect >= 45.0f)
+	{
+		aspect = 45.0f;
+	}
+	printf("aspect:%f\n",aspect);
 }
 
 //存储按键状态的数组
