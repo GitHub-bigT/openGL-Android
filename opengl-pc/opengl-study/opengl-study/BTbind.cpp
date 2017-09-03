@@ -243,7 +243,7 @@ void BTVaoVbo::initBallVaoVbo(){
 //球的旋转角度
 GLfloat rotateAngle = 0.0f;
 
-void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, GLfloat aspect){
+void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::mat4 viewMatrix, GLfloat aspect){
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.5f,0.5f,0.5f,1.0f);
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -266,7 +266,7 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::vec3 cam
 		//view = glm::lookAt(cameraPos, cameraPos+cameraFront, cameraUp);
 		//第二个参数设置为两向量相加cameraFront + cameraPos目的是为了保证不管怎么移动。摄像机都能注视前方 z轴的方向不变 vPos - vPos - vTar
 		//view = glm::lookAt(cameraPos, cameraPos + cameraFront , cameraUp);
-		view = calculate_lookAt_matrix(cameraPos, cameraPos + cameraFront, cameraUp);
+		view = viewMatrix ;
 		glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		//投影矩阵
 		glm::mat4 projection;

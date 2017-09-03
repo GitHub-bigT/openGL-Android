@@ -12,16 +12,12 @@ void scroll_callback(GLFWwindow *window , double xoffset, double yoffset);
 
 float alpha = 0.0f;
 enum {triangle = 1 , ball = 2};
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront;
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-//俯仰角 偏航角(!!!不是针对于摄像机坐标系。针对于物体的坐标系)
-GLfloat pitch = 0.0f;
-GLfloat yaw = -90.0f;
 //fov
 //滚轮向下滑动 ++  向上--
 //默认为最大视野
 GLfloat aspect = 45.0f;
+
+Camera *camera =  new Camera();
 
 int main(){
 	glfwInit();
@@ -68,15 +64,12 @@ int main(){
 		glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 		//鼠标移动（采用欧拉角）
 		glfwSetCursorPosCallback(window,mouse_callback);
-		glm::vec3 front; 
-		front.y = sin(glm::radians(pitch));
-		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-		cameraFront = glm::normalize(front);
 		//滚轮缩放大小
-		glfwSetScrollCallback(window , scroll_callback);
+		glfwSetScrollCallback(window, scroll_callback);
+
+		glm::mat4 viewMatrix = camera->getViewMatrix();
 		//三角形
-		handle->drawTriangles(triangle, alpha, cameraPos, cameraFront, cameraUp, aspect);
+		handle->drawTriangles(triangle, alpha, viewMatrix, aspect);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
@@ -94,25 +87,10 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos){
 	GLfloat xoffset = xpos - lastX;
 	//y向下为增 向上为-  与坐标系相反  所以在这反减
 	GLfloat yoffset = lastY - ypos;
-	printf("xoffset : %f , yoffset:%f\n",xoffset , yoffset);
+	//printf("xoffset : %f , yoffset:%f\n",xoffset , yoffset);
 	lastX = xpos;
 	lastY = ypos;
-	//定义一个灵敏度，不然鼠标移动太大
-	GLfloat sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-	pitch += yoffset;
-	yaw += xoffset;
-	printf("pitch:%f , yaw:%f\n",pitch , yaw);
-	//俯仰角移动范围 -89° ~ 89°
-	if (pitch > 89.0f)
-	{
-		pitch = 89.0f;
-	}
-	if (pitch < -89.0f)
-	{
-		pitch = -89.0f;
-	}
+	
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
@@ -128,7 +106,7 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
 	{
 		aspect = 45.0f;
 	}
-	printf("aspect:%f\n",aspect);
+	//printf("aspect:%f\n",aspect);
 }
 
 //存储按键状态的数组
@@ -148,19 +126,19 @@ void do_movement(){
 	if (keys[GLFW_KEY_W])
 	{
 
-		cameraPos += cameraSpeed * cameraFront;
+
 	}
 	if (keys[GLFW_KEY_S])
 	{
-			cameraPos -= cameraSpeed * cameraFront;
+
 	}
 	if (keys[GLFW_KEY_A])
 	{
-			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
 	}
 	if (keys[GLFW_KEY_D])
 	{
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
 	}
 }
 
@@ -182,7 +160,7 @@ void key_callback(GLFWwindow* window, int key , int scancode , int action , int 
 	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
 	{
 		alpha += 1.0f;
-		printf("alpha:%f\n", alpha);
+		//printf("alpha:%f\n", alpha);
 		//if (alpha >= 1.0f)
 		//{
 		//	alpha = 1.0f;
@@ -191,7 +169,7 @@ void key_callback(GLFWwindow* window, int key , int scancode , int action , int 
 	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
 	{
 		alpha -= 1.0f;
-		printf("alpha:%f\n", alpha);
+		//printf("alpha:%f\n", alpha);
 		//if (alpha <= 0.0f)
 		//{
 		//	alpha = 0.0f;

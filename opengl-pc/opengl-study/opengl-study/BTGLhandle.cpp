@@ -18,9 +18,9 @@ void Handle::init(int type){
 	btProgram->useProgram();
 	btVaoVbo->initSampler(programId);
 }
-void Handle::drawTriangles(int type, float alpha, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, GLfloat aspect){
+void Handle::drawTriangles(int type, float alpha, glm::mat4 viewMatrix , GLfloat aspect){
 	//std::cout << "draw triangle" << std::endl;
-	btVaoVbo->drawArrays(type , programId, alpha , cameraPos,cameraFront,cameraUp , aspect);
+	btVaoVbo->drawArrays(type , programId, alpha , viewMatrix , aspect);
 }
 Handle::Handle()
 {

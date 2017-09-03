@@ -22,7 +22,7 @@ public:
 	//Çò
 	void initBallVaoVbo();
 	void initSampler(GLuint programId);
-	void drawArrays(int type, GLuint programId, float alpha, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, GLfloat aspect);
+	void drawArrays(int type, GLuint programId, float alpha, glm::mat4 viewMatrix, GLfloat aspect);
 	
 private:
 	enum VAO_IDs{ TriangleVAO,BallVAO, NumVaoIds };

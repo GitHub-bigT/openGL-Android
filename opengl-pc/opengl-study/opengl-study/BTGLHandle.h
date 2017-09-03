@@ -12,7 +12,7 @@ public:
 	~Handle();
 	void init(int type);
 	//画一个三角形
-	void drawTriangles(int type, float alpha, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, GLfloat aspect);
+	void drawTriangles(int type, float alpha, glm::mat4 viewMatrix , GLfloat aspect);
 private:
 	BTVaoVbo* btVaoVbo;
 	GLuint programId;
