@@ -78,8 +78,11 @@ public:
 		xoffset *= this->MouseSensitivity;
 		yoffset *= this->MouseSensitivity;
 
-		this->Yaw += xoffset;
-		this->Pitch += yoffset;
+		printf("xoffset:%f\n",xoffset);
+
+		//逆时针旋转为正，偏航角和俯仰角应该-=偏移量
+		this->Yaw -= xoffset;
+		this->Pitch -= yoffset;
 
 		if (this->Pitch >= 89.0f)
 		{
