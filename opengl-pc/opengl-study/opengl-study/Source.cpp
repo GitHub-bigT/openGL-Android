@@ -33,7 +33,7 @@ int main(){
 	}
 	//通知GLFW将窗口的上下文设置为当前线程的主上下文
 	glfwMakeContextCurrent(window);
-	//
+	//glew设置为true  让glew知道使用现在的方法去恢复指针和扩展，防止异常 ,glewInit()之前设置
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK)
 	{
@@ -50,6 +50,7 @@ int main(){
 	//渲染三角形
 	Handle* handle = new Handle();
 	handle->init(triangle);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		//检查触发事件
@@ -105,7 +106,6 @@ bool keys[1024];
 GLfloat deltaTime = 0.0f;
 //上一帧的时间
 GLfloat lastFrame = 0.0f;
-//
 void do_movement(){
 	GLfloat currentTime = glfwGetTime();
 	deltaTime = currentTime - lastFrame;
