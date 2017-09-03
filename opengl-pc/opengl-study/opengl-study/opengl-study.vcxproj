@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClInclude Include="BTGL.h" />
     <ClInclude Include="BTGLHandle.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="File.h" />
   </ItemGroup>
   <ItemGroup>
