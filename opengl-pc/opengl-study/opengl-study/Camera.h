@@ -38,8 +38,8 @@ public:
 	GLfloat MouseSensitivity;
 	GLfloat Zoom;
 
-	//
-	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f) , GLfloat yaw = YAW , GLfloat pitch = PITCH) : WorldUp(0.0f,1.0f,0.0f) , MovementSpeed(SPEED) , MouseSensitivity(SENSITIVTY){  
+	//构造函数。初始化列表
+	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f) , GLfloat yaw = YAW , GLfloat pitch = PITCH) : WorldUp(0.0f,1.0f,0.0f) , MovementSpeed(SPEED) , MouseSensitivity(SENSITIVTY) , Zoom(ZOOM){  
 		this->Position = position;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
@@ -77,9 +77,6 @@ public:
 	void ProcessMouseMovement(GLfloat xoffset , GLfloat yoffset){
 		xoffset *= this->MouseSensitivity;
 		yoffset *= this->MouseSensitivity;
-
-		printf("xoffset:%f\n",xoffset);
-
 		//逆时针旋转为正，偏航角和俯仰角应该-=偏移量
 		this->Yaw -= xoffset;
 		this->Pitch -= yoffset;
@@ -94,6 +91,22 @@ public:
 		}
 
 		this->updateCameraVectors();
+	}
+
+	//鼠标滚轮放大缩小
+	void ProcessMouseScroll(GLfloat yoffset){
+		if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
+		{
+			this->Zoom -= yoffset;
+		}
+		if (this->Zoom >= 45.0f)
+		{
+			this->Zoom = 45.0f;
+		}
+		if (this->Zoom <= 1.0f)
+		{
+			this->Zoom = 1.0f;
+		}
 	}
 
 private:
