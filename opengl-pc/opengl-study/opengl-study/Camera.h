@@ -18,7 +18,7 @@ const GLfloat YAW = -90.0f;
 const GLfloat PITCH = 0.0f;
 
 const GLfloat SPEED = 3.0f;
-const GLfloat SENSITIVTY = 0.25f;
+const GLfloat SENSITIVTY = 0.15f;
 const GLfloat ZOOM = 45.0F;
 
 class Camera {
@@ -39,7 +39,7 @@ public:
 	GLfloat Zoom;
 
 	//
-	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f) , GLfloat yaw = YAW , GLfloat pitch = PITCH) : WorldUp(0.0f,1.0f,0.0f) , MovementSpeed(SPEED){  
+	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f) , GLfloat yaw = YAW , GLfloat pitch = PITCH) : WorldUp(0.0f,1.0f,0.0f) , MovementSpeed(SPEED) , MouseSensitivity(SENSITIVTY){  
 		this->Position = position;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
@@ -52,6 +52,7 @@ public:
 		return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 	}
 
+	//键盘事件
 	void ProcessKeyBoard(Camera_Movement direction , GLfloat deltaTime){
 		GLfloat velocity = this->MovementSpeed * deltaTime;
 		if (direction == FORWARD)
@@ -70,6 +71,26 @@ public:
 		{
 			this->Position += this->Rigth * velocity;
 		}
+	}
+
+	//鼠标移动事件
+	void ProcessMouseMovement(GLfloat xoffset , GLfloat yoffset){
+		xoffset *= this->MouseSensitivity;
+		yoffset *= this->MouseSensitivity;
+
+		this->Yaw += xoffset;
+		this->Pitch += yoffset;
+
+		if (this->Pitch >= 89.0f)
+		{
+			this->Pitch = 89.0f;
+		}
+		if (this->Pitch <= -89.0f)
+		{
+			this->Pitch = -89.0f;
+		}
+
+		this->updateCameraVectors();
 	}
 
 private:

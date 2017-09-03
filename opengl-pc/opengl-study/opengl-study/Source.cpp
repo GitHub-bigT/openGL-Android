@@ -82,8 +82,15 @@ int main(){
 //设置鼠标默认位置为窗口中心
 GLfloat lastX = 400;
 GLfloat lastY = 300;
-
+GLboolean firstMouse = true;
 void mouse_callback(GLFWwindow *window, double xpos, double ypos){
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
 	GLfloat xoffset = xpos - lastX;
 	//y向下为增 向上为-  与坐标系相反  所以在这反减
 	GLfloat yoffset = lastY - ypos;
@@ -91,6 +98,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos){
 	lastX = xpos;
 	lastY = ypos;
 	
+	camera->ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
