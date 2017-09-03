@@ -16,7 +16,8 @@ enum  Camera_Movement
 //默认值
 const GLfloat YAW = -90.0f;
 const GLfloat PITCH = 0.0f;
-const GLfloat SPEECD = 3.0f;
+
+const GLfloat SPEED = 3.0f;
 const GLfloat SENSITIVTY = 0.25f;
 const GLfloat ZOOM = 45.0F;
 
@@ -31,13 +32,14 @@ public:
 	//欧拉角
 	GLfloat Yaw;
 	GLfloat Pitch;
+
 	//选项
 	GLfloat MovementSpeed;
 	GLfloat MouseSensitivity;
 	GLfloat Zoom;
 
 	//
-	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f) , GLfloat yaw = YAW , GLfloat pitch = PITCH) : WorldUp(0.0f,1.0f,0.0f){  
+	Camera(glm::vec3 position = glm::vec3(0.0f,0.0f,3.0f) , GLfloat yaw = YAW , GLfloat pitch = PITCH) : WorldUp(0.0f,1.0f,0.0f) , MovementSpeed(SPEED){  
 		this->Position = position;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
@@ -50,8 +52,28 @@ public:
 		return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 	}
 
+	void ProcessKeyBoard(Camera_Movement direction , GLfloat deltaTime){
+		GLfloat velocity = this->MovementSpeed * deltaTime;
+		if (direction == FORWARD)
+		{
+			this->Position += this->Front * velocity;
+		}
+		if (direction == BACKWARD)
+		{
+			this->Position -= this->Front * velocity;
+		}
+		if (direction == LEFT)
+		{
+			this->Position -= this->Rigth * velocity;
+		}
+		if (direction == RIGHT)
+		{
+			this->Position += this->Rigth * velocity;
+		}
+	}
 
 private:
+	//用欧拉角计算摄像机向量
 	void updateCameraVectors(){
 		glm::vec3 front;
 		front.x = cos(glm::radians(this->Pitch)) * cos(glm::radians(this->Yaw));
@@ -59,8 +81,8 @@ private:
 		front.z = cos(glm::radians(this->Pitch)) * sin(glm::radians(this->Yaw));
 
 		this->Front = glm::normalize(front);
-		this->Rigth = glm::normalize(glm::cross(this->Front, this->WorldUp));
-		this->Up = glm::normalize(glm::cross(this->Front, this->Rigth));
+		this->Rigth = glm::normalize(glm::cross(this->WorldUp, this->Front));
+		this->Up = glm::normalize(glm::cross(this->Rigth, this->Front));
 	}
 };
 

@@ -125,20 +125,19 @@ void do_movement(){
 	//ÉãÏñ»ú¿ØÖÆ
 	if (keys[GLFW_KEY_W])
 	{
-
-
+		camera->ProcessKeyBoard(FORWARD, deltaTime);
 	}
 	if (keys[GLFW_KEY_S])
 	{
-
+		camera->ProcessKeyBoard(BACKWARD, deltaTime);
 	}
 	if (keys[GLFW_KEY_A])
 	{
-
+		camera->ProcessKeyBoard(LEFT , deltaTime);
 	}
 	if (keys[GLFW_KEY_D])
 	{
-
+		camera->ProcessKeyBoard(RIGHT, deltaTime);
 	}
 }
 
