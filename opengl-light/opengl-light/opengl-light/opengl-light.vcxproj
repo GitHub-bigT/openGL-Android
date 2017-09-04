@@ -91,7 +91,9 @@
     <ClInclude Include="BTShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="f_shader_lamp.frag" />
     <None Include="f_shader_triangle.frag" />
+    <None Include="v_shader_lamp.vert" />
     <None Include="v_shader_triangle.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

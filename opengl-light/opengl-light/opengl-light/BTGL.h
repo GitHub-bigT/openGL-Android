@@ -7,6 +7,7 @@
 #include <../glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include "ReadFile.h"
+#include "BTShader.h"
 
 
 class BTBind{
@@ -20,7 +21,7 @@ public:
 	};
 	enum VBO_IDs
 	{
-		TriangleVBO,LightVBO, NumVBOIds
+		TriangleVBO, NumVBOIds
 	};
 	GLuint VAOs[NumVAOIds];
 	GLuint VBOs[NumVBOIds];
@@ -30,11 +31,11 @@ public:
 	};
 
 	void init(Shape shape);
-	void draw(Shape shape, GLuint programId, glm::mat4 viewMatrix);
+	void draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix);
 
 private:
 	void initTriangle();
-	void drawTriangle(GLuint programId, glm::mat4 viewMatrix);
+	void drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix);
 };
 
 class BTProgram{

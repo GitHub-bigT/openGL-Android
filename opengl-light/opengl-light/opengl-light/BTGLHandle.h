@@ -10,6 +10,7 @@ public:
 	};
 	BTBind *bt_bind;
 	BTShader *bt_shader;
+	BTShader *bt_shader_lamp;
 
 	Handle(){
 		bt_bind = new BTBind();	
@@ -20,10 +21,10 @@ public:
 		{
 			bt_bind->init(bt_bind->TRIANGLE);
 			bt_shader = new BTShader("v_shader_triangle.vert", "f_shader_triangle.frag");
-			bt_shader->Use();
+			bt_shader_lamp = new BTShader("v_shader_lamp.vert", "f_shader_lamp.frag");
 		}
 	}
 	void draw(Shape shape , glm::mat4 viewMatrix){
-		bt_bind->draw(bt_bind->TRIANGLE,bt_shader->program,viewMatrix);
+		bt_bind->draw(bt_bind->TRIANGLE, bt_shader, bt_shader_lamp,viewMatrix);
 	}
 };

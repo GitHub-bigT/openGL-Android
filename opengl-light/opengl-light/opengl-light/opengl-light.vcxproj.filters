@@ -58,5 +58,11 @@
     <None Include="f_shader_triangle.frag">
       <Filter>Source Files\GLSL</Filter>
     </None>
+    <None Include="v_shader_lamp.vert">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
+    <None Include="f_shader_lamp.frag">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>
