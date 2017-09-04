@@ -1,14 +1,14 @@
 #ifndef _BTGL_H_
 #define _BTGL_H_
-#include <GL\glew.h>
+#include <../GL\glew.h>
 #include <iostream>
 #include "File.h"
 //#include <SOIL.h>
-#include "stdImage\stb_image.h"
+#include "../stdImage\stb_image.h"
 #include <glm.hpp>
 #include <gtc\matrix_transform.hpp>
 #include <gtc\type_ptr.hpp>
-#include <GLFW\glfw3.h>
+#include <../GLFW\glfw3.h>
 #define M_PI 3.1415926 
 //相邻维度之间的变换角度大小。值越小越像趋于球体
 #define STEP 12

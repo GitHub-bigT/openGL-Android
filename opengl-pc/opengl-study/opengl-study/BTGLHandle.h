@@ -2,7 +2,7 @@
 #define _BTGLHANDLE_H_
 
 #include <iostream>
-#include <GL\glew.h>
+#include <../GL\glew.h>
 #include "BTGL.h"
 
 class Handle
