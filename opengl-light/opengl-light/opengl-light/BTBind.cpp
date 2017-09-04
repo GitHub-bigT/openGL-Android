@@ -114,6 +114,10 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	
+	//ÑÕÉ«
+	glUniform3f(glGetUniformLocation(bt_shader->program, "objectColor"), 1.0f, 0.5f, 0.31f);//Éºº÷ºì
+	glUniform3f(glGetUniformLocation(bt_shader->program, "lightColor"), 1.0f, 1.0f, 1.0f);
+
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glDrawArrays(GL_TRIANGLES,0,36);
 
@@ -121,7 +125,8 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	bt_shader_lamp->Use();
 	//Ä£ÐÍ¾ØÕó
 	glm::mat4 model_light;
-	model_light = glm::translate(model_light, glm::vec3(1.0f, 0.0f, -1.0f));
+	model_light = glm::translate(model_light, glm::vec3(1.2f,1.0f,2.0f));
+	model_light = glm::scale(model_light,glm::vec3(0.2f));
 	//model = glm::rotate(model, glm::radians(currentTime) * 100, glm::vec3(0.0f, 0.0f, 1.0f));
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "model"), 1, GL_FALSE, glm::value_ptr(model_light));
 	//error->glCheckError();
@@ -131,6 +136,7 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	//Í¶Ó°¾ØÕó
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	//error->glCheckError();
+
 
 	glBindVertexArray(VAOs[LightVAO]);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
