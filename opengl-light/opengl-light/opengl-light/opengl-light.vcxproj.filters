@@ -44,6 +44,9 @@
     <ClInclude Include="ReadFile.h">
       <Filter>Source Files\GL</Filter>
     </ClInclude>
+    <ClInclude Include="BTCamera.h">
+      <Filter>Source Files\GL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="v_shader_triangle.vert">

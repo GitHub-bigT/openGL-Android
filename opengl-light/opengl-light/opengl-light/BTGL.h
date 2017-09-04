@@ -4,6 +4,7 @@
 #include <../GL/glew.h>
 #include <../GLFW/glfw3.h>
 #include <../glm/gtc/matrix_transform.hpp>
+#include <../glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include "ReadFile.h"
 
@@ -29,11 +30,11 @@ public:
 	};
 
 	void init(Shape shape);
-	void draw(Shape shape, GLuint programId);
+	void draw(Shape shape, GLuint programId, glm::mat4 viewMatrix);
 
 private:
 	void initTriangle();
-	void drawTriangle(GLuint programId);
+	void drawTriangle(GLuint programId, glm::mat4 viewMatrix);
 };
 
 class BTProgram{

@@ -6,9 +6,13 @@
 #include <../GLFW/glfw3.h>
 
 #include "BTGLHandle.h"
+#include "BTCamera.h"
 
 //键盘输入
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void do_movement();
+
+Camera *camera = new Camera();
 
 void main(){
 	//init glfw
@@ -45,8 +49,11 @@ void main(){
 	{
 		//检查触发事件
 		glfwPollEvents();
+		//键盘输入
+		do_movement();
 		//entrace
-		handle->draw(handle->TRIANGLE);
+		glm::mat4 viewMatrix = camera->getViewMatrix();
+		handle->draw(handle->TRIANGLE,viewMatrix);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
@@ -54,6 +61,7 @@ void main(){
 	glfwTerminate();
 }
 
+GLboolean keys[1024];
 //键盘输入
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode){
 
@@ -62,4 +70,40 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		std::cout << "account press ESC" << std::endl;
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
+	if (action == GLFW_PRESS)
+	{
+		keys[key] = true;
+	}
+	if (action == GLFW_RELEASE)
+	{
+		keys[key] = false;
+	}
 };
+
+//当前帧遇上上一帧的时间增量
+GLfloat deltaTime = 0.0f;
+//上一帧的时间
+GLfloat lastFrame = 0.0f;
+
+void do_movement(){
+	GLfloat currentTime = glfwGetTime();
+	deltaTime = currentTime - lastFrame;
+	lastFrame = currentTime;
+	//摄像机控制
+	if (keys[GLFW_KEY_W])
+	{
+		camera->ProcessKeyBoard(FORWARD, deltaTime);
+	}
+	if (keys[GLFW_KEY_S])
+	{
+		camera->ProcessKeyBoard(BACKWARD, deltaTime);
+	}
+	if (keys[GLFW_KEY_A])
+	{
+		camera->ProcessKeyBoard(LEFT, deltaTime);
+	}
+	if (keys[GLFW_KEY_D])
+	{
+		camera->ProcessKeyBoard(RIGHT, deltaTime);
+	}
+}

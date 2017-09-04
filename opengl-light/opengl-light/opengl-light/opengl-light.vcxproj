@@ -84,6 +84,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BTCamera.h" />
     <ClInclude Include="BTGL.h" />
     <ClInclude Include="BTGLHandle.h" />
     <ClInclude Include="ReadFile.h" />

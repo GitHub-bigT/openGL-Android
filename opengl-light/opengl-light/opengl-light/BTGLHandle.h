@@ -23,7 +23,7 @@ public:
 			bt_program->useProgram();
 		}
 	}
-	void draw(Shape shape){
-		bt_bind->draw(bt_bind->TRIANGLE,bt_program->programId);
+	void draw(Shape shape , glm::mat4 viewMatrix){
+		bt_bind->draw(bt_bind->TRIANGLE,bt_program->programId,viewMatrix);
 	}
 };
