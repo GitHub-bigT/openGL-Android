@@ -71,7 +71,7 @@ public:
 			this->Position += this->Rigth * velocity;
 		}
 		//FPS摄像机  只能在xy平面内
-		this->Position.y = 0.0f;
+		//this->Position.y = 0.0f;
 	}
 
 	//鼠标移动事件

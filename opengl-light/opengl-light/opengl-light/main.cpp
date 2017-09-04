@@ -11,6 +11,10 @@
 //键盘输入
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void do_movement();
+//鼠标移动
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+//鼠标滚轮缩放大小
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 
 Camera *camera = new Camera();
 
@@ -32,6 +36,12 @@ void main(){
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
+	//隐藏光标
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//鼠标移动（采用欧拉角）
+	glfwSetCursorPosCallback(window, mouse_callback);
+	//滚轮缩放大小
+	glfwSetScrollCallback(window, scroll_callback);
 	//init glew
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
@@ -53,7 +63,7 @@ void main(){
 		do_movement();
 		//entrace
 		glm::mat4 viewMatrix = camera->getViewMatrix();
-		handle->draw(handle->TRIANGLE,viewMatrix);
+		handle->draw(handle->TRIANGLE,viewMatrix,camera->Zoom);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}
@@ -106,4 +116,27 @@ void do_movement(){
 	{
 		camera->ProcessKeyBoard(RIGHT, deltaTime);
 	}
+}
+
+GLfloat lastX = 0.0f;
+GLfloat lastY = 0.0f;
+GLboolean firstMouse = true;
+void mouse_callback(GLFWwindow *window, double xpos, double ypos){
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	GLfloat xoffset = xpos - lastX;
+	//y向下为增 向上为-  与坐标系相反  所以在这反减
+	GLfloat yoffset = lastY - ypos;
+	//printf("xoffset : %f , yoffset:%f\n",xoffset , yoffset);
+	lastX = xpos;
+	lastY = ypos;
+	camera->ProcessMouseMovement(xoffset, yoffset);
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
+	camera->ProcessMouseScroll(yoffset);
 }

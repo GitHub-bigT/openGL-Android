@@ -9,10 +9,10 @@ void BTBind::init(Shape shape){
 	}
 }
 
-void BTBind::draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix){
+void BTBind::draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom){
 	if (shape == this->TRIANGLE)
 	{
-		this->drawTriangle(bt_shader,bt_shader_lamp,viewMatrix);
+		this->drawTriangle(bt_shader,bt_shader_lamp,viewMatrix,Zoom);
 	}
 }
 
@@ -94,12 +94,17 @@ void BTBind::initTriangle(){
 	glBindVertexArray(0);
 }
 
-void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix){
+void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom){
 	glEnable(GL_DEPTH_TEST);
 	
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//投影矩阵
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+
+	//立方体
 	bt_shader->Use();
 	GLfloat currentTime = glfwGetTime();
 	//模型矩阵
@@ -110,14 +115,10 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	//视图矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 	//投影矩阵
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	
 	//颜色
 	glUniform3f(glGetUniformLocation(bt_shader->program, "objectColor"), 1.0f, 0.5f, 0.31f);//珊瑚红
 	glUniform3f(glGetUniformLocation(bt_shader->program, "lightColor"), 1.0f, 1.0f, 1.0f);
-
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glDrawArrays(GL_TRIANGLES,0,36);
 
@@ -127,16 +128,11 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glm::mat4 model_light;
 	model_light = glm::translate(model_light, glm::vec3(1.2f,1.0f,2.0f));
 	model_light = glm::scale(model_light,glm::vec3(0.2f));
-	//model = glm::rotate(model, glm::radians(currentTime) * 100, glm::vec3(0.0f, 0.0f, 1.0f));
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "model"), 1, GL_FALSE, glm::value_ptr(model_light));
-	//error->glCheckError();
 	//视图矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
-	//error->glCheckError();
 	//投影矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	//error->glCheckError();
-
 
 	glBindVertexArray(VAOs[LightVAO]);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
