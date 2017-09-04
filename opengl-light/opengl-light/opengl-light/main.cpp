@@ -13,10 +13,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void main(){
 	//init glfw
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT,GL_TRUE);
+	glEnable(GL_DEBUG_OUTPUT);
 	GLFWwindow *window = glfwCreateWindow(800, 600, "OpenGL-Light", nullptr, nullptr);
 	if (window == nullptr)
 	{

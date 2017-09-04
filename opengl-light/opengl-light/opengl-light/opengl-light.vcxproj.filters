@@ -30,6 +30,9 @@
     <ClCompile Include="BTBind.cpp">
       <Filter>Source Files\GL</Filter>
     </ClCompile>
+    <ClCompile Include="BTProgram.cpp">
+      <Filter>Source Files\GL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTGLHandle.h">
@@ -38,5 +41,16 @@
     <ClInclude Include="BTGL.h">
       <Filter>Source Files\GL</Filter>
     </ClInclude>
+    <ClInclude Include="ReadFile.h">
+      <Filter>Source Files\GL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="v_shader_triangle.vert">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
+    <None Include="f_shader_triangle.frag">
+      <Filter>Source Files\GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

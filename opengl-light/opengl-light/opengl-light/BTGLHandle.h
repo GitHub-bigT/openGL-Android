@@ -7,17 +7,23 @@ public:
 	enum Shape{
 		TRIANGLE
 	};
-	BTBind *bind;
+	BTBind *bt_bind;
+	BTProgram *bt_program;
+
 	Handle(){
-		bind = new BTBind();
+		bt_bind = new BTBind();
+		bt_program = new BTProgram();
 	}
+
 	void init(Shape shape){
 		if (shape == this->TRIANGLE)
 		{
-			bind->init(bind->TRIANGLE);
+			bt_bind->init(bt_bind->TRIANGLE);
+			bt_program->createProgram();
+			bt_program->useProgram();
 		}
 	}
 	void draw(Shape shape){
-	
+		bt_bind->draw(bt_bind->TRIANGLE,bt_program->programId);
 	}
 };

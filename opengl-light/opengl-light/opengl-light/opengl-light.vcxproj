@@ -80,11 +80,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BTBind.cpp" />
+    <ClCompile Include="BTProgram.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTGL.h" />
     <ClInclude Include="BTGLHandle.h" />
+    <ClInclude Include="ReadFile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="f_shader_triangle.frag" />
+    <None Include="v_shader_triangle.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
