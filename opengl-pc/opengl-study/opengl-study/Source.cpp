@@ -47,6 +47,12 @@ int main(){
 	glViewport(0,0,width,height);
 	//设置键盘监听事件
 	glfwSetKeyCallback(window,key_callback);
+	//隐藏光标
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//鼠标移动（采用欧拉角）
+	glfwSetCursorPosCallback(window, mouse_callback);
+	//滚轮缩放大小
+	glfwSetScrollCallback(window, scroll_callback);
 	//渲染三角形
 	Handle* handle = new Handle();
 	handle->init(triangle);
@@ -57,13 +63,6 @@ int main(){
 		glfwPollEvents();
 		//键盘输入
 		do_movement();
-		//隐藏光标
-		glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
-		//鼠标移动（采用欧拉角）
-		glfwSetCursorPosCallback(window,mouse_callback);
-		//滚轮缩放大小
-		glfwSetScrollCallback(window, scroll_callback);
-
 		glm::mat4 viewMatrix = camera->getViewMatrix();
 		//三角形
 		handle->drawTriangles(triangle, alpha, viewMatrix, camera->Zoom);
