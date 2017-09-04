@@ -16,11 +16,11 @@ public:
 	};
 	enum VAO_IDs
 	{
-		TriangleVAO,NumVAOIds
+		TriangleVAO,LightVAO,NumVAOIds
 	};
 	enum VBO_IDs
 	{
-		TriangleVBO,NumVBOIds
+		TriangleVBO,LightVBO, NumVBOIds
 	};
 	GLuint VAOs[NumVAOIds];
 	GLuint VBOs[NumVBOIds];
