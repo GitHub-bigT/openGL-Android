@@ -15,6 +15,7 @@ void main(){
 	//Normal = vNormal;
 	//正规矩阵
 	Normal = mat3(transpose(inverse(model))) * vNormal;
+	//Normal = mat3(model) * vNormal;
 	//世界坐标
 	fragPos = vec3(model * vec4(vPosition,1.0f));
 }

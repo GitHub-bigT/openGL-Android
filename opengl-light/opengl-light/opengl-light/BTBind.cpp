@@ -113,17 +113,18 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	GLfloat radius = 2.0f;
 	GLfloat speed = 40.0f;
 	//光源位置
-	//glm::vec3 lightPos = glm::vec3(-1.2f, 1.0f, -3.0f);
-	glm::vec3 lightPos = glm::vec3(radius * glm::cos(glm::radians(currentTime) * speed), 0.0f, radius * glm::sin(glm::radians(currentTime) * speed));
+	glm::vec3 lightPos = glm::vec3(-1.2f, 1.0f, 3.0f);
+	//glm::vec3 lightPos = glm::vec3(radius * glm::cos(glm::radians(currentTime) * speed), 0.0f, radius * glm::sin(glm::radians(currentTime) * speed));
 
 	//立方体
 	bt_shader->Use();
 	
 	//模型矩阵
 	glm::mat4 model;
-	//model = glm::translate(model,glm::vec3(0.0f,0.0f,0.0f));
+	//model = glm::translate(model, glm::vec3(0.0f, 0.0f, currentTime*0.4f));
 	//model = glm::rotate(model, glm::radians(currentTime) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
-	//model = glm::scale(model, glm::vec3(1.0f, currentTime ,1.0f));
+	model = glm::scale(model, glm::vec3(0.6f * currentTime, 1.4f * currentTime, 1.0f));
+	//model = glm::scale(model, glm::vec3(currentTime*0.3f, currentTime, 1.0f));
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program,"model"),1,GL_FALSE,glm::value_ptr(model));
 	//视图矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
