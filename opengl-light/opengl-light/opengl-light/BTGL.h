@@ -27,7 +27,8 @@ public:
 	GLuint VBOs[NumVBOIds];
 	enum Attrib_IDs
 	{
-		vPosition = 1
+		vPosition = 1,
+		vNormal = 2
 	};
 
 	void init(Shape shape);
