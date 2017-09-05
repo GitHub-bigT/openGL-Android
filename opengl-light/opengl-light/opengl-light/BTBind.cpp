@@ -97,9 +97,16 @@ void BTBind::initTriangle(){
 	glBindVertexArray(0);
 }
 
+GLboolean isAdd = false;
+float ambientStrength = 1.0f;
+int specularStrength = 1;
+
 void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion){
 
 	GLfloat currentTime = glfwGetTime();
+
+	specularStrength += 1;
+	
 
 	glEnable(GL_DEPTH_TEST);
 	
@@ -137,6 +144,9 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glUniform3f(glGetUniformLocation(bt_shader->program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 	//观察向量
 	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), cameraPostion.x, cameraPostion.y, cameraPostion.z);
+	//传递环境光强度和镜面强度
+	glUniform1f(glGetUniformLocation(bt_shader->program,"ambientStrength"),ambientStrength);
+	glUniform1i(glGetUniformLocation(bt_shader->program, "shininess"), specularStrength);
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glDrawArrays(GL_TRIANGLES,0,36);
 

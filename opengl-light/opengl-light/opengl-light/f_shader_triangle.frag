@@ -13,8 +13,12 @@ in vec3 fragPos;
 //观察向量
 uniform vec3 viewPos;
 
-void main(){
+//uniform float ambientStrength;
+//uniform float specularStrength;
+uniform int shininess;
 
+void main(){
+	//(世界空间中计算冯氏光照)
 	//环境光强度
 	float ambientStrength = 0.1f;
 	vec3 ambient = ambientStrength * lightColor;
@@ -30,8 +34,9 @@ void main(){
 	float specularStrength = 0.5f;
 	vec3 viewDir = normalize(viewPos - fragPos);
 	vec3 reflectDir = reflect(-lightDir,norm);
-	float spec = pow(max(dot(viewDir,reflectDir),0.0),256);
+	float spec = pow(max(dot(viewDir,reflectDir),0.0),32);
 	vec3 specular = specularStrength * spec * lightColor;
+
 	vec3 result = (ambient + diffuse + specular) * objectColor;
 	oColor = vec4(result,1.0f);
 }

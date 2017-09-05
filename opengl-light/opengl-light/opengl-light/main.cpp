@@ -37,7 +37,7 @@ void main(){
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 	//隐藏光标
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//鼠标移动（采用欧拉角）
 	glfwSetCursorPosCallback(window, mouse_callback);
 	//滚轮缩放大小
