@@ -9,10 +9,10 @@ void BTBind::init(Shape shape){
 	}
 }
 
-void BTBind::draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom){
+void BTBind::draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion){
 	if (shape == this->TRIANGLE)
 	{
-		this->drawTriangle(bt_shader,bt_shader_lamp,viewMatrix,Zoom);
+		this->drawTriangle(bt_shader,bt_shader_lamp,viewMatrix,Zoom,cameraPostion);
 	}
 }
 
@@ -97,7 +97,7 @@ void BTBind::initTriangle(){
 	glBindVertexArray(0);
 }
 
-void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom){
+void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion){
 
 	GLfloat currentTime = glfwGetTime();
 
@@ -113,7 +113,7 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	GLfloat radius = 2.0f;
 	GLfloat speed = 40.0f;
 	//光源位置
-	glm::vec3 lightPos = glm::vec3(-1.2f, 1.0f, 3.0f);
+	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 3.0f);
 	//glm::vec3 lightPos = glm::vec3(radius * glm::cos(glm::radians(currentTime) * speed), 0.0f, radius * glm::sin(glm::radians(currentTime) * speed));
 
 	//立方体
@@ -123,7 +123,7 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glm::mat4 model;
 	//model = glm::translate(model, glm::vec3(0.0f, 0.0f, currentTime*0.4f));
 	//model = glm::rotate(model, glm::radians(currentTime) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(0.6f * currentTime, 1.4f * currentTime, 1.0f));
+	//model = glm::scale(model, glm::vec3(0.6f * currentTime,1.4f,1.0f));
 	//model = glm::scale(model, glm::vec3(currentTime*0.3f, currentTime, 1.0f));
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program,"model"),1,GL_FALSE,glm::value_ptr(model));
 	//视图矩阵
@@ -135,6 +135,8 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glUniform3f(glGetUniformLocation(bt_shader->program, "lightColor"), 1.0f, 1.0f, 1.0f);
 	//光的位置向量
 	glUniform3f(glGetUniformLocation(bt_shader->program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	//观察向量
+	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), cameraPostion.x, cameraPostion.y, cameraPostion.z);
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glDrawArrays(GL_TRIANGLES,0,36);
 

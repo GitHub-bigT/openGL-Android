@@ -8,6 +8,7 @@
 #include <iostream>
 #include "ReadFile.h"
 #include "BTShader.h"
+#include "BTCamera.h"
 
 
 class BTBind{
@@ -32,11 +33,11 @@ public:
 	};
 
 	void init(Shape shape);
-	void draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom);
+	void draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion);
 
 private:
 	void initTriangle();
-	void drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom);
+	void drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion);
 };
 
 class BTProgram{
