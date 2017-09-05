@@ -120,7 +120,7 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	GLfloat radius = 2.0f;
 	GLfloat speed = 40.0f;
 	//光源位置
-	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 lightPos = glm::vec3(0.0f, -0.5f, 3.0f);
 	//glm::vec3 lightPos = glm::vec3(radius * glm::cos(glm::radians(currentTime) * speed), 0.0f, radius * glm::sin(glm::radians(currentTime) * speed));
 
 	//立方体
@@ -128,7 +128,7 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	
 	//模型矩阵
 	glm::mat4 model;
-	//model = glm::translate(model, glm::vec3(0.0f, 0.0f, currentTime*0.4f));
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 	//model = glm::rotate(model, glm::radians(currentTime) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
 	//model = glm::scale(model, glm::vec3(0.6f * currentTime,1.4f,1.0f));
 	//model = glm::scale(model, glm::vec3(currentTime*0.3f, currentTime, 1.0f));
@@ -137,16 +137,25 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 	//投影矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	//颜色
-	glUniform3f(glGetUniformLocation(bt_shader->program, "objectColor"), 1.0f, 0.5f, 0.31f);//珊瑚红
-	glUniform3f(glGetUniformLocation(bt_shader->program, "lightColor"), 1.0f, 1.0f, 1.0f);
-	//光的位置向量
-	glUniform3f(glGetUniformLocation(bt_shader->program, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
 	//观察向量
 	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), cameraPostion.x, cameraPostion.y, cameraPostion.z);
-	//传递环境光强度和镜面强度
-	glUniform1f(glGetUniformLocation(bt_shader->program,"ambientStrength"),ambientStrength);
-	glUniform1i(glGetUniformLocation(bt_shader->program, "shininess"), specularStrength);
+
+	//材质结构体
+	glUniform3f(glGetUniformLocation(bt_shader->program, "material.ambient"), 0.0f, 0.1f, 0.06f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "material.diffuse"), 0.0f, 0.50980392f, 0.50980392f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "material.specular"), 0.50196078f, 0.50196078f, 0.50196078f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 32.0f);
+	//光源结构体
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), lightPos.x, lightPos.y, lightPos.z);
+	glm::vec3 lightColor;
+	lightColor.x = glm::sin(glm::radians(glfwGetTime() * 20.0f));
+	lightColor.y = glm::sin(glm::radians(glfwGetTime() * 20.0f));
+	lightColor.z = glm::sin(glm::radians(glfwGetTime() * 20.0f));
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.ambient"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.diffuse"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 1.0f, 1.0f, 1.0f);
+
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glDrawArrays(GL_TRIANGLES,0,36);
 
@@ -161,6 +170,8 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 	//投影矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	//光源颜色
+	glUniform3f(glGetUniformLocation(bt_shader_lamp->program, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 
 	glBindVertexArray(VAOs[LightVAO]);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
