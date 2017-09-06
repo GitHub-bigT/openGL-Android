@@ -23,6 +23,8 @@ void BTBind::initTriangle(){
 	unsigned char* image = stbi_load("sImage/container2.png",&width,&height,&channels,0);
 	int width_specular, height_specular, channels_specular;
 	unsigned char* image_specular = stbi_load("sImage/container2_specular.png", &width_specular, &height_specular, &channels_specular, 0);
+	int width_emission, height_emission, channels_emission;
+	unsigned char* image_emission = stbi_load("sImage/matrix.jpg", &width_emission, &height_emission, &channels_emission, 0);
 
 	glGenTextures(NumTEXIds, TEXs);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Container]);
@@ -37,6 +39,13 @@ void BTBind::initTriangle(){
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(image_specular);
 	glBindTexture(GL_TEXTURE_2D,0);
+
+	//放射光贴图
+	glBindTexture(GL_TEXTURE_2D,TEXs[Emission]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_emission, height_emission, 0, GL_RGB, GL_UNSIGNED_BYTE, image_emission);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(image_emission);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//vao
 	glGenVertexArrays(NumVAOIds,VAOs);
@@ -156,24 +165,29 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	//观察向量
 	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), cameraPostion.x, cameraPostion.y, cameraPostion.z);
 	//纹理单元
-	glUniform1i(glGetUniformLocation(bt_shader->program, "material.specular"), 5);
-	glUniform1i(glGetUniformLocation(bt_shader->program, "material.diffuse"), 11);
-	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 32.0f);
+	glUniform1i(glGetUniformLocation(bt_shader->program, "material.diffuse"), 5);
+	glUniform1i(glGetUniformLocation(bt_shader->program, "material.specular"), 11);
+	glUniform1i(glGetUniformLocation(bt_shader->program, "material.emission"), 16);
+
+	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 64.0f);
 	//光源结构体
 	glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), lightPos.x, lightPos.y, lightPos.z);
 	glUniform3f(glGetUniformLocation(bt_shader->program, "light.ambient"), 0.5f, 0.5f, 0.5f);
 	glUniform3f(glGetUniformLocation(bt_shader->program, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 2.0f, 2.0f, 2.0f);
 
 	//材质结构体
 	//纹理单元  激活 绑定 传值
 	//漫反射贴图
-	glActiveTexture(GL_TEXTURE11);
+	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Container]);
 	//镜面贴图
-	glActiveTexture(GL_TEXTURE5);
+	glActiveTexture(GL_TEXTURE11);
 	glBindTexture(GL_TEXTURE_2D,TEXs[Container_Specular]);
-	
+	//放射光贴图
+	glActiveTexture(GL_TEXTURE16);
+	glBindTexture(GL_TEXTURE_2D, TEXs[Emission]);
+
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glDrawArrays(GL_TRIANGLES,0,36);
 

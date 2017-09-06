@@ -28,7 +28,7 @@ public:
 	};
 	enum TEX_IDs
 	{
-		Container,Container_Specular,NumTEXIds
+		Container,Container_Specular,Emission,NumTEXIds
 	};
 	GLuint VAOs[NumVAOIds];
 	GLuint VBOs[NumVBOIds];
