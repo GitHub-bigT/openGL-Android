@@ -100,4 +100,18 @@ glTexImage2D前设置
 
 * 正射投影的使用
 
+* stb_image的使用
+
+下载这一个头文件，将它以stb_image.h的名字加入你的工程，并另创建一个新的C++文件，输入以下代码：
+
+```
+int width, height, nrChannels;
+unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+```
+
+通过定义STB_IMAGE_IMPLEMENTATION，预处理器会修改头文件，让其只包含相关的函数定义源码，等于是将这个头文件变为一个
+
+.cpp 文件了。现在只需要在你的程序中包含stb_image.h并编译就可以了。
+
+摘抄自：https://learnopengl-cn.github.io/01%20Getting%20started/06%20Textures/
 
