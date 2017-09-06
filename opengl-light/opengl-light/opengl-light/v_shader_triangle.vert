@@ -2,9 +2,11 @@
 
 layout(location = 1) in vec3 vPosition;
 layout(location = 2) in vec3 vNormal;
+layout(location = 3) in vec2 vTexCoords;
 
 out vec3 Normal;
 out vec3 fragPos;
+out vec2 TexCoords;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -18,4 +20,5 @@ void main(){
 	//Normal = mat3(model) * vNormal;
 	//ÊÀ½ç×ø±ê
 	fragPos = vec3(model * vec4(vPosition,1.0f));
+	TexCoords = vTexCoords;
 }

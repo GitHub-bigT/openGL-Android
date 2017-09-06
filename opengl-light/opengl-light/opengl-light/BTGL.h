@@ -10,6 +10,8 @@
 #include "BTShader.h"
 #include "BTCamera.h"
 
+#include <../stdImage/stb_image.h>
+
 
 class BTBind{
 public:
@@ -24,12 +26,19 @@ public:
 	{
 		TriangleVBO, NumVBOIds
 	};
+	enum TEX_IDs
+	{
+		Container,Container_Specular,NumTEXIds
+	};
 	GLuint VAOs[NumVAOIds];
 	GLuint VBOs[NumVBOIds];
+	GLuint TEXs[NumTEXIds];
+
 	enum Attrib_IDs
 	{
 		vPosition = 1,
-		vNormal = 2
+		vNormal = 2,
+		vTexCoords = 3
 	};
 
 	void init(Shape shape);

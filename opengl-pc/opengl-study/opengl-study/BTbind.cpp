@@ -327,14 +327,14 @@ void BTVaoVbo::drawArrays(int type, GLuint programId, float alpha, glm::mat4 vie
 
 
 void BTVaoVbo::initSampler(GLuint programId){
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic1]);
 	//printf("programId----:%d\n", programId);
-	//glUniform1i(glGetUniformLocation(programId, "ourTexture1"), 0);
+	glUniform1i(glGetUniformLocation(programId, "ourTexture1"), 3);
 
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE18);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Pic2]);
-	glUniform1i(glGetUniformLocation(programId, "ourTexture2"), 1);
+	glUniform1i(glGetUniformLocation(programId, "ourTexture2"), 18);
 }
 
 // Custom implementation of the LookAt function
