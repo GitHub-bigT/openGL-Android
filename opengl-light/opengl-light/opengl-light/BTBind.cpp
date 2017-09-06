@@ -142,7 +142,6 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 
 	//立方体
 	bt_shader->Use();
-	
 	//模型矩阵
 	glm::mat4 model;
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -156,25 +155,24 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	//观察向量
 	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), cameraPostion.x, cameraPostion.y, cameraPostion.z);
+	//纹理单元
+	glUniform1i(glGetUniformLocation(bt_shader->program, "material.specular"), 5);
+	glUniform1i(glGetUniformLocation(bt_shader->program, "material.diffuse"), 11);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 32.0f);
+	//光源结构体
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), lightPos.x, lightPos.y, lightPos.z);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.ambient"), 0.5f, 0.5f, 0.5f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.diffuse"), 0.5f, 0.5f, 0.5f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 1.0f, 1.0f, 1.0f);
 
 	//材质结构体
 	//纹理单元  激活 绑定 传值
 	//漫反射贴图
 	glActiveTexture(GL_TEXTURE11);
 	glBindTexture(GL_TEXTURE_2D, TEXs[Container]);
-	glUniform1i(glGetUniformLocation(bt_shader->program, "material.diffuse"), 11);
 	//镜面贴图
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D,TEXs[Container_Specular]);
-	glUniform1i(glGetUniformLocation(bt_shader->program,"material.specular"),5);
-
-	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 32.0f);
-
-	//光源结构体
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), lightPos.x, lightPos.y, lightPos.z);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.ambient"), 0.5f, 0.5f, 0.5f);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 1.0f, 1.0f, 1.0f);
 	
 	glBindVertexArray(VAOs[TriangleVAO]);
 	glDrawArrays(GL_TRIANGLES,0,36);
