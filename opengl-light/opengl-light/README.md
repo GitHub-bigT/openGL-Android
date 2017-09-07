@@ -1,5 +1,17 @@
 # 光照
 
+* （环境 + 漫反射 + 镜面）* 聚光 * 衰弱
+<div>
+  <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/light-spotlight.png" width="300px"/>
+</div>
+
+* （环境 + 漫反射 + 镜面）* 聚光（平滑） * 衰弱
+
+<div>
+  <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/light-spotlight-intensity.png" width="300px"/>
+</div>
+
+
 * 环境 + 漫反射 + 镜面 + 放射光
 <div>
   <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/emission.png" width="300px"/>
