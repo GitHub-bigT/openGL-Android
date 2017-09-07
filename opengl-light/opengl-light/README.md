@@ -1,5 +1,10 @@
 # 光照
 
+* 环境 + 漫反射 + 镜面 + 放射光
+<div>
+  <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/emission.png" width="300px"/>
+</div>
+
 * 漫反射光照
 <div>
   <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/light.gif" width="300px"/>
