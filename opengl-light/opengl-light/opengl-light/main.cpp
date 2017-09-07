@@ -16,7 +16,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 //鼠标滚轮缩放大小
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 
-Camera *camera = new Camera();
+Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 void main(){
 	//init glfw
@@ -63,7 +63,7 @@ void main(){
 		do_movement();
 		//entrace
 		glm::mat4 viewMatrix = camera->getViewMatrix();
-		handle->draw(handle->TRIANGLE,viewMatrix,camera->Zoom,camera->Position);
+		handle->draw(handle->TRIANGLE,viewMatrix,camera);
 		//双缓存技术,交换缓冲
 		glfwSwapBuffers(window);
 	}

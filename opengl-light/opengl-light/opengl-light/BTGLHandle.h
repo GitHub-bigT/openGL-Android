@@ -24,7 +24,7 @@ public:
 			bt_shader_lamp = new BTShader("v_shader_lamp.vert", "f_shader_lamp.frag");
 		}
 	}
-	void draw(Shape shape , glm::mat4 viewMatrix , GLfloat Zoom , glm::vec3 cameraPostion){
-		bt_bind->draw(bt_bind->TRIANGLE, bt_shader, bt_shader_lamp, viewMatrix, Zoom, cameraPostion);
+	void draw(Shape shape , glm::mat4 viewMatrix , Camera *camera){
+		bt_bind->draw(bt_bind->TRIANGLE, bt_shader, bt_shader_lamp, viewMatrix, camera);
 	}
 };

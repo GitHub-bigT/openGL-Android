@@ -9,6 +9,7 @@
 #include "ReadFile.h"
 #include "BTShader.h"
 #include "BTCamera.h"
+//#include "Camera_test.h"
 
 #include <../stdImage/stb_image.h>
 
@@ -42,11 +43,11 @@ public:
 	};
 
 	void init(Shape shape);
-	void draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion);
+	void draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, Camera *camera);
 
 private:
 	void initTriangle();
-	void drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion);
+	void drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, Camera *camera);
 };
 
 class BTProgram{

@@ -81,7 +81,6 @@
   <ItemGroup>
     <ClCompile Include="stb_image_implementation.cpp" />
     <ClCompile Include="BTBind.cpp" />
-    <ClCompile Include="BTProgram.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

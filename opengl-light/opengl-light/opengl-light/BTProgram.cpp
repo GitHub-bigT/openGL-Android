@@ -3,7 +3,7 @@
 void BTProgram::createProgram(){
 	TextFile *textfile = new TextFile();
 	const char *v_shader_source = textfile->readFile("v_shader_triangle.vert");
-	const char *f_shader_source = textfile->readFile("f_shader_triangle.frag");
+	const char *f_shader_source = textfile->readFile("f_shader_test.frag");
 	//printf("%s\n",f_shader_source);
 
 	this->v_shader_Id = this->loadShader(GL_VERTEX_SHADER, v_shader_source);

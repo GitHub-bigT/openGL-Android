@@ -30,9 +30,6 @@
     <ClCompile Include="BTBind.cpp">
       <Filter>Source Files\GL</Filter>
     </ClCompile>
-    <ClCompile Include="BTProgram.cpp">
-      <Filter>Source Files\GL</Filter>
-    </ClCompile>
     <ClCompile Include="stb_image_implementation.cpp">
       <Filter>Source Files\GL</Filter>
     </ClCompile>

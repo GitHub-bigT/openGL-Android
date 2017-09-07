@@ -9,10 +9,10 @@ void BTBind::init(Shape shape){
 	}
 }
 
-void BTBind::draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion){
+void BTBind::draw(Shape shape, BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, Camera *camera){
 	if (shape == this->TRIANGLE)
 	{
-		this->drawTriangle(bt_shader,bt_shader_lamp,viewMatrix,Zoom,cameraPostion);
+		this->drawTriangle(bt_shader,bt_shader_lamp,viewMatrix,camera);
 	}
 }
 
@@ -132,8 +132,9 @@ void BTBind::initTriangle(){
 	glBindVertexArray(0);
 }
 
-void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, GLfloat Zoom, glm::vec3 cameraPostion){
+void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::mat4 viewMatrix, Camera *camera){
 
+	
 	GLfloat currentTime = glfwGetTime();
 	glEnable(GL_DEPTH_TEST);
 	
@@ -142,39 +143,46 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 
 	//投影矩阵
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
 	//光源位置
-	GLfloat radius = 2.0f;
-	GLfloat speed = 40.0f;
-	glm::vec3 lightPos = glm::vec3(0.0f, -0.5f, 3.0f);
-	//glm::vec3 lightPos = glm::vec3(radius * glm::cos(glm::radians(currentTime) * speed), 0.0f, radius * glm::sin(glm::radians(currentTime) * speed));
+	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 5.0f);
 
 	//立方体
 	bt_shader->Use();
-	//模型矩阵
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 	//model = glm::rotate(model, glm::radians(currentTime) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
 	//model = glm::scale(model, glm::vec3(0.6f * currentTime,1.4f,1.0f));
 	//model = glm::scale(model, glm::vec3(currentTime*0.3f, currentTime, 1.0f));
-	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program,"model"),1,GL_FALSE,glm::value_ptr(model));
+	
 	//视图矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 	//投影矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	//观察向量
-	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), cameraPostion.x, cameraPostion.y, cameraPostion.z);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), camera->Position.x, camera->Position.y, camera->Position.z);
 	//纹理单元
 	glUniform1i(glGetUniformLocation(bt_shader->program, "material.diffuse"), 5);
 	glUniform1i(glGetUniformLocation(bt_shader->program, "material.specular"), 11);
 	glUniform1i(glGetUniformLocation(bt_shader->program, "material.emission"), 16);
-
-	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 64.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 32.0f);
 	//光源结构体
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), lightPos.x, lightPos.y, lightPos.z);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.ambient"), 0.5f, 0.5f, 0.5f);
+	//点光源
+	//glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), lightPos.x, lightPos.y, lightPos.z);
+	//定向光
+	//glUniform3f(glGetUniformLocation(bt_shader->program,"light.direction"),-0.2f,-1.0f,-0.3f);
+	//聚光
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), camera->Position.x, camera->Position.y, camera->Position.z);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.direction"), camera->Front.x, camera->Front.y, camera->Front.z);
+	//不直接传角度 而是传cos的原因：节省开销 http://learnopengl-cn.readthedocs.io/zh/latest/02%20Lighting/05%20Light%20casters/
+	glUniform1f(glGetUniformLocation(bt_shader->program,"light.cutoff"),glm::cos(glm::radians(12.5f)));
+	glUniform1f(glGetUniformLocation(bt_shader->program, "light.othercutoff"), glm::cos(glm::radians(17.5f)));
+
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.ambient"), 0.2f, 0.2f, 0.2f);
 	glUniform3f(glGetUniformLocation(bt_shader->program, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 2.0f, 2.0f, 2.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 3.0f, 3.0f, 3.0f);
+	//衰减值
+	glUniform1f(glGetUniformLocation(bt_shader->program,"light.constant"),1.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "light.linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "light.quadratic"), 0.032f);
 
 	//材质结构体
 	//纹理单元  激活 绑定 传值
@@ -189,7 +197,29 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glBindTexture(GL_TEXTURE_2D, TEXs[Emission]);
 
 	glBindVertexArray(VAOs[TriangleVAO]);
-	glDrawArrays(GL_TRIANGLES,0,36);
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(2.0f, 5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f, 3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f, 2.0f, -2.5f),
+		glm::vec3(1.5f, 0.2f, -1.5f),
+		glm::vec3(-1.3f, 1.0f, -1.5f)
+	};
+	//模型矩阵
+	for (int i = 0; i < 10; i++)
+	{
+		glm::mat4 model;
+		model = glm::translate(model, cubePositions[i]);
+		GLfloat angle = 20.0f *i;
+		model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+		glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+	
 
 	//光源
 	bt_shader_lamp->Use();
@@ -204,5 +234,5 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	glBindVertexArray(VAOs[LightVAO]);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
 }
