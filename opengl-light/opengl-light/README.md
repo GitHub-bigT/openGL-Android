@@ -1,5 +1,13 @@
 # 光照
 
+* 多光源
+<div>
+  <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/more-light.png" width="300px"/>
+</div>
+<div>
+  <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/more-light-all.png" width="300px"/>
+</div>
+
 * （环境 + 漫反射 + 镜面）* 聚光 * 衰弱
 <div>
   <img src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-light/opengl-light/images/light-spotlight.png" width="300px"/>
