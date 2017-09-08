@@ -145,7 +145,7 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
 	//光源位置
-	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 5.0f);
+	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 10.0f);
 
 	//立方体
 	bt_shader->Use();
@@ -159,30 +159,65 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	//观察向量
 	glUniform3f(glGetUniformLocation(bt_shader->program, "viewPos"), camera->Position.x, camera->Position.y, camera->Position.z);
-	//纹理单元
+	//材质
 	glUniform1i(glGetUniformLocation(bt_shader->program, "material.diffuse"), 5);
 	glUniform1i(glGetUniformLocation(bt_shader->program, "material.specular"), 11);
 	glUniform1i(glGetUniformLocation(bt_shader->program, "material.emission"), 16);
 	glUniform1f(glGetUniformLocation(bt_shader->program, "material.shininess"), 32.0f);
-	//光源结构体
+	glm::vec3 pointLightLocation[] = {
+		glm::vec3(0.7f, 0.2f, 2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f, 2.0f, -12.0f),
+		glm::vec3(0.0f, 0.0f, -3.0f)
+	};
 	//点光源
-	//glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), lightPos.x, lightPos.y, lightPos.z);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[0].position"), pointLightLocation[0].x, pointLightLocation[0].y, pointLightLocation[0].z);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[0].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[0].linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[0].quadratic"), 0.032f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[0].ambient"), 1.0f,0.0f,0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[0].diffuse"), 1.0f, 0.0f, 0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
+	//点光源2
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[1].position"), pointLightLocation[1].x, pointLightLocation[1].y, pointLightLocation[1].z);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[1].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[1].linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[1].quadratic"), 0.032f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[1].ambient"), 0.0f, 0.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[1].diffuse"), 0.0f, 0.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[1].specular"), 1.0f, 1.0f, 1.0f);
+	//点光源3
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[2].position"), pointLightLocation[2].x, pointLightLocation[2].y, pointLightLocation[2].z);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[2].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[2].linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[2].quadratic"), 0.032f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[2].ambient"), 0.0f, 0.0f, 0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[2].diffuse"), 0.0f, 0.0f, 0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[2].specular"), 1.0f, 1.0f, 1.0f);
+	//点光源4
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[3].position"), pointLightLocation[3].x, pointLightLocation[3].y, pointLightLocation[3].z);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[3].constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[3].linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "pointLights[3].quadratic"), 0.032f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[3].ambient"), 0.0f, 1.0f, 0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[3].diffuse"), 0.0f, 1.0f, 0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "pointLights[3].specular"), 1.0f, 1.0f, 1.0f);
 	//定向光
-	//glUniform3f(glGetUniformLocation(bt_shader->program,"light.direction"),-0.2f,-1.0f,-0.3f);
+	glUniform3f(glGetUniformLocation(bt_shader->program,"dirLight.direction"),100.0f,0.0f,0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "dirLight.specular"), 0.2f, 0.2f, 0.2f);
 	//聚光
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.position"), camera->Position.x, camera->Position.y, camera->Position.z);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.direction"), camera->Front.x, camera->Front.y, camera->Front.z);
-	//不直接传角度 而是传cos的原因：节省开销 http://learnopengl-cn.readthedocs.io/zh/latest/02%20Lighting/05%20Light%20casters/
-	glUniform1f(glGetUniformLocation(bt_shader->program,"light.cutoff"),glm::cos(glm::radians(12.5f)));
-	glUniform1f(glGetUniformLocation(bt_shader->program, "light.othercutoff"), glm::cos(glm::radians(17.5f)));
-
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.ambient"), 0.2f, 0.2f, 0.2f);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.diffuse"), 0.5f, 0.5f, 0.5f);
-	glUniform3f(glGetUniformLocation(bt_shader->program, "light.specular"), 3.0f, 3.0f, 3.0f);
-	//衰减值
-	glUniform1f(glGetUniformLocation(bt_shader->program,"light.constant"),1.0f);
-	glUniform1f(glGetUniformLocation(bt_shader->program, "light.linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(bt_shader->program, "light.quadratic"), 0.032f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "spotLight.position"), camera->Position.x, camera->Position.y, camera->Position.z);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "spotLight.direction"), camera->Front.x, camera->Front.y, camera->Front.z);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(bt_shader->program, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "spotLight.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "spotLight.linear"), 0.09);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "spotLight.quadratic"), 0.032);
+	glUniform1f(glGetUniformLocation(bt_shader->program, "spotLight.cutOff"), glm::cos(glm::radians(5.5f)));
+	glUniform1f(glGetUniformLocation(bt_shader->program, "spotLight.outerCutOff"), glm::cos(glm::radians(7.5f)));
 
 	//材质结构体
 	//纹理单元  激活 绑定 传值
@@ -223,16 +258,21 @@ void BTBind::drawTriangle(BTShader *bt_shader, BTShader *bt_shader_lamp, glm::ma
 
 	//光源
 	bt_shader_lamp->Use();
-	//模型矩阵
-	glm::mat4 model_light;
-	model_light = glm::translate(model_light, lightPos);
-	model_light = glm::scale(model_light,glm::vec3(0.2f));
-	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "model"), 1, GL_FALSE, glm::value_ptr(model_light));
 	//视图矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 	//投影矩阵
 	glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	glBindVertexArray(VAOs[LightVAO]);
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	//模型矩阵
+	for (int i = 0; i < 4; i++)
+	{
+		glm::mat4 model;
+		model = glm::translate(model, pointLightLocation[i]);
+		model = glm::scale(model, glm::vec3(0.2f));
+		glUniformMatrix4fv(glGetUniformLocation(bt_shader_lamp->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 }

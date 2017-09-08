@@ -7,83 +7,145 @@ struct Material {
 	float shininess;
 };
 
-struct Light {
-	//点光源
-	//vec3 position;
-	//定向光：不需要position 无限远
-	//vec3 direction;
-	//聚光
-	vec3 position;
+//平行光、定向光
+struct DirLight{
 	vec3 direction;
-	float cutoff; //内切光角
-	float othercutoff; //外切光角
 
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
-	//衰减值
+};
+//点光源
+struct PointLight{
+	vec3 position;
+
 	float constant;
 	float linear;
 	float quadratic;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+//聚光
+struct SpotLight{
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+  
+    float constant;
+    float linear;
+    float quadratic;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;   
 };
 
-out vec4 oColor;
-//片段的位置向量
+out vec4 color;
 in vec3 fragPos;
 in vec2 TexCoords;
 in vec3 Normal;
-//观察向量
 uniform vec3 viewPos;
 uniform Material material;
-uniform Light light;
+
+#define NR_POINT_LIGHTS 4
+uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform SpotLight spotLight;
+uniform DirLight dirLight;
+
+//平行光、定向光
+vec3 CalcDirLight(DirLight light , vec3 normal , vec3 viewDir);
+//点光源
+vec3 CalcPointLight(PointLight light , vec3 normal, vec3 fragPos , vec3 viewDir);
+//聚光
+vec3 CalcSpotLight(SpotLight light , vec3 normal, vec3 fragPos , vec3 viewDir);
+
+//平行光、定向光
+vec3 CalcDirLight(DirLight light , vec3 normal , vec3 viewDir){
+	vec3 lightDir = normalize(-light.direction);
+	//漫反射强度
+	float diff = max(dot(lightDir , normal),0.0f);
+	//镜面反射强度
+	vec3 reflectDir = reflect(-lightDir , normal);
+	float spec = pow(max(dot(viewDir , reflectDir) , 0.0f) , material.shininess);
+	//合并
+	vec3 ambient = light.ambient * vec3(texture(material.diffuse,TexCoords));
+	vec3 diffuse = light.diffuse * vec3(texture(material.diffuse,TexCoords));
+	vec3 specular = light.specular * vec3(texture(material.specular , TexCoords));
+
+	return (ambient + diffuse + specular);
+}
+
+//点光源
+vec3 CalcPointLight(PointLight light , vec3 normal , vec3 viewDir , vec3 fragPos){
+	vec3 lightDir = normalize(light.position - fragPos);
+	//计算漫反射强度
+	float diff = max(dot(lightDir,normal),0.0f);
+	//计算镜面反射强度
+	vec3 reflectDir = reflect(-lightDir , normal);
+	float spec = pow(max(dot(reflectDir , viewDir),0.0f),material.shininess);
+	//计算衰减
+	float distance = length(light.position - fragPos);
+	float attenuation = 1.0f/(light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	//合并
+	vec3 ambient = light.ambient * vec3(texture(material.diffuse,TexCoords));
+	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse,TexCoords));
+	vec3 specular = light.specular * spec * vec3(texture(material.specular,TexCoords));
+
+	ambient *= attenuation;
+	diffuse *= attenuation;
+	specular *= attenuation;
+
+	return (ambient + diffuse + specular);
+}
+
+//聚光
+vec3 CalcSpotLight(SpotLight light , vec3 normal, vec3 viewDir , vec3 fragPos){
+	vec3 lightDir = normalize(light.position - fragPos);
+	//计算漫反射强度
+	float diff = max(dot(lightDir,normal),0.0f);
+	//计算镜面反射强度
+	vec3 reflectDir = reflect(-lightDir , normal);
+	float spec = pow(max(dot(reflectDir , viewDir),0.0f),material.shininess);
+	//计算衰减
+	float distance = length(light.position - fragPos);
+	float attenuation = 1.0f/(light.constant + light.linear * distance + light.quadratic * (distance * distance));  
+    //平滑
+    float theta = dot(lightDir, normalize(-light.direction)); 
+    float epsilon = light.cutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    //合并
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    ambient *= attenuation * intensity;
+    diffuse *= attenuation * intensity;
+    specular *= attenuation * intensity;
+	return (ambient + diffuse + specular);
+}
 
 void main(){
-	vec3 lightDir = normalize(light.position - fragPos);
-	//计算theta角 和 phi角进行比较 看是否在聚光内部
-	float theta = dot(lightDir,normalize(-light.direction));
-	float epsilon = light.cutoff - light.othercutoff;
-	//clamp函数 将第一个参数固定在0-1之间 保证亮度值不会超出[0,1]以外
-	//超出0，1之外就是黑色
-	float intensity = clamp((theta - light.othercutoff) / epsilon , 0.0f , 1.0f);
-	//float intensity = (theta - light.othercutoff) / epsilon ;
+	//一些必要的属性
+	vec3 norm = normalize(Normal);
+	vec3 viewDir = normalize(viewPos - fragPos);
+	
+	//1.计算平行光照
+	vec3 result = CalcDirLight(dirLight,norm,viewDir);
+	//2.计算点光源光照
+	for(int i = 0 ; i < NR_POINT_LIGHTS ; i++)
+	{
+		result += CalcPointLight(pointLights[i],norm,viewDir,fragPos);
+	}
+	//3.计算聚光光照
+	result += CalcSpotLight(spotLight,norm,viewDir,fragPos);
 
-	//if(theta > light.cutoff){
-		//执行光照计算
-		//计算衰减值
-		//float distance = length(light.position - fragPos);
-		//float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-
-		//(世界空间中计算冯氏光照)
-		//环境光强度
-		vec3 ambient = light.ambient * vec3(texture(material.diffuse,TexCoords));
-
-		//漫反射
-		vec3 norm = normalize(Normal);
-		//light.direction 从光源发出  取反
-		//vec3 lightDir = normalize(-light.direction);
-		float diff = max(dot(norm , lightDir),0.0);
-		vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse , TexCoords));
-		//镜面光照
-		vec3 viewDir = normalize(viewPos - fragPos);
-		vec3 reflectDir = reflect(-lightDir,norm);
-		float spec = pow(max(dot(viewDir,reflectDir),0.0),material.shininess);
-		vec3 specular = light.specular * spec * vec3(texture(material.specular,TexCoords));
-
-		//放射光
-		vec3 emission = vec3(texture(material.emission,TexCoords));
-
-		//ambient *= attenuation;
-		//diffuse *= attenuation;
-		//specular *= attenuation;
-
-		diffuse *= intensity;
-		specular *= intensity;
-
-		vec3 result = ambient + diffuse + specular;
-		oColor = vec4(result,3.0f);
-		//oColor = vec4(-11.0f,-10.0f,-770.0f,1.0f);
+	//float theta = dot(normalize(spotLight.position - fragPos), normalize(-spotLight.direction)); 
+	//if(theta > spotLight.cutOff){
+	//	color = vec4(1.0f,0.0f,0.0f,1.0f);
 	//}
-	//else //否则使用环境光，使得场景不至于完全黑暗
-	//oColor = vec4(light.ambient * vec3(texture(material.diffuse,TexCoords)),1.0f);
-	//oColor = vec4(0.0f,0.0f,0.0f,1.0f);
+	//else
+	//color = vec4(0.0f,1.0f,0.0f,1.0f);
+	color = vec4(result,1.0f);
 }
