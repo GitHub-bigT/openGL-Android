@@ -1,21 +1,30 @@
-﻿Build started 2017/9/8 20:07:49.
+﻿Build started 2017/9/11 16:34:25.
      1>Project "E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\opengl-assimp\opengl-assimp.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\mesh.h(48): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\model.h(25): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\model.h(59): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\model.h(65): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\model.h(78): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\model.h(111): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\model.h(114): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\model.h(139): warning C4018: '<' : signed/unsigned mismatch
      1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(85): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(151): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
      1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(152): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(156): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(153): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
      1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(157): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(159): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(158): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
      1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(160): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(167): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(161): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\github-bigt\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(168): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
        Link:
-         E:\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\Debug\opengl-assimp.exe" /INCREMENTAL /NOLOGO glew32.lib glfw3dll.lib "assimp-vc120-mt.lib" SOIL.lib OpenGL32.lib GLu32.lib GLaux.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\Debug\opengl-assimp.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\Debug\opengl-assimp.lib" /MACHINE:X86 Debug\main.obj
+         E:\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\Debug\opengl-assimp.exe" /INCREMENTAL /NOLOGO glew32.lib glfw3dll.lib "assimp-vc120-mt.lib" OpenGL32.lib GLu32.lib GLaux.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\Debug\opengl-assimp.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\Debug\opengl-assimp.lib" /MACHINE:X86 Debug\main.obj
+         Debug\stb_image_implementation.obj
          opengl-assimp.vcxproj -> E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\Debug\opengl-assimp.exe
      1>Done Building Project "E:\vsprojects\github-bigT\opengl-assimp\opengl-assimp\opengl-assimp\opengl-assimp.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.05
+Time Elapsed 00:00:02.12
