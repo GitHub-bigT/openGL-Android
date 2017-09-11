@@ -33,6 +33,7 @@ private:
 	string directory;
 
 	void loadModel(string path){
+		printf("---------- Assimp:Load Model Start ----------\n");
 		//加载模型到assimp的scene模型中。scene是assimp的根对象
 		Assimp::Importer importer;
 		//aiProcess_Triangulate如果模型不是（不全是）三角形构成，则需要将模型所有的图元形状变换为三角形
@@ -45,26 +46,39 @@ private:
 			cout << "ERROR::ASSIMP::" << importer.GetErrorString() << endl;
 			return;
 		}
+		printf("load scene success.\n");
 		directory = path.substr(0,path.find_last_of('/'));
-
-		printf("scene 中 mesh 的数量为：%d\n", scene->mNumMeshes);
+		printf("directory:%s\n",directory.c_str());
+		//printf("scene 中 mesh 的数量为：%d\n", scene->mNumMeshes);
+		printf("\n==========   start Process node   ===========\n");
 		processNode(scene->mRootNode,scene);
 	}
-
 	//递归函数。处理scene中的所有节点
 	void processNode(aiNode *node , const aiScene *scene){
-		printf("node 中 mesh 的数量为：%d\n",node->mNumMeshes);
-		//printf("node 中 节点 的数量为：%d\n", node->mNumChildren);
-		//处理节点的所有网格
-		for (int i = 0; i < node->mNumMeshes; i++)
+		printf("\n\n\n---------   处理该节点中的网格   ---------\n");
+		printf("该节点含有 -- %d -- 个网格\n", node->mNumMeshes);
+		if (node->mNumMeshes > 0)
 		{
-			aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-			meshes.push_back(processMesh(mesh,scene));
+			printf("开始遍历所有网格\n");
+			//处理节点的所有网格
+			for (int i = 0; i < node->mNumMeshes; i++)
+			{
+				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+				meshes.push_back(processMesh(mesh, scene));
+			}
 		}
-		//遍历所有子节点
-		for (int i = 0; i < node->mNumChildren; i++)
+		
+		printf("---------   处理该节点中的子节点   ---------\n");
+		printf("该节点含有 -- %d -- 个子节点\n", node->mNumChildren);
+		if (node->mNumChildren > 0)
 		{
-			processNode(node->mChildren[i],scene);
+			printf("开始遍历所有子节点\n");
+			//遍历所有子节点
+			for (int i = 0; i < node->mNumChildren; i++)
+			{
+				printf("\n\n子节点::%d\n", i);
+				processNode(node->mChildren[i], scene);
+			}
 		}
 	}
 
@@ -94,6 +108,7 @@ private:
 			if (!mesh->mTextureCoords[0])
 			{
 				glm::vec2 vec;
+//******************************************************************************************88
 				//assimp允许一个模型在一个顶点上有八个不同的坐标
 				vec.x = mesh->mTextureCoords[0][i].x;
 				vec.y = mesh->mTextureCoords[0][i].x;
@@ -117,36 +132,39 @@ private:
 			}
 		}
 		//处理材质
-		
-		printf("材质数量%d\n", mesh->mMaterialIndex);
+
+		//printf("材质数量%d\n", mesh->mMaterialIndex);
 		if (mesh->mMaterialIndex >= 0)
 		{
-			//一个网格只包含了一个材质索引
-			aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-			vector<Texture> diffuseMaps = loadMaterialTextures(material,aiTextureType_DIFFUSE,"texture_diffuse");
-			//在textures的末尾加入diffuseMaps的所有元素
-			textures.insert(textures.end(),diffuseMaps.begin(),diffuseMaps.end());
-			vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_diffuse");
-			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+				//一个网格只包含了一个材质索引
+				aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+				vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+				//在textures的末尾加入diffuseMaps的所有元素
+				textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+				vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_diffuse");
+				textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+			
 		}
 		
 		return Mesh(vertices,indices,textures);
 	}
+
 	vector<Texture> loadMaterialTextures(aiMaterial *material , aiTextureType type,string typeName){
 		vector<Texture> textures;
-		printf("----- %s -----\n",typeName.c_str());
-		printf("纹理数量:%d\n", material->GetTextureCount(type));
+		//printf("----- %s -----\n",typeName.c_str());
+		//printf("纹理数量:%d\n", material->GetTextureCount(type));
 		for (int i = 0; i < material->GetTextureCount(type); i++)
-		{	/*
+		{	
 			aiString str;
 			material->GetTexture(type,i,&str);
-			printf("纹理图片名称：%s\n",str);
-			
+			//printf("纹理图片名称：%s\n",str.C_Str());
 			Texture texture;
 			texture.id = TextureFromFile(str.C_Str(),directory);
 			texture.type = typeName;
 			textures.push_back(texture);
-			*/
+			
 		}
 		return textures;
 	}
@@ -161,7 +179,7 @@ int TextureFromFile(const char* path, const string &direction, bool gamma){
 	glGenTextures(1,&textureId);
 	int width, height, channels;
 	unsigned char* data = stbi_load(fileName.c_str(),&width,&height,&channels,0);
-	printf("颜色通道数量：%d\n", channels);
+	//printf("颜色通道数量：%d\n", channels);
 	if (data)
 	{
 		GLenum format;
