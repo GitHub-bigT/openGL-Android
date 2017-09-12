@@ -38,9 +38,17 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+GLfloat loadTime = 0.0f;
+GLfloat startTime = 0.0f;
+GLfloat endTime = 0.0f;
+GLint flag = 1;
+
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
+	printf("===== start project =====\n");
+	startTime = glfwGetTime();
+	printf("项目运行的开始时间：%f\n",startTime);
 	// Init GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -73,7 +81,7 @@ int main()
 	Shader ourShader("v_shader.vert", "f_shader.frag");
 
 	// Load models
-	Model ourModel("../../../3dModel/nanosuit/nanosuit.obj");
+	Model ourModel("../../../3dModel/ball/ball1.obj");
 
 	// Draw in wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -104,10 +112,22 @@ int main()
 
 		// Draw the loaded model
 		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
+		//model = glm::rotate(model, glm::radians(glfwGetTime()) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
+		GLfloat angle = glfwGetTime() * 20;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// It's a bit too big for our scene, so scale it down
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		ourModel.Draw(ourShader);
+		if (flag == 1)
+		{
+			endTime = glfwGetTime();
+			printf("项目结束时间：%f\n", endTime);
+			loadTime = endTime - startTime;
+			printf("加载model消耗的时间：%f\n", loadTime);
+		}
+		flag++;
 
 		// Swap the buffers
 		glfwSwapBuffers(window);

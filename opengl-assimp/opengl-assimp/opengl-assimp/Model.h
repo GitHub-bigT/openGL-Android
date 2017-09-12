@@ -12,6 +12,7 @@ using namespace std;
 #include "Mesh.h"
 #include <../stdImage/stb_image.h>
 
+vector<Texture> textures_loaded;//将所有加载过的纹理存储在另一个vector中
 int TextureFromFile(const char* path , const string &direction , bool gamma = false);
 
 class Model{
@@ -46,40 +47,47 @@ private:
 			cout << "ERROR::ASSIMP::" << importer.GetErrorString() << endl;
 			return;
 		}
+		//检查scene中包含的数据
+		printf("\n模型总共有 %d 个mNumMeshes\n", scene->mNumMeshes);
+		printf("\n模型总共有 %d 个mNumMaterials\n", scene->mNumMaterials);
+		printf("\n模型总共有 %d 个mNumTextures\n", scene->mNumTextures);
+		printf("\n模型总共有 %d 个mNumLights\n", scene->mNumLights);
+		printf("\n模型总共有 %d 个mNumCameras\n", scene->mNumCameras);
+		printf("\n模型总共有 %d 个mNumAnimations\n", scene->mNumAnimations);
+
 		printf("load scene success.\n");
 		directory = path.substr(0,path.find_last_of('/'));
 		printf("directory:%s\n",directory.c_str());
 		//printf("scene 中 mesh 的数量为：%d\n", scene->mNumMeshes);
 		printf("\n==========   start Process node   ===========\n");
+		
+
 		processNode(scene->mRootNode,scene);
+		
+		printf("遍历完所有结点，meshes数组中一共有 %d 个元素\n", meshes.size());
+
+		for (int i = 0; i < meshes.size(); i++)
+		{
+			printf("\n第 %d 个网格：\n", i);
+			printf("含有的顶点个数为%d：\n", meshes[i].vertices.size());
+			printf("含有的索引个数为%d：\n", meshes[i].indices.size());
+			printf("含有的材质个数为%d：\n", meshes[i].textures.size());
+		}
 	}
 	//递归函数。处理scene中的所有节点
 	void processNode(aiNode *node , const aiScene *scene){
-		printf("\n\n\n---------   处理该节点中的网格   ---------\n");
-		printf("该节点含有 -- %d -- 个网格\n", node->mNumMeshes);
-		if (node->mNumMeshes > 0)
-		{
-			printf("开始遍历所有网格\n");
 			//处理节点的所有网格
 			for (int i = 0; i < node->mNumMeshes; i++)
 			{
 				aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 				meshes.push_back(processMesh(mesh, scene));
+				
 			}
-		}
-		
-		printf("---------   处理该节点中的子节点   ---------\n");
-		printf("该节点含有 -- %d -- 个子节点\n", node->mNumChildren);
-		if (node->mNumChildren > 0)
-		{
-			printf("开始遍历所有子节点\n");
 			//遍历所有子节点
 			for (int i = 0; i < node->mNumChildren; i++)
 			{
-				printf("\n\n子节点::%d\n", i);
 				processNode(node->mChildren[i], scene);
 			}
-		}
 	}
 
 	//将assimp中的数据解析到Mesh类中
@@ -98,6 +106,7 @@ private:
 			posVector.y = mesh->mVertices[i].y;
 			posVector.z = mesh->mVertices[i].z;
 			vertex.Position = posVector;
+//******************************************************************************************88
 			//法线
 			glm::vec3 norVector;
 			norVector.x = mesh->mNormals[i].x;
@@ -105,13 +114,13 @@ private:
 			norVector.z = mesh->mNormals[i].z;
 			vertex.Normal = norVector;
 			//纹理坐标
-			if (!mesh->mTextureCoords[0])
+			if (mesh->mTextureCoords[0])
 			{
 				glm::vec2 vec;
 //******************************************************************************************88
 				//assimp允许一个模型在一个顶点上有八个不同的坐标
 				vec.x = mesh->mTextureCoords[0][i].x;
-				vec.y = mesh->mTextureCoords[0][i].x;
+				vec.y = mesh->mTextureCoords[0][i].y;
 				vertex.TexCoords = vec;
 			}
 			else
@@ -131,44 +140,69 @@ private:
 				indices.push_back(face.mIndices[j]);
 			}
 		}
+		/*
 		//处理材质
-
-		//printf("材质数量%d\n", mesh->mMaterialIndex);
 		if (mesh->mMaterialIndex >= 0)
 		{
-
 				//一个网格只包含了一个材质索引
 				aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+				printf("\n----- -------------------------------------------- -----\n");
+				printf("----- 漫反射：%d -----\n", material->GetTextureCount(aiTextureType_DIFFUSE));
+				printf("----- 镜面：%d -----\n", material->GetTextureCount(aiTextureType_SPECULAR));
+				printf("----- 环境：%d -----\n", material->GetTextureCount(aiTextureType_AMBIENT));
+				printf("----- 放射：%d -----\n", material->GetTextureCount(aiTextureType_EMISSIVE));
+				printf("----- 法线：%d -----\n", material->GetTextureCount(aiTextureType_NORMALS));
+				printf("----- 移位、替换：%d -----\n", material->GetTextureCount(aiTextureType_DISPLACEMENT));//移位、替换
+				printf("----- 光照：%d -----\n", material->GetTextureCount(aiTextureType_LIGHTMAP));//光照
+				printf("----- 高？：%d -----\n", material->GetTextureCount(aiTextureType_HEIGHT));
+				printf("----- 不透明度：%d -----\n", material->GetTextureCount(aiTextureType_OPACITY));//不透明度
+				printf("----- shininess：%d -----\n", material->GetTextureCount(aiTextureType_SHININESS));//shininess
+				printf("----- 反射：%d -----\n", material->GetTextureCount(aiTextureType_REFLECTION));
+				printf("----- 未知：%d -----\n", material->GetTextureCount(aiTextureType_UNKNOWN));
+				printf("----- NONE：%d -----\n", material->GetTextureCount(aiTextureType_NONE));
+				printf("\n----- -------------------------------------------- -----\n");
 				vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 				//在textures的末尾加入diffuseMaps的所有元素
 				textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 				vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_diffuse");
 				textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-			
 		}
-		
+		*/
 		return Mesh(vertices,indices,textures);
 	}
 
 	vector<Texture> loadMaterialTextures(aiMaterial *material , aiTextureType type,string typeName){
 		vector<Texture> textures;
 		//printf("----- %s -----\n",typeName.c_str());
-		//printf("纹理数量:%d\n", material->GetTextureCount(type));
+		
 		for (int i = 0; i < material->GetTextureCount(type); i++)
 		{	
-			aiString str;
-			material->GetTexture(type,i,&str);
-			//printf("纹理图片名称：%s\n",str.C_Str());
-			Texture texture;
-			texture.id = TextureFromFile(str.C_Str(),directory);
-			texture.type = typeName;
-			textures.push_back(texture);
-			
+			aiString texPath;
+			material->GetTexture(type, i, &texPath);
+			bool skip = false;
+			for (int j = 0; j < textures_loaded.size(); j++)
+			{
+				//strcmp 比较字符串
+				if (std::strcmp(textures_loaded[j].path.C_Str(), texPath.C_Str()) == 0)
+				{
+					textures.push_back(textures_loaded[j]);
+					skip = true;
+					break;
+				}
+			}
+			if (!skip)
+			{
+				//printf("纹理图片名称：%s\n",str.C_Str());
+				Texture texture;
+				texture.id = TextureFromFile(texPath.C_Str(), directory);
+				texture.type = typeName;
+				texture.path = texPath;
+				textures.push_back(texture);
+				textures_loaded.push_back(texture);
+			}
 		}
 		return textures;
 	}
-
 };
 //工具函数  加载一个纹理 并返回id
 int TextureFromFile(const char* path, const string &direction, bool gamma){

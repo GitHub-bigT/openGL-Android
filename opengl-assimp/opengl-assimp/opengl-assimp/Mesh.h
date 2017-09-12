@@ -12,6 +12,7 @@ using namespace std;
 #include <../glm/gtc/matrix_transform.hpp>
 
 #include "BTShader.h"
+#include <../stdImage/stb_image.h>
 
 struct Vertex{
 	glm::vec3 Position;
@@ -21,12 +22,14 @@ struct Vertex{
 struct Texture{
 	unsigned int id;
 	string type;
+	aiString path;//存储纹理的路径用于和其他纹理进行比较
 };
 enum Attrib_ID{
 	vPosition = 1,
 	vNormal = 2,
 	vTexCoords = 3
 };
+unsigned int textureId;
 
 class Mesh{
 public:
@@ -45,6 +48,7 @@ public:
 		// diffuseNum++  先返回本身，在递增。 所以初始化为1
 		unsigned int diffuseNum = 1;
 		unsigned int specularNum = 1;
+		/*
 		for (int i = 0; i < textures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
@@ -65,7 +69,14 @@ public:
 			glUniform1i(glGetUniformLocation(shader.program, (name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D,textures[i].id);
 		}
+		*/
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(glGetUniformLocation(shader.program, "texture_diffuse1"),0);
+		glBindTexture(GL_TEXTURE_2D,textureId);
 		
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES,indices.size(),GL_UNSIGNED_INT,0);
 		glBindVertexArray(0);
@@ -76,6 +87,17 @@ private:
 	unsigned int VAO, VBO, EBO;
 	//初始化缓存
 	void setupMesh(){
+		
+		glGenTextures(1, &textureId);
+		int width, height, channels;
+		unsigned char* data = stbi_load("123121358625296297.jpg", &width, &height, &channels, 0);
+		printf("颜色通道数量：%d\n", channels);
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		stbi_image_free(data);
 		glGenVertexArrays(1,&VAO);
 		glGenBuffers(1,&VBO);
 		glGenBuffers(1,&EBO);
