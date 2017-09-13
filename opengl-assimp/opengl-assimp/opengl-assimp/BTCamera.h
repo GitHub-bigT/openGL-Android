@@ -111,8 +111,6 @@ public:
 			this->Zoom = 1.0f;
 		}
 	}
-
-private:
 	//用欧拉角计算摄像机向量
 	void updateCameraVectors(){
 		glm::vec3 front;
@@ -124,6 +122,8 @@ private:
 		this->Rigth = glm::normalize(glm::cross(this->WorldUp, this->Front));
 		this->Up = glm::normalize(glm::cross(this->Rigth, this->Front));
 	}
+private:
+
 };
 
 #endif

@@ -30,7 +30,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void Do_Movement();
 
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -43,6 +43,8 @@ GLfloat startTime = 0.0f;
 GLfloat endTime = 0.0f;
 GLint flag = 1;
 
+//×óÓÒÐý×ª
+GLfloat angle = 0.0f;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
@@ -61,8 +63,8 @@ int main()
 
 	// Set the required callback functions
 	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	//glfwSetCursorPosCallback(window, mouse_callback);
+	//glfwSetScrollCallback(window, scroll_callback);
 
 	// Options
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -105,7 +107,7 @@ int main()
 		ourShader.Use();
 
 		// Transformation matrices
-		glm::mat4 projection = glm::perspective(camera.Zoom, 800.0f / 600.0f, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -113,11 +115,11 @@ int main()
 		// Draw the loaded model
 		glm::mat4 model;
 		//model = glm::rotate(model, glm::radians(glfwGetTime()) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
-		GLfloat angle = glfwGetTime() * 20;
+		
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::translate(model, glm::vec3(0.0f, 1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// It's a bit too big for our scene, so scale it down
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));	// It's a bit too big for our scene, so scale it down
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		ourModel.Draw(ourShader);
 		if (flag == 1)
@@ -139,18 +141,61 @@ int main()
 
 #pragma region "User input"
 
+
+GLfloat reduce = 0.1f;
 // Moves/alters the camera positions based on user input
 void Do_Movement()
 {
 	// Camera controls
-	if (keys[GLFW_KEY_W])
-		camera.ProcessKeyBoard(FORWARD, deltaTime);
-	if (keys[GLFW_KEY_S])
-		camera.ProcessKeyBoard(BACKWARD, deltaTime);
-	if (keys[GLFW_KEY_A])
-		camera.ProcessKeyBoard(LEFT, deltaTime);
+
+	//if (keys[GLFW_KEY_W])
+		//camera.ProcessKeyBoard(FORWARD, deltaTime);
+	//if (keys[GLFW_KEY_S])
+		//camera.ProcessKeyBoard(BACKWARD, deltaTime);
+		if (keys[GLFW_KEY_A])
+			//camera.ProcessKeyBoard(LEFT, deltaTime);
+		{
+			//angle += reduce;
+			camera.Yaw += reduce;
+		}
 	if (keys[GLFW_KEY_D])
-		camera.ProcessKeyBoard(RIGHT, deltaTime);
+		//camera.ProcessKeyBoard(RIGHT, deltaTime);
+	{
+		//angle -= reduce
+			camera.Yaw -= reduce;
+	}
+	
+
+	if (keys[GLFW_KEY_W]){
+		camera.Pitch -= reduce;
+	}
+	if (keys[GLFW_KEY_S]){
+		camera.Pitch += reduce;
+	}
+	if (camera.Pitch >= 89.0f)
+	{
+		camera.Pitch = 89.0f;
+	}
+	if (camera.Pitch <= -89.0f)
+	{
+		camera.Pitch = -89.0f;
+	}
+	camera.updateCameraVectors();
+	if (keys[GLFW_KEY_Q]){
+		camera.Zoom += 0.01f;
+	}
+	if (keys[GLFW_KEY_E]){
+		camera.Zoom -= 0.01f;
+	}
+	if (camera.Zoom >= 45.0f)
+	{
+		camera.Zoom = 45.0f;
+	}
+	if (camera.Zoom <= 1.0f)
+	{
+		camera.Zoom = 1.0f;
+	}
+	printf("Zoom::%f\n", camera.Zoom);
 }
 
 // Is called whenever a key is pressed/released via GLFW
@@ -163,6 +208,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)
 		keys[key] = false;
+
+
+
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
