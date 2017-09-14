@@ -119,7 +119,7 @@ int main()
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::translate(model, glm::vec3(0.0f, 1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));	// It's a bit too big for our scene, so scale it down
+		model = glm::scale(model, glm::vec3(20.0f, 20.0f, 20.0f));	// It's a bit too big for our scene, so scale it down
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		ourModel.Draw(ourShader);
 		if (flag == 1)
