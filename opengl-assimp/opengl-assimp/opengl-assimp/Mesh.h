@@ -90,7 +90,7 @@ private:
 		
 		glGenTextures(1, &textureId);
 		int width, height, channels;
-		unsigned char* data = stbi_load("quanjing.jpg", &width, &height, &channels, 0);
+		unsigned char* data = stbi_load("earth.bmp", &width, &height, &channels, 0);
 		printf("颜色通道数量：%d\n", channels);
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
