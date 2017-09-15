@@ -1,3 +1,4 @@
+# 录下的gif图感觉好卡  - -..
 * 全景图
 <div>
   <image src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-assimp/opengl-assimp/images/panoramic.gif" />
