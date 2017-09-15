@@ -5,6 +5,11 @@
 
 * 全景图
 
+* 地球
+<div>
+  <image src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-assimp/opengl-assimp/images/earth.gif" />
+</div>
+
 * 直升机
 <div>
   <image src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-assimp/opengl-assimp/images/fly.png" />
