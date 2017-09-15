@@ -44,7 +44,9 @@ GLfloat endTime = 0.0f;
 GLint flag = 1;
 
 //左右旋转
-GLfloat angle = 0.0f;
+GLfloat angleH = 0.0f;
+//上下旋转
+GLfloat angleV = 0.0f;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
@@ -83,7 +85,8 @@ int main()
 	Shader ourShader("v_shader.vert", "f_shader.frag");
 
 	// Load models
-	Model ourModel("../../../3dModel/ball/ball1.obj");
+	//Model ourModel("../../../3dModel/ball/ball1.obj");
+	Model ourModel("../../../3dModel/ball2.obj");
 
 	// Draw in wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -116,10 +119,11 @@ int main()
 		glm::mat4 model;
 		//model = glm::rotate(model, glm::radians(glfwGetTime()) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
 		
-		model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(angleH), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(angleV), glm::vec3(1.0f, 0.0f, 0.0f));
 		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::translate(model, glm::vec3(0.0f, 1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(20.0f, 20.0f, 20.0f));	// It's a bit too big for our scene, so scale it down
+		//model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f)); // Translate it down a bit so it's at the center of the scene
+		//model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// It's a bit too big for our scene, so scale it down
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		ourModel.Draw(ourShader);
 		if (flag == 1)
@@ -148,30 +152,36 @@ void Do_Movement()
 {
 	// Camera controls
 
-	//if (keys[GLFW_KEY_W])
-		//camera.ProcessKeyBoard(FORWARD, deltaTime);
-	//if (keys[GLFW_KEY_S])
-		//camera.ProcessKeyBoard(BACKWARD, deltaTime);
-		if (keys[GLFW_KEY_A])
-			//camera.ProcessKeyBoard(LEFT, deltaTime);
-		{
-			//angle += reduce;
-			camera.Yaw += reduce;
-		}
+	if (keys[GLFW_KEY_W]){
+		camera.ProcessKeyBoard(FORWARD, deltaTime);
+	}
+	if (keys[GLFW_KEY_S]){
+		camera.ProcessKeyBoard(BACKWARD, deltaTime);
+	}
+		
+	if (keys[GLFW_KEY_A])
+		//camera.ProcessKeyBoard(LEFT, deltaTime);
+	{
+		angleH += reduce;
+		//camera.Yaw += reduce;
+	}
 	if (keys[GLFW_KEY_D])
 		//camera.ProcessKeyBoard(RIGHT, deltaTime);
 	{
-		//angle -= reduce
-			camera.Yaw -= reduce;
+		angleH -= reduce;
+		//camera.Yaw -= reduce;
 	}
 	
 
-	if (keys[GLFW_KEY_W]){
-		camera.Pitch -= reduce;
+	if (keys[GLFW_KEY_Q]){
+		//camera.Pitch -= reduce;
+		angleV += reduce;
 	}
-	if (keys[GLFW_KEY_S]){
-		camera.Pitch += reduce;
+	if (keys[GLFW_KEY_E]){
+		//camera.Pitch += reduce;
+		angleV -= reduce;
 	}
+	/*
 	if (camera.Pitch >= 89.0f)
 	{
 		camera.Pitch = 89.0f;
@@ -180,22 +190,8 @@ void Do_Movement()
 	{
 		camera.Pitch = -89.0f;
 	}
+	*/
 	camera.updateCameraVectors();
-	if (keys[GLFW_KEY_Q]){
-		camera.Zoom += 0.01f;
-	}
-	if (keys[GLFW_KEY_E]){
-		camera.Zoom -= 0.01f;
-	}
-	if (camera.Zoom >= 45.0f)
-	{
-		camera.Zoom = 45.0f;
-	}
-	if (camera.Zoom <= 1.0f)
-	{
-		camera.Zoom = 1.0f;
-	}
-	printf("Zoom::%f\n", camera.Zoom);
 }
 
 // Is called whenever a key is pressed/released via GLFW

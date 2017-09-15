@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\vsprojects\github-bigT\3rd\stdImage;E:\vsprojects\github-bigT\3rd\glm;E:\vsprojects\github-bigT\3rd\glfw-3.2.1.bin.WIN32\include\GLFW;E:\vsprojects\github-bigT\3rd\glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\vsprojects\github-bigT\3rd\glfw-3.2.1.bin.WIN32\lib-vc2013;E:\vsprojects\github-bigT\3rd\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\vsprojects\git-opengl\3rd\stdImage;E:\vsprojects\git-opengl\3rd\glm;E:\vsprojects\git-opengl\3rd\glfw-3.2.1.bin.WIN32\include\GLFW;E:\vsprojects\git-opengl\3rd\glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\vsprojects\git-opengl\3rd\glfw-3.2.1.bin.WIN32\lib-vc2013;E:\vsprojects\git-opengl\3rd\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

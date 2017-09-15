@@ -19,7 +19,7 @@ enum  Camera_Movement
 const GLfloat YAW = -90.0f;
 const GLfloat PITCH = 0.0f;
 
-const GLfloat SPEED = 3.0f;
+const GLfloat SPEED = 20.0f;
 const GLfloat SENSITIVTY = 0.15f;
 const GLfloat ZOOM = 45.0F;
 
@@ -41,7 +41,7 @@ public:
 	GLfloat Zoom;
 
 	//构造函数。初始化列表
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : WorldUp(0.0f, 1.0f, 0.0f), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM){
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : WorldUp(0.0f, 1.0f, 0.0f), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM){
 		this->Position = position;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
