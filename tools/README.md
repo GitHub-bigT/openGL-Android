@@ -1,5 +1,5 @@
 # tool function summary
-## 打印opengl es相关信息
+## printf opengl es infos
 
 ```
 static void printGLString(const char *name, GLenum s) {
@@ -12,7 +12,7 @@ static void printGLString(const char *name, GLenum s) {
     printGLString("Extensions", GL_EXTENSIONS);
     printGLString("Shader language version", GL_SHADING_LANGUAGE_VERSION);
 ```
-## 检查shader错误
+## check shader error
 ```
         GLint compiled = 0;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
@@ -32,7 +32,7 @@ static void printGLString(const char *name, GLenum s) {
             }
         }
 ```
-## 检查program错误
+## check program error
 ```
         GLint linkStatus = GL_FALSE;
         glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
