@@ -42,7 +42,7 @@ void main(){
 	glfwSetKeyCallback(window, key_callback);
 
 	//init glew
-	glewExperimental = GL_TRUE;
+	glewExperimental = true;
 	glewInit();
 
 	//init opengl
