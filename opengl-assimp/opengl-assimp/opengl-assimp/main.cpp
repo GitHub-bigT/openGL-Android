@@ -44,7 +44,7 @@ GLfloat endTime = 0.0f;
 GLint flag = 1;
 
 //左右旋转
-GLfloat angleH = 0.0f;
+GLfloat angleH = 0.1f;
 //上下旋转
 GLfloat angleV = 0.0f;
 // The MAIN function, from here we start our application and run our Game loop
@@ -106,10 +106,14 @@ int main()
 		// Clear the colorbuffer
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//面剔除
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
 
 		ourShader.Use();
 
 		// Transformation matrices
+		printf("value:%f\n",angleH);
 		glm::mat4 projection = glm::perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
@@ -172,15 +176,6 @@ void Do_Movement()
 		//camera.Yaw -= reduce;
 	}
 	
-
-	if (keys[GLFW_KEY_Q]){
-		//camera.Pitch -= reduce;
-		angleV += reduce;
-	}
-	if (keys[GLFW_KEY_E]){
-		//camera.Pitch += reduce;
-		angleV -= reduce;
-	}
 	/*
 	if (camera.Pitch >= 89.0f)
 	{
@@ -199,7 +194,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-
+	if (key == GLFW_KEY_N && action == GLFW_PRESS)
+		angleH += 1.0f;
+	if (key == GLFW_KEY_M && action == GLFW_PRESS)
+		angleH -= 1.0f;
 	if (action == GLFW_PRESS)
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)
