@@ -1,4 +1,4 @@
-﻿Build started 2017/9/19 17:36:50.
+﻿Build started 2017/9/19 19:48:56.
      1>Project "E:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\opengl-assimp.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -14,13 +14,13 @@
      1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\model.h(183): warning C4018: '<' : signed/unsigned mismatch
      1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(57): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(101): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(131): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(181): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(132): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(182): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(189): warning C4244: '+=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(183): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(190): warning C4244: '+=' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(193): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(191): warning C4244: '+=' : conversion from 'double' to 'GLfloat', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(194): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\opengl-assimp\main.cpp(195): warning C4244: '=' : conversion from 'double' to 'GLfloat', possible loss of data
        Link:
          E:\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\Debug\opengl-assimp.exe" /INCREMENTAL /NOLOGO glew32.lib glfw3dll.lib "assimp-vc120-mt.lib" OpenGL32.lib GLu32.lib GLaux.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\Debug\opengl-assimp.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\vsprojects\git-opengl\opengl-assimp\opengl-assimp\Debug\opengl-assimp.lib" /MACHINE:X86 Debug\main.obj
          Debug\stb_image_implementation.obj

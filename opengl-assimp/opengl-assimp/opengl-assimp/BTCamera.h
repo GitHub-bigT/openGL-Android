@@ -40,18 +40,21 @@ public:
 	GLfloat MouseSensitivity;
 	GLfloat Zoom;
 
+	GLfloat radius = 0.0f;
+
 	//构造函数。初始化列表
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : WorldUp(0.0f, 1.0f, 0.0f), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM){
 		this->Position = position;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
+		this->radius = position.z;
 		this->updateCameraVectors();
 	}
 
 	//返回视图变换矩阵
 	glm::mat4 getViewMatrix(){
 		//return glm::lookAt(this->Position, this->Position + , this->Up);
-		return glm::lookAt(this->Position, this->Front, this->Up);
+		return glm::lookAt(this->Position, glm::vec3(0.0f,0.0f,0.0f), this->Up);
 	}
 
 	//键盘事件
@@ -60,10 +63,12 @@ public:
 		if (direction == FORWARD)
 		{
 			this->Position += this->Front * velocity;
+			radius += 1.0f * velocity;
 		}
 		if (direction == BACKWARD)
 		{
 			this->Position -= this->Front * velocity;
+			radius -= 1.0f * velocity;
 		}
 		if (direction == LEFT)
 		{
@@ -96,7 +101,13 @@ public:
 			this->Pitch = -89.0f;
 		}
 
+		//float x = cos(glm::radians(this->Pitch)) * cos(glm::radians(this->Yaw));
+		//float y = sin(glm::radians(this->Pitch));
+		//float z = cos(glm::radians(this->Pitch)) * sin(glm::radians(this->Yaw));
+		//glm::vec3 mm = glm::vec3(x,y,z);
+		printf("照相机半径：%f\n",radius);
 		this->updateCameraVectors();
+		this->Position = this->Front * radius;
 	}
 
 	//鼠标滚轮放大缩小
@@ -124,6 +135,7 @@ public:
 		this->Front = glm::normalize(front);
 		this->Rigth = glm::normalize(glm::cross(this->WorldUp, this->Front));
 		this->Up = glm::normalize(glm::cross(this->Rigth, this->Front));
+
 	}
 private:
 

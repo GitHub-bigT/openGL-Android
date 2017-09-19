@@ -110,8 +110,8 @@ int main()
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//ÃæÌÞ³ý
-		//glEnable(GL_CULL_FACE);
-		//glCullFace(GL_FRONT);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
 
 		ourShader.Use();
 		//printf("%f\n",camera.Position.z);
@@ -119,6 +119,7 @@ int main()
 		glm::mat4 projection = glm::perspective(45.0f, 800.0f / 600.0f, 0.1f, 300.0f);
 		glm::mat4 view = camera.getViewMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 		// Draw the loaded model
