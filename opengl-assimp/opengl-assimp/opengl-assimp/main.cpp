@@ -22,18 +22,21 @@
 
 // Properties
 GLuint screenWidth = 800, screenHeight = 600;
+GLfloat xoffset = -90.0f;
+GLfloat yoffset;
 
 // Function prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void Do_Movement();
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 60.0f));
 bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
+bool isClick = false;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
@@ -44,7 +47,7 @@ GLfloat endTime = 0.0f;
 GLint flag = 1;
 
 //左右旋转
-GLfloat angleH = 0.1f;
+GLfloat angleH = 0.0f;
 //上下旋转
 GLfloat angleV = 0.0f;
 // The MAIN function, from here we start our application and run our Game loop
@@ -65,11 +68,11 @@ int main()
 
 	// Set the required callback functions
 	glfwSetKeyCallback(window, key_callback);
-	//glfwSetCursorPosCallback(window, mouse_callback);
-	//glfwSetScrollCallback(window, scroll_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	// Options
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Initialize GLEW to setup the OpenGL Function pointers
 	glewExperimental = GL_TRUE;
@@ -107,27 +110,20 @@ int main()
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//面剔除
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
+		//glEnable(GL_CULL_FACE);
+		//glCullFace(GL_FRONT);
 
 		ourShader.Use();
-
+		//printf("%f\n",camera.Position.z);
 		// Transformation matrices
-		printf("value:%f\n",angleH);
-		glm::mat4 projection = glm::perspective(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(45.0f, 800.0f / 600.0f, 0.1f, 300.0f);
 		glm::mat4 view = camera.getViewMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 		// Draw the loaded model
 		glm::mat4 model;
-		//model = glm::rotate(model, glm::radians(glfwGetTime()) * 100, glm::vec3(0.0f, 1.0f, 0.0f));
-		
-		model = glm::rotate(model, glm::radians(angleH), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(angleV), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		//model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f)); // Translate it down a bit so it's at the center of the scene
-		//model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// It's a bit too big for our scene, so scale it down
+
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		ourModel.Draw(ourShader);
 		if (flag == 1)
@@ -155,37 +151,12 @@ GLfloat reduce = 0.1f;
 void Do_Movement()
 {
 	// Camera controls
-
 	if (keys[GLFW_KEY_W]){
 		camera.ProcessKeyBoard(FORWARD, deltaTime);
 	}
 	if (keys[GLFW_KEY_S]){
 		camera.ProcessKeyBoard(BACKWARD, deltaTime);
 	}
-		
-	if (keys[GLFW_KEY_A])
-		//camera.ProcessKeyBoard(LEFT, deltaTime);
-	{
-		angleH += reduce;
-		//camera.Yaw += reduce;
-	}
-	if (keys[GLFW_KEY_D])
-		//camera.ProcessKeyBoard(RIGHT, deltaTime);
-	{
-		angleH -= reduce;
-		//camera.Yaw -= reduce;
-	}
-	
-	/*
-	if (camera.Pitch >= 89.0f)
-	{
-		camera.Pitch = 89.0f;
-	}
-	if (camera.Pitch <= -89.0f)
-	{
-		camera.Pitch = -89.0f;
-	}
-	*/
 	camera.updateCameraVectors();
 }
 
@@ -194,40 +165,59 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_N && action == GLFW_PRESS)
-		angleH += 1.0f;
-	if (key == GLFW_KEY_M && action == GLFW_PRESS)
-		angleH -= 1.0f;
 	if (action == GLFW_PRESS)
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)
 		keys[key] = false;
 
-
-
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (firstMouse)
+	if (isClick)
 	{
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+			//printf("%f,%f\n",xpos,ypos);
+		}
+		//printf("lastX:%f,lastY:%f\n", lastX, lastY);
+		//printf("xpos:%f,ypos:%f\n", xpos, ypos);
+
+		xoffset += (xpos - lastX)*0.1f;
+		yoffset += (ypos - lastY)*0.1f;
+		printf("%f,%f\n", xoffset, yoffset);
+
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
 
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos;
-
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	camera.ProcessMouseScroll(yoffset);
+	if (action == GLFW_PRESS)
+	{
+		isClick = true;
+		firstMouse = true;
+		switch (button)
+		{
+			case GLFW_MOUSE_BUTTON_RIGHT:
+			printf("Mosue right button clicked!\n");
+			break;
+		default:
+		return;
+		}
+	}
+	else if (action == GLFW_RELEASE){
+		isClick = false;
+	}
+		
+	return;
 }
 
 #pragma endregion

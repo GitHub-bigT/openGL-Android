@@ -50,7 +50,8 @@ public:
 
 	//·µ»ØÊÓÍ¼±ä»»¾ØÕó
 	glm::mat4 getViewMatrix(){
-		return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
+		//return glm::lookAt(this->Position, this->Position + , this->Up);
+		return glm::lookAt(this->Position, this->Front, this->Up);
 	}
 
 	//¼üÅÌÊÂ¼þ
@@ -78,11 +79,13 @@ public:
 
 	//Êó±êÒÆ¶¯ÊÂ¼þ
 	void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset){
-		xoffset *= this->MouseSensitivity;
-		yoffset *= this->MouseSensitivity;
+		//xoffset *= this->MouseSensitivity;
+		//yoffset *= this->MouseSensitivity;
 		//ÄæÊ±ÕëÐý×ªÎªÕý£¬Æ«º½½ÇºÍ¸©Ñö½ÇÓ¦¸Ã-=Æ«ÒÆÁ¿
-		this->Yaw -= xoffset;
-		this->Pitch -= yoffset;
+		this->Yaw = xoffset;
+		this->Pitch = yoffset;
+
+		//printf("Æ«º½½Ç£º%f£¬¸©Ñö½Ç£º%f\n", this->Yaw, this->Pitch);
 
 		if (this->Pitch >= 89.0f)
 		{
