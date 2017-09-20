@@ -22,7 +22,7 @@
 
 // Properties
 GLuint screenWidth = 800, screenHeight = 600;
-GLfloat xoffset = -90.0f;
+GLfloat xoffset = 90.0f;
 GLfloat yoffset;
 
 // Function prototypes
@@ -111,7 +111,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//ÃæÌÞ³ý
 		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
+		glCullFace(GL_BACK);
 
 		ourShader.Use();
 		//printf("%f\n",camera.Position.z);
@@ -187,12 +187,20 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		//printf("lastX:%f,lastY:%f\n", lastX, lastY);
 		//printf("xpos:%f,ypos:%f\n", xpos, ypos);
 
-		xoffset += (xpos - lastX)*0.1f;
-		yoffset += (ypos - lastY)*0.1f;
+		xoffset += (xpos - lastX) * 0.1f;
+		yoffset += (lastY - ypos) * 0.1f;
 		printf("%f,%f\n", xoffset, yoffset);
 
 		lastX = xpos;
 		lastY = ypos;
+		if (yoffset >= 89.0f)
+		{
+			yoffset = 89.0f;
+		}
+		if (yoffset <= -89.0f)
+		{
+			yoffset = -89.0f;
+		}
 		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
 

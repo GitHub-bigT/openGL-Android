@@ -62,24 +62,14 @@ public:
 		GLfloat velocity = this->MovementSpeed * deltaTime;
 		if (direction == FORWARD)
 		{
-			this->Position += this->Front * velocity;
-			radius += 1.0f * velocity;
-		}
-		if (direction == BACKWARD)
-		{
 			this->Position -= this->Front * velocity;
 			radius -= 1.0f * velocity;
 		}
-		if (direction == LEFT)
+		if (direction == BACKWARD)
 		{
-			this->Position -= this->Rigth * velocity;
+			this->Position += this->Front * velocity;
+			radius += 1.0f * velocity;
 		}
-		if (direction == RIGHT)
-		{
-			this->Position += this->Rigth * velocity;
-		}
-		//FPS摄像机  只能在xy平面内
-		//this->Position.y = 0.0f;
 	}
 
 	//鼠标移动事件
@@ -88,24 +78,12 @@ public:
 		//yoffset *= this->MouseSensitivity;
 		//逆时针旋转为正，偏航角和俯仰角应该-=偏移量
 		this->Yaw = xoffset;
-		this->Pitch = yoffset;
+		this->Pitch = -yoffset;
 
 		//printf("偏航角：%f，俯仰角：%f\n", this->Yaw, this->Pitch);
 
-		if (this->Pitch >= 89.0f)
-		{
-			this->Pitch = 89.0f;
-		}
-		if (this->Pitch <= -89.0f)
-		{
-			this->Pitch = -89.0f;
-		}
-
-		//float x = cos(glm::radians(this->Pitch)) * cos(glm::radians(this->Yaw));
-		//float y = sin(glm::radians(this->Pitch));
-		//float z = cos(glm::radians(this->Pitch)) * sin(glm::radians(this->Yaw));
-		//glm::vec3 mm = glm::vec3(x,y,z);
-		printf("照相机半径：%f\n",radius);
+		
+		//printf("照相机半径：%f\n",radius);
 		this->updateCameraVectors();
 		this->Position = this->Front * radius;
 	}
