@@ -34,6 +34,8 @@ public:
 	//欧拉角
 	GLfloat Yaw;
 	GLfloat Pitch;
+	GLfloat yaw = 90.0f;
+	GLfloat pitch;
 
 	//选项
 	GLfloat MovementSpeed;
@@ -44,11 +46,19 @@ public:
 
 	//构造函数。初始化列表
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : WorldUp(0.0f, 1.0f, 0.0f), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM){
-		this->Position = position;
+		//this->Position = position;
 		this->Yaw = yaw;
 		this->Pitch = pitch;
 		this->radius = position.z;
 		this->updateCameraVectors();
+		this->caluPosition();
+	}
+	void caluPosition(){
+		glm::vec3 pos;
+		pos.x = cos(glm::radians(this->pitch)) * cos(glm::radians(this->yaw));
+		pos.y = sin(glm::radians(this->pitch));
+		pos.z = cos(glm::radians(this->pitch)) * sin(glm::radians(this->yaw));
+		this->Position = glm::normalize(pos) * radius;
 	}
 
 	//返回视图变换矩阵
@@ -60,49 +70,46 @@ public:
 	//键盘事件
 	void ProcessKeyBoard(Camera_Movement direction, GLfloat deltaTime){
 		GLfloat velocity = this->MovementSpeed * deltaTime;
-		if (direction == FORWARD)
+		
+		radius = sqrt(Position.x * Position.x + Position.y * Position.y + Position.z * Position.z);
+
+		if (direction == FORWARD) 
 		{
-			this->Position -= this->Front * velocity;
-			radius -= 1.0f * velocity;
+			//23 - 75
+			if (radius <= 23.0f)
+			{
+				radius = 23.0f;
+			}
+			else
+			{
+				radius -= 1.0f * velocity;
+			}
 		}
 		if (direction == BACKWARD)
 		{
-			this->Position += this->Front * velocity;
-			radius += 1.0f * velocity;
+			if (radius >= 75.0f)
+			{
+				radius = 75.0f;
+			}
+			else
+			{
+				radius += 1.0f * velocity;
+			}
 		}
+
+		this->caluPosition();
+
 	}
 
 	//鼠标移动事件
 	void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset){
-		//xoffset *= this->MouseSensitivity;
-		//yoffset *= this->MouseSensitivity;
-		//逆时针旋转为正，偏航角和俯仰角应该-=偏移量
-		this->Yaw = xoffset;
-		this->Pitch = -yoffset;
 
-		//printf("偏航角：%f，俯仰角：%f\n", this->Yaw, this->Pitch);
-
+		this->yaw = xoffset;
+		this->pitch = yoffset;
+		this->caluPosition();
 		
-		//printf("照相机半径：%f\n",radius);
-		this->updateCameraVectors();
-		this->Position = this->Front * radius;
 	}
 
-	//鼠标滚轮放大缩小
-	void ProcessMouseScroll(GLfloat yoffset){
-		if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
-		{
-			this->Zoom -= yoffset;
-		}
-		if (this->Zoom >= 45.0f)
-		{
-			this->Zoom = 45.0f;
-		}
-		if (this->Zoom <= 1.0f)
-		{
-			this->Zoom = 1.0f;
-		}
-	}
 	//用欧拉角计算摄像机向量
 	void updateCameraVectors(){
 		glm::vec3 front;

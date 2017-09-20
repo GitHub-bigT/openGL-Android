@@ -46,10 +46,6 @@ GLfloat startTime = 0.0f;
 GLfloat endTime = 0.0f;
 GLint flag = 1;
 
-//左右旋转
-GLfloat angleH = 0.0f;
-//上下旋转
-GLfloat angleV = 0.0f;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
@@ -119,7 +115,6 @@ int main()
 		glm::mat4 projection = glm::perspective(45.0f, 800.0f / 600.0f, 0.1f, 300.0f);
 		glm::mat4 view = camera.getViewMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
 		glUniformMatrix4fv(glGetUniformLocation(ourShader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 		// Draw the loaded model
@@ -145,7 +140,6 @@ int main()
 }
 
 #pragma region "User input"
-
 
 GLfloat reduce = 0.1f;
 // Moves/alters the camera positions based on user input
@@ -182,14 +176,10 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 			lastX = xpos;
 			lastY = ypos;
 			firstMouse = false;
-			//printf("%f,%f\n",xpos,ypos);
 		}
-		//printf("lastX:%f,lastY:%f\n", lastX, lastY);
-		//printf("xpos:%f,ypos:%f\n", xpos, ypos);
 
 		xoffset += (xpos - lastX) * 0.1f;
-		yoffset += (lastY - ypos) * 0.1f;
-		printf("%f,%f\n", xoffset, yoffset);
+		yoffset += (ypos - lastY) * 0.1f;
 
 		lastX = xpos;
 		lastY = ypos;
