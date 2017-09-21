@@ -7,10 +7,12 @@
 
 #include <../GL/glew.h>
 
+
 class BTShader{
 public:
 	GLuint program;
 	BTShader(const char* vertexPath, const char* fragmentPath){
+
 		std::string vertexCode;
 		std::string fragmentCode;
 		std::ifstream vShaderFile;
