@@ -12,6 +12,7 @@
 //inner
 #include "BTShader.h"
 #include "utils.h"
+#include "Texture.h"
 
 GLfloat screen_width = 800.0f, screen_height = 600.0f;
 GLuint vao, vbo;
@@ -49,7 +50,10 @@ void main(){
 	initVAO();
 	BTShader shader("vertex_shader.vert","fragment_shader.frag");
 
-	printf("%s\n", LoadFile("res/test.bmp"));
+	//printf("%s\n", LoadFile("res/test.bmp"));
+	int width = 0, height = 0;
+	DecodeImageBmp(LoadFile("res/bmp1.bmp"),width,height);
+
 	shader.Use();
 
 	//loop

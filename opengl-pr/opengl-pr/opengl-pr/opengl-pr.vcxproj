@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTShader.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
