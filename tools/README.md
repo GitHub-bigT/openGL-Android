@@ -51,4 +51,3 @@ static void printGLString(const char *name, GLenum s) {
             program = 0;
         }
 ```
-# other
