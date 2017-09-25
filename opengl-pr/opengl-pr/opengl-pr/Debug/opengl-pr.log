@@ -1,10 +1,12 @@
-﻿Build started 2017/9/22 16:02:44.
+﻿Build started 2017/9/22 18:40:11.
      1>Project "E:\vsprojects\git-opengl\opengl-pr\opengl-pr\opengl-pr\opengl-pr.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt /D _CRT_SECURE_NO_WARNINGS main.cpp
          main.cpp
+     1>e:\vsprojects\git-opengl\opengl-pr\opengl-pr\opengl-pr\texture.h(32): warning C4715: 'DecodeImageBmp' : not all control paths return a value
        Link:
          E:\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\vsprojects\git-opengl\opengl-pr\opengl-pr\Debug\opengl-pr.exe" /INCREMENTAL /NOLOGO glew32.lib glfw3dll.lib OpenGL32.lib GLu32.lib GLaux.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\vsprojects\git-opengl\opengl-pr\opengl-pr\Debug\opengl-pr.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\vsprojects\git-opengl\opengl-pr\opengl-pr\Debug\opengl-pr.lib" /MACHINE:X86 Debug\main.obj
+         Debug\std_image.obj
          LINK : E:\vsprojects\git-opengl\opengl-pr\opengl-pr\Debug\opengl-pr.exe not found or not built by the last incremental link; performing full link
          opengl-pr.vcxproj -> E:\vsprojects\git-opengl\opengl-pr\opengl-pr\Debug\opengl-pr.exe
        PostBuildEvent:
@@ -18,4 +20,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.63
+Time Elapsed 00:00:01.88

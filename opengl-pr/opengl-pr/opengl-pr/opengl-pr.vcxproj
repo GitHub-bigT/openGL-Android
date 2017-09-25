@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTShader.h" />
