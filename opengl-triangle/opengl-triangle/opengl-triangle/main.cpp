@@ -12,7 +12,6 @@
 //inner
 #include "BTShader.h"
 #include "utils.h"
-#include "Texture.h"
 #include "stb_image.h"
 
 GLfloat screen_width = 800.0f, screen_height = 600.0f;
@@ -51,17 +50,6 @@ void main(){
 
 	//init opengl
 	glViewport(0, 0, (GLsizei)screen_width, (GLsizei)screen_height);
-
-	//printf("%s\n", LoadFile("res/test.bmp"));
-	
-	//int channels;
-	//imageData = stbi_load("res/bmp1.bmp", &width, &height, &channels, 0);
-	//printf("颜色通道数量：%d\n", channels);
-
-	
-	//imageData = DecodeImageBmp(LoadFile("res/bmp3.bmp"), width, height);
-	//printf("width:%d,height:%d\n", width, height);
-	//printf("image data :%s\n", imageData);
 	
 	initVAO();
 	BTShader shader("vertex_shader.vert","fragment_shader.frag");
@@ -79,9 +67,6 @@ void main(){
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//draw
-		//glActiveTexture(GL_TEXTURE0);
-		//glUniform1i(glGetUniformLocation(shader.program,"sampler1"),0);
-		//glBindTexture(GL_TEXTURE_2D,tbo);
 
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES,0,3);
