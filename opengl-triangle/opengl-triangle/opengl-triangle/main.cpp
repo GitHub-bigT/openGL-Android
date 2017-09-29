@@ -15,7 +15,7 @@
 #include "stb_image.h"
 
 GLfloat screen_width = 800.0f, screen_height = 600.0f;
-GLuint vao, vbo , tbo;
+GLuint vao, vbo , pbo , textureId;
 GLfloat vertexs[] = {
 	0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
 	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
@@ -23,7 +23,7 @@ GLfloat vertexs[] = {
 };
 //texture
 unsigned char* imageData;
-int width = 0, height = 0;
+int width = 0, height = 0, channels = 0;
 
 //function
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);//键盘输入
@@ -50,16 +50,11 @@ void main(){
 
 	//init opengl
 	glViewport(0, 0, (GLsizei)screen_width, (GLsizei)screen_height);
-	
 	initVAO();
 	BTShader shader("vertex_shader.vert","fragment_shader.frag");
-
-	
-
 	shader.Use();
 
 	//loop
-	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();//检查触发事件
@@ -67,7 +62,10 @@ void main(){
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//draw
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
+		glBindTexture(GL_TEXTURE_2D, textureId);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES,0,3);
 		// Swap the buffers
@@ -89,43 +87,43 @@ enum Attr_id
 	vTextureCoords = 2
 };
 void initVAO(){
+	imageData = stbi_load("images/container2.png",&width,&height,&channels,0);
 	//纹理
-	glGenTextures(1, &tbo);
-	glBindTexture(GL_TEXTURE_2D, tbo);
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
 	//设置纹理过滤方式
-
-	//
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	//glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,0);
+	//pbo
+	glGenBuffers(1, &pbo);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER,pbo);
+	glBufferData(GL_PIXEL_UNPACK_BUFFER,width * height * channels , 0 , GL_STATIC_DRAW);
+	unsigned char* ptr = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER,GL_WRITE_ONLY);
+	if (ptr)
+	{
+		memcpy(ptr,imageData,0);
+	}
+	glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 	glGenVertexArrays(1,&vao);
 	glGenBuffers(1,&vbo);
-
 	glBindVertexArray(vao);
-
 	//check VAO bind status
 	GLboolean vao_light_b = glIsVertexArray(vao);
 	printf("vao bind status:%d\n", vao_light_b);
-
 	//vbo
 	glBindBuffer(GL_ARRAY_BUFFER,vbo);
 	//check VBO bind status
 	GLboolean vbo_b = glIsBuffer(vbo);
 	printf("vbo bind status:%d\n", vbo_b);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(vertexs),vertexs,GL_STATIC_DRAW);
-
-	//tbo
-	/*
-	glGenBuffers(1,&tbo);
-	glBindBuffer(GL_TEXTURE_BUFFER,tbo);
-	//check VBO bind status
-	GLboolean tbo_b = glIsBuffer(tbo);
-	printf("tbo bind status:%d\n", tbo_b);
-	glBufferData();
-	*/
-
 	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE,sizeof(GLfloat) * 5 , 0);
 	glVertexAttribPointer(vTextureCoords,2,GL_FLOAT,GL_FALSE,sizeof(GLfloat) * 5 , (const void*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(vPosition);
