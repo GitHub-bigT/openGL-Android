@@ -2,13 +2,13 @@
 #include <math.h>
 
 //GLEW
-#include <GL/glew.h>
+#include <../GL/glew.h>
 //GLFW
-#include <GLFW/glfw3.h>
+#include <../GLFW/glfw3.h>
 //GLM
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtc/type_ptr.hpp>
+#include <../glm/glm.hpp>
+#include <../glm/gtc/matrix_transform.hpp>
+#include <../glm/gtc/type_ptr.hpp>
 //inner
 #include "BTShader.h"
 #include "utils.h"
