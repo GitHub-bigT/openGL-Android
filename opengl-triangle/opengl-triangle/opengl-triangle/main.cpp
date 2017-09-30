@@ -107,7 +107,7 @@ void initVAO(){
 	unsigned char* ptr = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER,GL_WRITE_ONLY);
 	if (ptr)
 	{
-		memcpy(ptr,imageData,0);
+		memcpy(ptr, imageData, width * height * channels);
 	}
 	glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
