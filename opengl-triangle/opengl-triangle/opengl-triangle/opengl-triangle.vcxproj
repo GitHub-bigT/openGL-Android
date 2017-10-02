@@ -83,6 +83,7 @@
     <None Include="vertex_shader.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BTCamera.h" />
     <ClInclude Include="BTShader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="utils.h" />

@@ -13,6 +13,7 @@
 #include "BTShader.h"
 #include "utils.h"
 #include "stb_image.h"
+#include "BTCamera.h"
 
 GLfloat screen_width = 800.0f, screen_height = 600.0f;
 GLuint vao, vbo , pbo , textureId;
@@ -21,12 +22,28 @@ GLfloat vertexs[] = {
 	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
 	0.5f, -0.5f, 0.0f, 1.0f, 0.0f
 };
+enum Attr_id
+{
+	vPosition = 1,
+	vTextureCoords = 2
+};
 //texture
 unsigned char* imageData;
 int width = 0, height = 0, channels = 0;
+Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+//key、mouse
+GLfloat lastX = 0.0f;
+GLfloat lastY = 0.0f;
+GLfloat deltaTime = 0.0f;//当前帧遇上上一帧的时间增量
+GLfloat lastFrame = 0.0f;//上一帧的时间
+GLboolean firstMouse = true;
+GLboolean keys[1024];
 
 //function
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);//键盘输入
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);//鼠标移动
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);//鼠标滚轮缩放大小
+void do_movement();
 void initVAO();
 
 void main(){
@@ -42,7 +59,10 @@ void main(){
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(window);
-	glfwSetKeyCallback(window, key_callback);
+	glfwSetKeyCallback(window, key_callback);//keyboard
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//hind cursor
+	glfwSetCursorPosCallback(window, mouse_callback);//mouse move
+	glfwSetScrollCallback(window, scroll_callback);//mouse roller
 
 	//init glew
 	glewExperimental = true;
@@ -58,9 +78,14 @@ void main(){
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();//检查触发事件
+		do_movement();//keyboard
 		// Clear the colorbuffer
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);//投影矩阵
+		glm::mat4 viewMatrix = camera->getViewMatrix();//视图矩阵
+		glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		//draw
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES,0,3);
@@ -69,19 +94,6 @@ void main(){
 	}
 }
 
-//键盘输入
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode){
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
-};
-enum Attr_id
-{
-	vPosition = 1,
-	vTextureCoords = 2
-};
 void initVAO(){
 	//vao
 	glGenVertexArrays(1,&vao);
@@ -100,4 +112,61 @@ void initVAO(){
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(vTextureCoords);
 	glBindVertexArray(0);
+}
+//键盘鼠标
+void mouse_callback(GLFWwindow *window, double xpos, double ypos){
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+	GLfloat xoffset = xpos - lastX;
+	//y向下为增 向上为-  与坐标系相反  所以在这反减
+	GLfloat yoffset = lastY - ypos;
+	//printf("xoffset : %f , yoffset:%f\n",xoffset , yoffset);
+	lastX = xpos;
+	lastY = ypos;
+	camera->ProcessMouseMovement(xoffset, yoffset);
+}
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
+	camera->ProcessMouseScroll(yoffset);
+}
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode){
+
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
+	if (action == GLFW_PRESS)
+	{
+		keys[key] = true;
+	}
+	if (action == GLFW_RELEASE)
+	{
+		keys[key] = false;
+	}
+};
+void do_movement(){
+	GLfloat currentTime = glfwGetTime();
+	deltaTime = currentTime - lastFrame;
+	lastFrame = currentTime;
+	//摄像机控制
+	if (keys[GLFW_KEY_W])
+	{
+		camera->ProcessKeyBoard(FORWARD, deltaTime);
+	}
+	if (keys[GLFW_KEY_S])
+	{
+		camera->ProcessKeyBoard(BACKWARD, deltaTime);
+	}
+	if (keys[GLFW_KEY_A])
+	{
+		camera->ProcessKeyBoard(LEFT, deltaTime);
+	}
+	if (keys[GLFW_KEY_D])
+	{
+		camera->ProcessKeyBoard(RIGHT, deltaTime);
+	}
+
 }

@@ -10,6 +10,6 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main(){
-	gl_Position = vec4(vPosition ,1.0f) ;
+	gl_Position = projection * view * vec4(vPosition.x , 1.0f - vPosition.y , vPosition.z , 1.0f) ;
 	textureCoords = vTextureCoords;
 }
