@@ -1,4 +1,4 @@
-﻿Build started 2017/10/2 18:45:48.
+﻿Build started 2017/10/2 19:20:59.
      1>Project "E:\vsprojects\git-opengl\opengl-triangle\opengl-triangle\opengl-triangle\opengl-triangle.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -21,4 +21,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.46
+Time Elapsed 00:00:02.33

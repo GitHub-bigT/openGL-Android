@@ -30,7 +30,7 @@ enum Attr_id
 //texture
 unsigned char* imageData;
 int width = 0, height = 0, channels = 0;
-Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
 //key¡¢mouse
 GLfloat lastX = 0.0f;
 GLfloat lastY = 0.0f;
