@@ -62,9 +62,17 @@ void main(){
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//draw
+		/*
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
+		if (channels == 3)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+		}
+		if (channels == 4)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		}
+		*/
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES,0,3);
@@ -87,6 +95,7 @@ enum Attr_id
 	vTextureCoords = 2
 };
 void initVAO(){
+	/*
 	imageData = stbi_load("images/container2.png",&width,&height,&channels,0);
 	//Œ∆¿Ì
 	glGenTextures(1, &textureId);
@@ -97,10 +106,11 @@ void initVAO(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
 	//glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,0);
 	//pbo
+	
 	glGenBuffers(1, &pbo);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER,pbo);
 	glBufferData(GL_PIXEL_UNPACK_BUFFER,width * height * channels , 0 , GL_STATIC_DRAW);
@@ -111,7 +121,7 @@ void initVAO(){
 	}
 	glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
+	*/
 	glGenVertexArrays(1,&vao);
 	glGenBuffers(1,&vbo);
 	glBindVertexArray(vao);

@@ -15,29 +15,29 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\opengl-triangle\opengl-triangle\opengl-triangle\vertex_shader.vert">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="..\..\..\opengl-triangle\opengl-triangle\opengl-triangle\fragment_shader.frag">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\opengl-triangle\opengl-triangle\opengl-triangle\BTShader.h">
+    <ClInclude Include="BTShader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\opengl-triangle\opengl-triangle\opengl-triangle\stb_image.h">
+    <ClInclude Include="stb_image.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\opengl-triangle\opengl-triangle\opengl-triangle\utils.h">
+    <ClInclude Include="utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp">
+    <None Include="fragment_shader.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="vertex_shader.vert">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\opengl-triangle\opengl-triangle\opengl-triangle\std_image.cpp">
+    <ClCompile Include="std_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
