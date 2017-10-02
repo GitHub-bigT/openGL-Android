@@ -62,18 +62,6 @@ void main(){
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//draw
-		/*
-		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
-		if (channels == 3)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-		}
-		if (channels == 4)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-		}
-		*/
-		glBindTexture(GL_TEXTURE_2D, textureId);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES,0,3);
 		// Swap the buffers
@@ -95,37 +83,10 @@ enum Attr_id
 	vTextureCoords = 2
 };
 void initVAO(){
-	/*
-	imageData = stbi_load("images/container2.png",&width,&height,&channels,0);
-	//纹理
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	//设置纹理过滤方式
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-	//glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D,0);
-	//pbo
-	
-	glGenBuffers(1, &pbo);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER,pbo);
-	glBufferData(GL_PIXEL_UNPACK_BUFFER,width * height * channels , 0 , GL_STATIC_DRAW);
-	unsigned char* ptr = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER,GL_WRITE_ONLY);
-	if (ptr)
-	{
-		memcpy(ptr, imageData, width * height * channels);
-	}
-	glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-	*/
+	//vao
 	glGenVertexArrays(1,&vao);
 	glGenBuffers(1,&vbo);
 	glBindVertexArray(vao);
-	//check VAO bind status
 	GLboolean vao_light_b = glIsVertexArray(vao);
 	printf("vao bind status:%d\n", vao_light_b);
 	//vbo
