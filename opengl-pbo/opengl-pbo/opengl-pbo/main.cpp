@@ -97,10 +97,9 @@ enum Attr_id
 void initVAO(){
 	imageData = stbi_load("images/container2.png",&width,&height,&channels,0);
 	
-	//纹理
+	//texture
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	//设置纹理过滤方式
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
