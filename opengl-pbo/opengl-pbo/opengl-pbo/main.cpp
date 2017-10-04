@@ -113,8 +113,7 @@ void initVAO(){
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
 	GLboolean pbo_b = glIsBuffer(pbo);
 	printf("pbo bind status:%d\n", pbo);
-	glBufferData(GL_PIXEL_UNPACK_BUFFER, width * height * channels, imageData, GL_STATIC_DRAW);
-	
+	glBufferData(GL_PIXEL_UNPACK_BUFFER, width * height * channels, NULL, GL_STATIC_DRAW);
 	unsigned char* ptr = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
 	if (ptr)
 	{
