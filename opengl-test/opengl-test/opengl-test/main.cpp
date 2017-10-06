@@ -24,8 +24,8 @@ void processInput(GLFWwindow *window);
 void initVAO();
 unsigned int loadTexture(char const *path);
 
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
 
 float cubeVertices[] = {
 	// positions          // texture Coords
@@ -128,7 +128,8 @@ void main(){
 	//init opengl
 	glViewport(0, 0, (GLsizei)SCR_WIDTH, (GLsizei)SCR_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_ALWAYS);
+	//glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
 	
 	initVAO();
 	Shader shader("vertex_shader.vert","fragment_shader.frag");
