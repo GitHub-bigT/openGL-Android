@@ -14,22 +14,88 @@
 //inner
 #include "shader.h"
 #include "utils.h"
+#include "camera.h"
 
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
-GLuint vao, vbo , tbo;
-GLfloat vertexs[] = {
-	0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
-	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-	0.5f, -0.5f, 0.0f, 1.0f, 0.0f
+
+
+float cubeVertices[] = {
+	// positions          // texture Coords
+	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+	0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+	0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+	-0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+	-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+	0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+	0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+	-0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+	-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+
+	-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	-0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+	-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+	0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+	0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+	0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+	-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+	-0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+	0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+	0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+	-0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+	-0.5f, 0.5f, -0.5f, 0.0f, 1.0f
 };
+float planeVertices[] = {
+	// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+	5.0f, -0.5f, 5.0f, 2.0f, 0.0f,
+	-5.0f, -0.5f, 5.0f, 0.0f, 0.0f,
+	-5.0f, -0.5f, -5.0f, 0.0f, 2.0f,
+
+	5.0f, -0.5f, 5.0f, 2.0f, 0.0f,
+	-5.0f, -0.5f, -5.0f, 0.0f, 2.0f,
+	5.0f, -0.5f, -5.0f, 2.0f, 2.0f
+};
+// cube VAO
+unsigned int cubeVAO, cubeVBO;
+// plane VAO
+unsigned int planeVAO, planeVBO;
 //texture
 unsigned char* imageData;
 int width = 0, height = 0;
+// camera
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = (float)SCR_WIDTH / 2.0;
+float lastY = (float)SCR_HEIGHT / 2.0;
+bool firstMouse = true;
+// timing
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 //function
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);//键盘输入
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void processInput(GLFWwindow *window);
 void initVAO();
 
 void main(){
@@ -44,8 +110,14 @@ void main(){
 		printf("create GLFW window failed");
 		glfwTerminate();
 	}
+
 	glfwMakeContextCurrent(window);
-	glfwSetKeyCallback(window, key_callback);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	// tell GLFW to capture our mouse
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//init glew
 	glewExperimental = true;
@@ -57,81 +129,138 @@ void main(){
 	initVAO();
 	Shader shader("vertex_shader.vert","fragment_shader.frag");
 
-	
-
 	shader.use();
 
 	//loop
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();//检查触发事件
-		// Clear the colorbuffer
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//draw
+		// per-frame time logic
+		// --------------------
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES,0,3);
-		// Swap the buffers
+		// input
+		// -----
+		processInput(window);
+
+		// render
+		// ------
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		shader.use();
+		glm::mat4 model;
+		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		shader.setMat4("view", view);
+		shader.setMat4("projection", projection);
+		// cubes
+		glBindVertexArray(cubeVAO);
+		glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, cubeTexture);
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		shader.setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		model = glm::mat4();
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		shader.setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		// floor
+		glBindVertexArray(planeVAO);
+		//glBindTexture(GL_TEXTURE_2D, floorTexture);
+		shader.setMat4("model", glm::mat4());
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+
+		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
+	// optional: de-allocate all resources once they've outlived their purpose:
+	// ------------------------------------------------------------------------
+	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteVertexArrays(1, &planeVAO);
+	glDeleteBuffers(1, &cubeVBO);
+	glDeleteBuffers(1, &planeVBO);
+
+	glfwTerminate();
 }
 
 //键盘输入
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode){
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
-};
-enum Attr_id
+void processInput(GLFWwindow *window)
 {
-	vPosition = 1,
-	vTextureCoords = 2
-};
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
+}
+
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+// ----------------------------------------------------------------------
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
+}
+
 void initVAO(){
-	//纹理
-	glGenTextures(1, &tbo);
-	glBindTexture(GL_TEXTURE_2D, tbo);
-	//设置纹理过滤方式
-
-	//
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D,0);
-
-	glGenVertexArrays(1,&vao);
-	glGenBuffers(1,&vbo);
-
-	glBindVertexArray(vao);
-
-	//check VAO bind status
-	GLboolean vao_light_b = glIsVertexArray(vao);
-	printf("vao bind status:%d\n", vao_light_b);
-
-	//vbo
-	glBindBuffer(GL_ARRAY_BUFFER,vbo);
-	//check VBO bind status
-	GLboolean vbo_b = glIsBuffer(vbo);
-	printf("vbo bind status:%d\n", vbo_b);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(vertexs),vertexs,GL_STATIC_DRAW);
-
-	//tbo
-	/*
-	glGenBuffers(1,&tbo);
-	glBindBuffer(GL_TEXTURE_BUFFER,tbo);
-	//check VBO bind status
-	GLboolean tbo_b = glIsBuffer(tbo);
-	printf("tbo bind status:%d\n", tbo_b);
-	glBufferData();
-	*/
-
-	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE,sizeof(GLfloat) * 5 , 0);
-	glVertexAttribPointer(vTextureCoords,2,GL_FLOAT,GL_FALSE,sizeof(GLfloat) * 5 , (const void*)(sizeof(GLfloat) * 3));
-	glEnableVertexAttribArray(vPosition);
-	glEnableVertexAttribArray(vTextureCoords);
+	//cube
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glBindVertexArray(0);
+	//plane
+	glGenVertexArrays(1, &planeVAO);
+	glGenBuffers(1, &planeVBO);
+	glBindVertexArray(planeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glBindVertexArray(0);
 }
