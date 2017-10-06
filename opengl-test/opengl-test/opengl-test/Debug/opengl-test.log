@@ -1,4 +1,4 @@
-﻿Build started 2017/10/6 15:16:58.
+﻿Build started 2017/10/6 19:46:46.
      1>Project "E:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\opengl-test.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -7,16 +7,16 @@
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\shader.h(69): warning C4101: 'infoLog' : unreferenced local variable
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\utils.h(7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\vs2013\vc\include\stdio.h(211) : see declaration of 'fopen'
-     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(87): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(88): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(140): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(93): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(94): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(144): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(222): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(223): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(227): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(228): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(230): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
      1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(231): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(240): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>e:\vsprojects\git-opengl\opengl-test\opengl-test\opengl-test\main.cpp(237): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
        Link:
          E:\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\vsprojects\git-opengl\opengl-test\opengl-test\Debug\opengl-test.exe" /INCREMENTAL /NOLOGO glew32.lib glfw3dll.lib "assimp-vc120-mt.lib" OpenGL32.lib GLu32.lib GLaux.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\vsprojects\git-opengl\opengl-test\opengl-test\Debug\opengl-test.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\vsprojects\git-opengl\opengl-test\opengl-test\Debug\opengl-test.lib" /MACHINE:X86 Debug\main.obj
          Debug\std_image.obj
@@ -25,4 +25,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.34
+Time Elapsed 00:00:01.43
