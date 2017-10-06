@@ -2,4 +2,4 @@
 
 ## 深度测试
 <div>
-  <image src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-pc/opengl-study/images/study-camera.gif" width=300px />
+  <image src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-test/opengl-test/images/test.png" width=300px />
