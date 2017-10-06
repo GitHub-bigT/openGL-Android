@@ -9,12 +9,15 @@
 #include <../glm/glm.hpp>
 #include <../glm/gtc/matrix_transform.hpp>
 #include <../glm/gtc/type_ptr.hpp>
-//inner
-#include "BTShader.h"
-#include "utils.h"
+//stb
 #include "stb_image.h"
+//inner
+#include "shader.h"
+#include "utils.h"
 
-GLfloat screen_width = 800.0f, screen_height = 600.0f;
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 720;
+
 GLuint vao, vbo , tbo;
 GLfloat vertexs[] = {
 	0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
@@ -35,7 +38,7 @@ void main(){
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,4);//opengl 4.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);//use opengl core
-	GLFWwindow *window = glfwCreateWindow((int)screen_width,(int)screen_height,"opengl-pr",NULL,NULL);
+	GLFWwindow *window = glfwCreateWindow((int)SCR_WIDTH,(int)SCR_HEIGHT,"opengl-pr",NULL,NULL);
 	if (window == NULL)//check window
 	{
 		printf("create GLFW window failed");
@@ -49,14 +52,14 @@ void main(){
 	glewInit(); 
 
 	//init opengl
-	glViewport(0, 0, (GLsizei)screen_width, (GLsizei)screen_height);
+	glViewport(0, 0, (GLsizei)SCR_WIDTH, (GLsizei)SCR_HEIGHT);
 	
 	initVAO();
-	BTShader shader("vertex_shader.vert","fragment_shader.frag");
+	Shader shader("vertex_shader.vert","fragment_shader.frag");
 
 	
 
-	shader.Use();
+	shader.use();
 
 	//loop
 	// Game loop

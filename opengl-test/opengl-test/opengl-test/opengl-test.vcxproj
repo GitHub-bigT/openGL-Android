@@ -12,6 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTShader.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="model.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -54,8 +58,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\vsprojects\git-opengl\3rd\glm;E:\vsprojects\git-opengl\3rd\glfw-3.2.1.bin.WIN32\include\GLFW;E:\vsprojects\git-opengl\3rd\glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\vsprojects\git-opengl\3rd\glfw-3.2.1.bin.WIN32\lib-vc2013;E:\vsprojects\git-opengl\3rd\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\vsprojects\git-opengl\3rd\assimp-3.3.1\include;E:\vsprojects\git-opengl\3rd\glm;E:\vsprojects\git-opengl\3rd\glfw-3.2.1.bin.WIN32\include\GLFW;E:\vsprojects\git-opengl\3rd\glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\vsprojects\git-opengl\3rd\assimp-3.3.1\lib;E:\vsprojects\git-opengl\3rd\glfw-3.2.1.bin.WIN32\lib-vc2013;E:\vsprojects\git-opengl\3rd\glew-2.1.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -71,7 +75,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;glfw3dll.lib;OpenGL32.lib;GLu32.lib;GLaux.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glfw3dll.lib;assimp-vc120-mt.lib;OpenGL32.lib;GLu32.lib;GLaux.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
