@@ -24,10 +24,15 @@ GLfloat vertexs[] = {
 //texture
 unsigned char* imageData = nullptr;
 int width = 0, height = 0, channels = 0;
+const int    IMAGE_WIDTH = 1024;
+const int    IMAGE_HEIGHT = 1024;
+const int    CHANNEL_COUNT = 4;
+const int    DATA_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * CHANNEL_COUNT;
 
 //function
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);//º¸≈Ã ‰»Î
 void initVAO();
+void updatePixels(GLubyte* dst, int size);
 
 void main(){
 	//init glfw
@@ -136,4 +141,25 @@ void initVAO(){
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(vTextureCoords);
 	glBindVertexArray(0);
+}
+void updatePixels(GLubyte* dst, int size)
+{
+	static int color = 0;
+
+	if (!dst)
+		return;
+
+	int* ptr = (int*)dst;
+
+	// copy 4 bytes at once
+	for (int i = 0; i < IMAGE_HEIGHT; ++i)
+	{
+		for (int j = 0; j < IMAGE_WIDTH; ++j)
+		{
+			*ptr = color;
+			++ptr;
+		}
+		color += 257;   // add an arbitary number (no meaning)
+	}
+	++color;            // scroll down
 }
