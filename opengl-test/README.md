@@ -13,3 +13,6 @@
   
 <div>
   <image src="https://github.com/GitHub-bigT/openGL-study/blob/master/opengl-test/opengl-test/images/depth_no_linear.gif" width=300px />
+  
+## 模板测试
+## 融合测试
