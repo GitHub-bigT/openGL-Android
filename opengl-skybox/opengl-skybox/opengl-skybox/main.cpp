@@ -1,5 +1,7 @@
 #include <iostream>
 #include <math.h>
+#include <vector>
+using namespace std;
 
 //GLEW
 #include <GL/glew.h>
@@ -45,6 +47,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos);//鼠标移动
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);//鼠标滚轮缩放大小
 void do_movement();
 void initVAO();
+unsigned int loadCubemap(vector<string> faces);
 
 void main(){
 	//init glfw
@@ -112,6 +115,42 @@ void initVAO(){
 	glEnableVertexAttribArray(vPosition);
 	glEnableVertexAttribArray(vTextureCoords);
 	glBindVertexArray(0);
+}
+
+//load cube map
+unsigned int loadCubemap(vector<string> faces) {
+	unsigned int textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
+
+	int width, height, channels;
+	for (int i = 0 ; i < faces.size() ; i++)
+	{
+		unsigned char* imageData = stbi_load(faces[i].c_str(), &width, &height, &channels, 0);
+		if (imageData)
+		{
+			if (channels == 3)
+			{
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+			}
+			if (channels == 4)
+			{
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+			}
+			stbi_image_free(imageData);
+		}
+		else
+		{
+			stbi_image_free(imageData);
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return textureId;
 }
 //键盘鼠标
 void mouse_callback(GLFWwindow *window, double xpos, double ypos){
