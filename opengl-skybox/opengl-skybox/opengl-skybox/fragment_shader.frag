@@ -1,10 +1,11 @@
 #version 430 core
 
 out vec4 oColor;
-in vec2 textureCoords;
+in vec3 textureCoords;
 
-uniform sampler2D sampler1;
+uniform samplerCube sample_cube;
 
 void main(){
-	oColor = vec4(1.0f,0.0f,0.0f,0.0f);
+	//oColor = vec4(1.0f,0.0f,0.0f,0.0f);
+	oColor = texture(sample_cube,textureCoords);
 }

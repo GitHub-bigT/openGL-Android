@@ -18,20 +18,65 @@ using namespace std;
 #include "BTCamera.h"
 
 GLfloat screen_width = 800.0f, screen_height = 600.0f;
-GLuint vao, vbo , pbo , textureId;
+GLuint vao, vbo , pbo , cube_texture_id;
+vector<std::string> faces
+{
+	"images/right.jpg",
+	"images/left.jpg",
+	"images/top.jpg",
+	"images/bottom.jpg",
+	"images/back.jpg",
+	"images/front.jpg",
+};
 GLfloat vertexs[] = {
-	0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
-	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-	0.5f, -0.5f, 0.0f, 1.0f, 0.0f
+	-1.0f,  1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	-1.0f,  1.0f, -1.0f,
+	1.0f,  1.0f, -1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	1.0f, -1.0f,  1.0f
 };
 enum Attr_id
 {
 	vPosition = 1,
 	vTextureCoords = 2
 };
-//texture
-unsigned char* imageData;
-int width = 0, height = 0, channels = 0;
+
 Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
 //key¡¢mouse
 GLfloat lastX = 0.0f;
@@ -74,6 +119,7 @@ void main(){
 	//init opengl
 	glViewport(0, 0, (GLsizei)screen_width, (GLsizei)screen_height);
 	initVAO();
+	cube_texture_id = loadCubemap(faces);
 	BTShader shader("vertex_shader.vert","fragment_shader.frag");
 	shader.Use();
 
@@ -91,7 +137,8 @@ void main(){
 		glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		//draw
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES,0,3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP,cube_texture_id);
+		glDrawArrays(GL_TRIANGLES,0,36);
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
@@ -102,18 +149,10 @@ void initVAO(){
 	glGenVertexArrays(1,&vao);
 	glGenBuffers(1,&vbo);
 	glBindVertexArray(vao);
-	GLboolean vao_light_b = glIsVertexArray(vao);
-	printf("vao bind status:%d\n", vao_light_b);
-	//vbo
 	glBindBuffer(GL_ARRAY_BUFFER,vbo);
-	//check VBO bind status
-	GLboolean vbo_b = glIsBuffer(vbo);
-	printf("vbo bind status:%d\n", vbo_b);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(vertexs),vertexs,GL_STATIC_DRAW);
-	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE,sizeof(GLfloat) * 5 , 0);
-	glVertexAttribPointer(vTextureCoords,2,GL_FLOAT,GL_FALSE,sizeof(GLfloat) * 5 , (const void*)(sizeof(GLfloat) * 3));
+	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE,sizeof(GLfloat) * 3 , 0);
 	glEnableVertexAttribArray(vPosition);
-	glEnableVertexAttribArray(vTextureCoords);
 	glBindVertexArray(0);
 }
 
