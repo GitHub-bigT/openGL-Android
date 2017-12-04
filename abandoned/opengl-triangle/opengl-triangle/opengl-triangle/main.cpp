@@ -14,8 +14,9 @@
 #include "utils.h"
 #include "stb_image.h"
 #include "BTCamera.h"
+#include "time_util.h"
 
-GLfloat screen_width = 800.0f, screen_height = 600.0f;
+GLfloat screen_width = 1920.0f, screen_height = 1080.0f;
 GLuint vao, vbo , pbo , textureId;
 GLfloat vertexs[] = {
 	0.0f, 0.5f, 0.0f, 0.5f, 1.0f,
@@ -38,6 +39,8 @@ GLfloat deltaTime = 0.0f;//当前帧遇上上一帧的时间增量
 GLfloat lastFrame = 0.0f;//上一帧的时间
 GLboolean firstMouse = true;
 GLboolean keys[1024];
+GLFWwindow *window[2] = {0};
+const char *titles[2] = {"aaa","bbb"};
 
 //function
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);//键盘输入
@@ -52,45 +55,79 @@ void main(){
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,4);//opengl 4.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);//use opengl core
-	GLFWwindow *window = glfwCreateWindow((int)screen_width,(int)screen_height,"opengl-pr",NULL,NULL);
-	if (window == NULL)//check window
+
+	for (int i = 0 ; i < 2 ; i++)
 	{
-		printf("create GLFW window failed");
-		glfwTerminate();
+		bool isFullScreen = true;
+		int monitorCount;
+		GLFWmonitor** pMonitor = isFullScreen ? glfwGetMonitors(&monitorCount) : NULL;
+
+		window[i] = glfwCreateWindow((int)screen_width, (int)screen_height, titles[i], pMonitor[i], NULL);
+		if (window[i] == NULL)//check window
+		{
+			printf("create GLFW window failed");
+			glfwTerminate();
+		}
+		//glfwMakeContextCurrent(window);
+		glfwSetKeyCallback(window[i], key_callback);//keyboard
+		//glfwSetInputMode(window[i], GLFW_CURSOR, GLFW_CURSOR_DISABLED);//hind cursor
+		glfwSetCursorPosCallback(window[i], mouse_callback);//mouse move
+		glfwSetScrollCallback(window[i], scroll_callback);//mouse roller
 	}
-	glfwMakeContextCurrent(window);
-	glfwSetKeyCallback(window, key_callback);//keyboard
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//hind cursor
-	glfwSetCursorPosCallback(window, mouse_callback);//mouse move
-	glfwSetScrollCallback(window, scroll_callback);//mouse roller
 
 	//init glew
+	glfwMakeContextCurrent(window[0]);
 	glewExperimental = true;
 	glewInit(); 
 
-	//init opengl
-	glViewport(0, 0, (GLsizei)screen_width, (GLsizei)screen_height);
-	initVAO();
-	BTShader shader("vertex_shader.vert","fragment_shader.frag");
-	shader.Use();
+
 
 	//loop
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window[0]))
 	{
-		glfwPollEvents();//检查触发事件
-		do_movement();//keyboard
-		// Clear the colorbuffer
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);//投影矩阵
-		glm::mat4 viewMatrix = camera->getViewMatrix();//视图矩阵
-		glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		//draw
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES,0,3);
-		// Swap the buffers
-		glfwSwapBuffers(window);
+		for (int i = 0 ; i < 2 ; i++)
+		{
+			MLT_TIMER start;
+			timer_start(&start);
+
+			glfwMakeContextCurrent(window[i]);
+
+			int cost_time = timer_elapsed_msec(&start);
+			FILE *fp = fopen("d:/vlc/aaaFW.txt", "a");
+			fprintf(fp, "make context current cost time = %d\r\n", cost_time);
+			fclose(fp);
+
+			//init opengl
+			glViewport(0, 0, (GLsizei)screen_width, (GLsizei)screen_height);
+			initVAO();
+			BTShader shader("vertex_shader.vert", "fragment_shader.frag");
+			shader.Use();
+
+			glfwPollEvents();//检查触发事件
+			do_movement();//keyboard
+						  // Clear the colorbuffer
+			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 800.0f / 600.0f, 0.1f, 100.0f);//投影矩阵
+			glm::mat4 viewMatrix = camera->getViewMatrix();//视图矩阵
+			glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+			//draw
+			glBindVertexArray(vao);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+			// Swap the buffers
+			glfwSwapBuffers(window[i]);
+
+			MLT_TIMER start_null;
+			timer_start(&start_null);
+
+			glfwMakeContextCurrent(NULL);
+
+			int cost_time_null = timer_elapsed_msec(&start_null);
+			FILE *fp_null = fopen("d:/vlc/aaaFW.txt", "a");
+			fprintf(fp_null, "null context current cost time = %d\r\n", cost_time_null);
+			fclose(fp_null);
+		}
 	}
 }
 
