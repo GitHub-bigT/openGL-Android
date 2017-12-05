@@ -12,6 +12,9 @@ const int windowHeight	= 600;
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void process_input(GLFWwindow *window);
 
+//render
+void draw_scene(GLFWwindow *window);
+
 int main()
 {
 	//init glfw
@@ -48,7 +51,8 @@ int main()
 		glfwPollEvents();
 		process_input(window);
 
-		glfwSwapBuffers(window);
+		//render
+		draw_scene(window);
 	}
 
 	//release glfw
@@ -68,4 +72,11 @@ void process_input(GLFWwindow *window)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+}
+
+//render
+void draw_scene(GLFWwindow *window)
+{
+
+	glfwSwapBuffers(window);
 }
