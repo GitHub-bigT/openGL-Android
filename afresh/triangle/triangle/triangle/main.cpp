@@ -12,17 +12,16 @@
 const int windowWidth	= 800;
 const int windowHeight	= 600;
 //common property
-
+GLuint shaderProgram;
 
 //common Util
-#define SHADER_DEBUG 1;
+#define SHADER_DEBUG 0;
 ShaderUtil bigTShaderUtil;
 TextFile bigTReadFileUtil;
 
 //Triangle
-#define TRIANGLE_DEBUG 1;
+#define TRIANGLE_DEBUG 0;
 GLuint triangleVAO;
-GLuint shaderProgram;
 GLuint triangleVBO;
 GLfloat triangleVertices[] =
 {
@@ -37,6 +36,7 @@ void process_input(GLFWwindow *window);
 
 //render
 void initGL();
+GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
 void initTriangle();
 void draw_scene(GLFWwindow *window);
 
@@ -67,8 +67,6 @@ int main()
 		return -1;
 	}
 
-	//gl
-	glViewport(0, 0, windowWidth, windowHeight);
 	//initGL
 	initGL();
 
@@ -104,32 +102,39 @@ void process_input(GLFWwindow *window)
 //render
 void initGL()
 {
+	glViewport(0, 0, windowWidth, windowHeight);
+	shaderProgram = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./simple_fragment_shader.fs"));
 	initTriangle();
+}
+
+GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource)
+{
 	bigTShaderUtil.isEnableDebug = GL_TRUE;
-	GLuint vertexShader = bigTShaderUtil.initShader(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), GL_VERTEX_SHADER);
-	GLuint fragShader = bigTShaderUtil.initShader(bigTReadFileUtil.readFile("./simple_fragment_shader.fs"), GL_FRAGMENT_SHADER);
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragShader);
-	glLinkProgram(shaderProgram);
+	GLuint vertexShader = bigTShaderUtil.initShader(vertexShaderSource, GL_VERTEX_SHADER);
+	GLuint fragShader = bigTShaderUtil.initShader(fragShaderSource, GL_FRAGMENT_SHADER);
+	GLuint program = glCreateProgram();
+	glAttachShader(program, vertexShader);
+	glAttachShader(program, fragShader);
+	glLinkProgram(program);
 #if SHADER_DEBUG
 	int  success;
 	char infoLog[512];
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) 
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	if (!success)
 	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		printf("LINK PROGRAM ERROR %s\n",std::string(infoLog).c_str());
+		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		printf("LINK PROGRAM ERROR %s\n", std::string(infoLog).c_str());
 	}
 	else
 	{
 		printf("LINK PROGRAM SUCCESS\n");
 	}
 #endif
-	glUseProgram(shaderProgram);
+	glUseProgram(program);
 	//delete shader
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragShader);
+	return program;
 }
 
 void initTriangle()
@@ -142,10 +147,13 @@ void initTriangle()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void draw_scene(GLFWwindow *window)
 {
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
