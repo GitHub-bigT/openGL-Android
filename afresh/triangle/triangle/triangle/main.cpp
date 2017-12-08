@@ -21,6 +21,8 @@ TextFile bigTReadFileUtil;
 
 //Triangle
 #define TRIANGLE_DEBUG 1;
+GLuint triangleVAO;
+GLuint shaderProgram;
 GLuint triangleVBO;
 GLfloat triangleVertices[] =
 {
@@ -106,9 +108,9 @@ void initGL()
 	bigTShaderUtil.isEnableDebug = GL_TRUE;
 	GLuint vertexShader = bigTShaderUtil.initShader(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), GL_VERTEX_SHADER);
 	GLuint fragShader = bigTShaderUtil.initShader(bigTReadFileUtil.readFile("./simple_fragment_shader.fs"), GL_FRAGMENT_SHADER);
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(vertexShader, GL_VERTEX_SHADER);
-	glAttachShader(vertexShader, GL_FRAGMENT_SHADER);
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragShader);
 	glLinkProgram(shaderProgram);
 #if SHADER_DEBUG
 	int  success;
@@ -117,7 +119,11 @@ void initGL()
 	if (!success) 
 	{
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		printf("%s\n",std::string(infoLog).c_str());
+		printf("LINK PROGRAM ERROR %s\n",std::string(infoLog).c_str());
+	}
+	else
+	{
+		printf("LINK PROGRAM SUCCESS\n");
 	}
 #endif
 	glUseProgram(shaderProgram);
@@ -128,19 +134,24 @@ void initGL()
 
 void initTriangle()
 {
-	GLuint triangleVAO;
 	glGenVertexArrays(1, &triangleVAO);
 	glBindVertexArray(triangleVAO);
 
 	glGenBuffers(1, &triangleVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVBO), triangleVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(0);
 }
 
 void draw_scene(GLFWwindow *window)
 {
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glUseProgram(shaderProgram);
+	glBindVertexArray(triangleVAO);
+
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glfwSwapBuffers(window);

@@ -23,6 +23,10 @@ GLuint ShaderUtil::initShader(const char* shaderSource, GLenum shaderType)
 			glGetShaderInfoLog(shader, 512, NULL, infoLog);
 			printf("COMPILE SHADER ERRPR %s\n",std::string(infoLog).c_str());
 		}
+		else
+		{
+			printf("COMPILE SHADER SUCCESS\n");
+		}
 	}
 	return shader;
 }
