@@ -160,13 +160,12 @@ void initTriangle()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)(sizeof(GLfloat) * 2));
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 
 	int index = 0;
 	GLfloat offset = 0.1f;
-	for (int y = -10; y < 10; y+=2)
+	for (int y = -10; y < 10; y += 2)
 	{
-		for (int x = -10; x < 10; x+=2)
+		for (int x = -10; x < 10; x += 2)
 		{
 			glm::vec2 translation;
 			translation.x = (float)x / 10.0f + offset;
@@ -174,6 +173,19 @@ void initTriangle()
 			translations[index++] = translation;
 		}
 	}
+	unsigned int instanceVBO;
+	glGenBuffers(1, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribDivisor(2, 1);
+	glBindVertexArray(0);
+
+/*
 	for (unsigned int i = 0; i < 100; i++)
 	{
 		std::stringstream ss;
@@ -182,7 +194,7 @@ void initTriangle()
 		index = ss.str();
 		GLint offsetsLocation = glGetUniformLocation(shaderProgram, ("offsets[" + index + "]").c_str());
 		glUniform2fv(offsetsLocation, 1, &translations[i][0]);
-	}
+	}*/
 	
 }
 
@@ -191,7 +203,7 @@ void draw_scene(GLFWwindow *window)
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	 
 	//glUseProgram(shaderProgram);
 	glBindVertexArray(triangleVAO);
 
