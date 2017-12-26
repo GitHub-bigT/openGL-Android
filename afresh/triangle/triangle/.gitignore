@@ -3,3 +3,4 @@
 *.sdf
 *.db
 Debug
+*.suo
