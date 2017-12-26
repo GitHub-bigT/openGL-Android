@@ -1,0 +1,6 @@
+﻿  main.cpp
+f:\gitrepo\opengl-study\afresh\triangle\triangle\triangle\readfileutil.h(20): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+f:\gitrepo\opengl-study\afresh\triangle\triangle\triangle\main.cpp(119): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  triangle.vcxproj -> F:\GitRepo\OpenGL-study\afresh\triangle\triangle\Debug\triangle.exe
+  triangle.vcxproj -> F:\GitRepo\OpenGL-study\afresh\triangle\triangle\Debug\triangle.pdb (Full PDB)
