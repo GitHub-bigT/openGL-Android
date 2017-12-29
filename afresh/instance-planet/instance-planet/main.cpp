@@ -5,19 +5,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 //inner
-#include "ShaderUtil.h"
+#include "Shader.h"
 #include "ReadFileUtil.h"
 
 //const
 const int windowWidth = 800;
 const int windowHeight = 600;
-//common property
-GLuint shaderProgram;
-
-//common Util
-#define SHADER_DEBUG 0;
-ShaderUtil bigTShaderUtil;
-TextFile bigTReadFileUtil;
 
 //Triangle
 #define TRIANGLE_DEBUG 0;
@@ -36,7 +29,6 @@ void process_input(GLFWwindow *window);
 
 //render
 void initGL();
-GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
 void initTriangle();
 void draw_scene(GLFWwindow *window);
 
@@ -103,38 +95,9 @@ void process_input(GLFWwindow *window)
 void initGL()
 {
 	glViewport(0, 0, windowWidth, windowHeight);
-	shaderProgram = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./simple_fragment_shader.fs"));
+	Shader shader("./simple_vertex_shader.vs", "./simple_fragment_shader.fs");
+	shader.use();
 	initTriangle();
-}
-
-GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource)
-{
-	bigTShaderUtil.isEnableDebug = GL_TRUE;
-	GLuint vertexShader = bigTShaderUtil.initShader(vertexShaderSource, GL_VERTEX_SHADER);
-	GLuint fragShader = bigTShaderUtil.initShader(fragShaderSource, GL_FRAGMENT_SHADER);
-	GLuint program = glCreateProgram();
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragShader);
-	glLinkProgram(program);
-#if SHADER_DEBUG
-	int  success;
-	char infoLog[512];
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(program, 512, NULL, infoLog);
-		printf("LINK PROGRAM ERROR %s\n", std::string(infoLog).c_str());
-	}
-	else
-	{
-		printf("LINK PROGRAM SUCCESS\n");
-	}
-#endif
-	glUseProgram(program);
-	//delete shader
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragShader);
-	return program;
 }
 
 void initTriangle()
@@ -157,7 +120,6 @@ void draw_scene(GLFWwindow *window)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(shaderProgram);
 	glBindVertexArray(triangleVAO);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);

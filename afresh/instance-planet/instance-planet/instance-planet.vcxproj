@@ -88,13 +88,21 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>../../../3rd/assimp-3.3.1/include;../../../3rd/glfw-3.2.1.bin.WIN32/include;../../../3rd/glad/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+=======
+      <AdditionalIncludeDirectories>../../../3rd/glm;../../../3rd/glfw-3.2.1.bin.WIN32/include;../../../3rd/assimp-3.3.1/include;../../../3rd/glad/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+>>>>>>> 4e30bd95e53e7e875f9eec414958f68263424034
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../../3rd/assimp-3.3.1/lib;../../../3rd/glfw-3.2.1.bin.WIN32/lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+<<<<<<< HEAD
       <AdditionalDependencies>glfw3.lib;assimp-vc140-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+=======
+      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+>>>>>>> 4e30bd95e53e7e875f9eec414958f68263424034
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -147,15 +155,16 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ShaderUtil.cpp" />
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simple_fragment_shader.fs" />
     <None Include="simple_vertex_shader.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="ReadFileUtil.h" />
-    <ClInclude Include="ShaderUtil.h" />
+    <ClInclude Include="Shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
