@@ -7,6 +7,7 @@
 //inner
 #include "Shader.h"
 #include "ReadFileUtil.h"
+#include "Model.h"
 
 //const
 const int windowWidth = 800;
@@ -22,6 +23,9 @@ GLfloat triangleVertices[] =
 	0.5f, -0.5f, 0.0f,
 	0.0f,  0.5f, 0.0f
 };
+
+Model ourModel;
+Shader shader;
 
 //callback fun
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -95,9 +99,10 @@ void process_input(GLFWwindow *window)
 void initGL()
 {
 	glViewport(0, 0, windowWidth, windowHeight);
-	Shader shader("./simple_vertex_shader.vs", "./simple_fragment_shader.fs");
+	shader.initShader("./simple_vertex_shader.vs", "./simple_fragment_shader.fs");
 	shader.use();
-	initTriangle();
+	ourModel.loadModel(std::string("nanosuit/nanosuit.obj"));
+	//initTriangle();
 }
 
 void initTriangle()
@@ -120,9 +125,10 @@ void draw_scene(GLFWwindow *window)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glBindVertexArray(triangleVAO);
+	//glBindVertexArray(triangleVAO);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	ourModel.Draw(shader);
 
 	glfwSwapBuffers(window);
 }
