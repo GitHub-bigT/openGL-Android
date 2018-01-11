@@ -1,9 +1,9 @@
+/*
 #include "Model.h"
 
 Model::Model()
 {
 }
-
 Model::~Model()
 {
 }
@@ -12,7 +12,7 @@ void Model::Draw(Shader shader)
 {
 	for (int i = 0; i < meshes.size(); i++)
 	{
-		meshes.at(i).Draw();
+		meshes.at(i).Draw(shader);
 	}
 }
 
@@ -44,8 +44,8 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 {
 	std::vector<Vertex> verVec;
+	std::vector<unsigned int> indexVec;
 	std::vector<Texture> texVec;
-	std::vector<GLuint> indexVec;
 
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -56,6 +56,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 		vector.z = mesh->mVertices[i].z;
 		vertex.Position = vector;
 
+/ *
 		vector.x = mesh->mNormals[i].x;
 		vector.y = mesh->mNormals[i].y;
 		vector.z = mesh->mNormals[i].z;
@@ -69,7 +70,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 			vertex.TexCoord = vec;
 		}
 		else
-			vertex.TexCoord = glm::vec2(0.0f, 0.0f);
+			vertex.TexCoord = glm::vec2(0.0f, 0.0f);* /
 
 		verVec.push_back(vertex);
 	}
@@ -81,5 +82,5 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 			indexVec.push_back(face.mIndices[j]);
 	}
 
-	return Mesh(verVec, texVec, indexVec);
-}
+	return Mesh(verVec, indexVec, texVec);
+}*/

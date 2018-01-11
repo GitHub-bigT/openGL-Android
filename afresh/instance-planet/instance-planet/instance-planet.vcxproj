@@ -88,7 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../3rd/glm;../../../3rd/glfw-3.2.1.bin.WIN32/include;../../../3rd/assimp-3.3.1/include;../../../3rd/glad/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\GitRepo\OpenGL-study\3rd\stdImage;../../../3rd/glm;../../../3rd/glfw-3.2.1.bin.WIN32/include;../../../3rd/assimp-3.3.1/include;../../../3rd/glad/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,6 +149,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="std.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simple_fragment_shader.fs" />
@@ -156,7 +157,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh2.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Model2.h" />
     <ClInclude Include="ReadFileUtil.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>

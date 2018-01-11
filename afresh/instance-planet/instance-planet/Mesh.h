@@ -1,3 +1,4 @@
+/*
 #pragma once
 #include <glad/glad.h>
 #include <string>
@@ -5,6 +6,7 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+#include "Shader.h"
 
 struct Vertex
 {
@@ -26,9 +28,9 @@ public:
 	std::vector<GLuint> indexVec;
 	Mesh(std::vector<Vertex> verVec, std::vector<Texture> texVec, std::vector<GLuint> indexVec);
 	~Mesh();
-	void Draw();
+	void Draw(Shader shader);
 
 private:
 	GLuint VAO, VBO, EBO;
 	void setupMesh();
-};
+};*/

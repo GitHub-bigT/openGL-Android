@@ -1,3 +1,4 @@
+/*
 #include "Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex> verVec, std::vector<Texture> texVec, std::vector<GLuint> indexVec)
@@ -14,7 +15,7 @@ Mesh::~Mesh()
 
 }
 
-void Mesh::Draw()
+void Mesh::Draw(Shader shader)
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indexVec.size(), GL_UNSIGNED_INT, 0);
@@ -37,9 +38,9 @@ void Mesh::setupMesh()
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+	//glEnableVertexAttribArray(2);
+	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
 
-}
+}*/

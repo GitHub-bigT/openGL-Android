@@ -7,7 +7,7 @@
 //inner
 #include "Shader.h"
 #include "ReadFileUtil.h"
-#include "Model.h"
+#include "Model2.h"
 
 //const
 const int windowWidth = 800;
@@ -24,8 +24,9 @@ GLfloat triangleVertices[] =
 	0.0f,  0.5f, 0.0f
 };
 
+/*
 Model ourModel;
-Shader shader;
+Shader shader;*/
 
 //callback fun
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -64,7 +65,21 @@ int main()
 	}
 
 	//initGL
-	initGL();
+	//initGL();
+
+	// configure global opengl state
+	// -----------------------------
+	glEnable(GL_DEPTH_TEST);
+
+	// build and compile shaders
+	// -------------------------
+	Shader ourShader;
+	ourShader.initShader("./simple_vertex_shader.vs", "./simple_fragment_shader.fs");
+
+	// load models
+	// -----------
+	Model ourModel;
+	ourModel.loadModel("nanosuit/nanosuit.obj");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -73,7 +88,15 @@ int main()
 		process_input(window);
 
 		//render
-		draw_scene(window);
+		//draw_scene(window);
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		ourShader.use();
+
+		ourModel.Draw(ourShader);
+
+		glfwSwapBuffers(window);
 	}
 
 	//release glfw
@@ -99,9 +122,11 @@ void process_input(GLFWwindow *window)
 void initGL()
 {
 	glViewport(0, 0, windowWidth, windowHeight);
+	glEnable(GL_DEPTH_TEST);
+/*
 	shader.initShader("./simple_vertex_shader.vs", "./simple_fragment_shader.fs");
 	shader.use();
-	ourModel.loadModel(std::string("nanosuit/nanosuit.obj"));
+	ourModel.loadModel(std::string("nanosuit/nanosuit.obj"));*/
 	//initTriangle();
 }
 
@@ -128,7 +153,7 @@ void draw_scene(GLFWwindow *window)
 	//glBindVertexArray(triangleVAO);
 
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
-	ourModel.Draw(shader);
+	//ourModel.Draw(shader);
 
 	glfwSwapBuffers(window);
 }
