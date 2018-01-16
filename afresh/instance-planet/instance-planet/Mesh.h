@@ -1,4 +1,3 @@
-/*
 #pragma once
 #include <glad/glad.h>
 #include <string>
@@ -33,4 +32,4 @@ public:
 private:
 	GLuint VAO, VBO, EBO;
 	void setupMesh();
-};*/
+};

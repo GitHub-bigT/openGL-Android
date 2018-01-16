@@ -58,12 +58,6 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>

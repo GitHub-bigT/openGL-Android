@@ -1,4 +1,3 @@
-/*
 #include "Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex> verVec, std::vector<Texture> texVec, std::vector<GLuint> indexVec)
@@ -43,4 +42,4 @@ void Mesh::setupMesh()
 	//glEnableVertexAttribArray(2);
 	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
 
-}*/
+}

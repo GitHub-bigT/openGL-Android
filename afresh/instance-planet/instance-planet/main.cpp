@@ -8,7 +8,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "ReadFileUtil.h"
-#include "Model2.h"
+#include "Model.h"
 
 //const
 const int windowWidth = 800;
