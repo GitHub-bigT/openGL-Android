@@ -17,4 +17,6 @@ glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 ```
 
-注：衹需一次
+成对出现
+
+注：衹需一次（待定）， 
