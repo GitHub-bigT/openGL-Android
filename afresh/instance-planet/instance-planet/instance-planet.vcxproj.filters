@@ -38,6 +38,12 @@
     <None Include="simple_vertex_shader.vs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="1.model_loading.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="1.model_loading.fs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadFileUtil.h">
@@ -52,10 +58,7 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model2.h">
+    <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

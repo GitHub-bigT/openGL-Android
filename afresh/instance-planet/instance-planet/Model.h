@@ -1,4 +1,3 @@
-/*
 #pragma once
 #include <string>
 #include <vector>
@@ -13,7 +12,7 @@
 #include <gtc/matrix_transform.hpp>
 
 #include "Shader.h"
-#include "Mesh2.h"
+#include "Mesh.h"
 
 class Model
 {
@@ -31,4 +30,3 @@ private:
 	Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 };
 
-*/

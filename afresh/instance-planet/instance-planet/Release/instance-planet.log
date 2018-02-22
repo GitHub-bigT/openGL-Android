@@ -1,0 +1,20 @@
+﻿  main.cpp
+f:\gitrepo\opengl-study\afresh\instance-planet\instance-planet\Shader.h(65): warning C4101: 'infoLog': unreferenced local variable
+f:\gitrepo\opengl-study\afresh\instance-planet\instance-planet\Shader.h(64): warning C4101: 'success': unreferenced local variable
+f:\gitrepo\opengl-study\afresh\instance-planet\instance-planet\ReadFileUtil.h(20): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+main.cpp(103): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+main.cpp(171): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+main.cpp(172): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+main.cpp(176): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+main.cpp(177): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+main.cpp(179): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+main.cpp(180): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+main.cpp(189): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  2 of 932 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    10 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  instance-planet.vcxproj -> F:\GitRepo\OpenGL-study\afresh\instance-planet\Release\instance-planet.exe
+  instance-planet.vcxproj -> F:\GitRepo\OpenGL-study\afresh\instance-planet\Release\instance-planet.pdb (Full PDB)
