@@ -58,7 +58,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow *window = glfwCreateWindow(windowWidth, windowHeight, "bigT-triangle", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(windowWidth, windowHeight, "bigT-planet", NULL, NULL);
 	if (window == NULL)
 	{
 		printf("GLFW Window == NULL\n");
@@ -94,10 +94,11 @@ int main()
 
 	// load models
 	// -----------
-	Model rockModel("rock/rock.obj");
+	//Model rockModel("rock/rock.obj");
+	Model rockModel("nanosuit/nanosuit.obj");
 	Model planetModel("planet/planet.obj");
 
-	GLuint amount = 100000;
+	GLuint amount = 1000;
 	glm::mat4 *modelMatrices;
 	modelMatrices = new glm::mat4[amount];
 	srand(glfwGetTime());
@@ -191,7 +192,7 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.0f, 0.0f, 0.05f, 1.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// don't forget to enable shader before setting uniforms
