@@ -23,6 +23,7 @@ struct Texture
 class Mesh
 {
 public:
+	GLuint VAO;
 	std::vector<Vertex> verVec;
 	std::vector<Texture> texVec;
 	std::vector<GLuint> indexVec;
@@ -53,7 +54,7 @@ public:
 	}
 
 private:
-	GLuint VAO, VBO, EBO;
+	GLuint  VBO, EBO;
 	void setupMesh()
 	{
 		glGenVertexArrays(1, &VAO);
