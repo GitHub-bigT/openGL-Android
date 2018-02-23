@@ -42,6 +42,11 @@ public:
 
 	void Draw(Shader shader)
 	{
+		for (unsigned int i = 0; i < texVec.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, texVec[i].id);
+		}
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, indexVec.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
