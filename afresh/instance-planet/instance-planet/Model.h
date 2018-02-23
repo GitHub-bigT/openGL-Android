@@ -21,19 +21,7 @@ unsigned int TextureFromFile(const char *path, const std::string &directory, boo
 class Model
 {
 public:
-	Model()
-	{
-	}
-
-	void Draw(Shader shader)
-	{
-		for (int i = 0; i < meshes.size(); i++)
-		{
-			meshes.at(i).Draw(shader);
-		}
-	}
-
-	void loadModel(std::string path)
+	Model(std::string path)
 	{
 		Assimp::Importer import;
 		const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -45,6 +33,14 @@ public:
 		directory = path.substr(0, path.find_last_of('/'));
 
 		processNode(scene->mRootNode, scene);
+	}
+
+	void Draw(Shader shader)
+	{
+		for (int i = 0; i < meshes.size(); i++)
+		{
+			meshes.at(i).Draw(shader);
+		}
 	}
 
 	~Model()

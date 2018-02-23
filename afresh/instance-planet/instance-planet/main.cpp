@@ -11,11 +11,11 @@
 #include "Model.h"
 
 //const
-const int windowWidth = 800;
-const int windowHeight = 600;
+const int windowWidth = 1280;
+const int windowHeight = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 55.0f));
 float lastX = windowWidth / 2.0f;
 float lastY = windowHeight / 2.0f;
 bool firstMouse = true;
@@ -93,8 +93,38 @@ int main()
 
 	// load models
 	// -----------
-	Model ourModel;
-	ourModel.loadModel("nanosuit/nanosuit.obj");
+	Model rockModel("rock/rock.obj");
+	Model planetModel("planet/planet.obj");
+
+	GLuint amount = 10000;
+	glm::mat4 *modelMatrices;
+	modelMatrices = new glm::mat4[amount];
+	srand(glfwGetTime());
+	GLfloat radius = 50.0f;
+	GLfloat offset = 2.5f;
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		glm::mat4 model;
+		// 1. 位移：分布在半径为 'radius' 的圆形上，偏移的范围是 [-offset, offset]
+		float angle = (float)i / (float)amount * 360.0f;
+		float displacement = rand() % (int)(2 * offset) - offset;
+		float x = sin(angle) * radius + displacement;
+		float y = displacement * 0.4f; // 让行星带的高度比x和z的宽度要小
+		float z = cos(angle) * radius + displacement;
+		model = glm::translate(model, glm::vec3(x, y, z));
+
+		// 2. 缩放：在 0.05 和 0.25f 之间缩放
+		float scale = (rand() % 20) / 100.0f + 0.05;
+		model = glm::scale(model, glm::vec3(scale));
+
+		// 3. 旋转：绕着一个（半）随机选择的旋转轴向量进行随机的旋转
+		float rotAngle = (rand() % 360);
+		model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+		// 4. 添加到矩阵的数组中
+		modelMatrices[i] = model;
+	}
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -110,25 +140,30 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.05f, 1.0f, 0.05f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// don't forget to enable shader before setting uniforms
 		ourShader.use();
 
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
 		// render the loaded model
 		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 		ourShader.setMat4("model", model);
-		ourModel.Draw(ourShader);
+		planetModel.Draw(ourShader);
 
+		for (unsigned int i = 0; i < amount; i++)
+		{
+			ourShader.setMat4("model", modelMatrices[i]);
+			rockModel.Draw(ourShader);
+		}
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

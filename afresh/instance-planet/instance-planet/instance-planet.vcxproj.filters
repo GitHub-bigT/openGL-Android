@@ -38,6 +38,12 @@
     <None Include="1.model_loading.fs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="instancing.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="instancing.fs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadFileUtil.h">
