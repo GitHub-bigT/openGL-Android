@@ -150,8 +150,6 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="std.cpp" />
   </ItemGroup>
   <ItemGroup>
