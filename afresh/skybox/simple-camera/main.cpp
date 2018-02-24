@@ -15,7 +15,7 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 300.0f));
+Camera camera(glm::vec3(0.0f, 10.0f, 50.0f));
 float lastX = windowWidth / 2.0f;
 float lastY = windowHeight / 2.0f;
 bool firstMouse = true;
@@ -117,10 +117,11 @@ int main()
 	// -------------------------
 	//Shader ourShader("simple_vertex_shader.vs", "simple_fragment_shader.fs");
 	Shader skyboxShader("skybox.vs", "skybox.fs");
+	Shader nanosuitShader("1.model_loading.vs", "1.model_loading.fs");
 
 	// load models
 	// -----------
-	//Model nanosuitModel("nanosuit/nanosuit.obj");
+	Model nanosuitModel("nanosuit/nanosuit.obj");
 	//skybox
 	GLuint skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -132,21 +133,28 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (void*)0);
 	std::vector<std::string> faces
 	{
-/*
 		"images/right.jpg",
 		"images/left.jpg",
 		"images/top.jpg",
 		"images/bottom.jpg",
 		"images/back.jpg",
-		"images/front.jpg"*/
+		"images/front.jpg"
+/*
 		"mp_blood/blood_rt.tga",
 		"mp_blood/blood_lf.tga",
 		"mp_blood/blood_up.tga",
 		"mp_blood/blood_dn.tga",
 		"mp_blood/blood_bk.tga",
-		"mp_blood/blood_ft.tga",
+		"mp_blood/blood_ft.tga",*/
+/*
+		"mp_hanging/hangingstone_rt.tga",
+		"mp_hanging/hangingstone_lf.tga",
+		"mp_hanging/hangingstone_up.tga",
+		"mp_hanging/hangingstone_dn.tga",
+		"mp_hanging/hangingstone_bk.tga",
+		"mp_hanging/hangingstone_ft.tga"*/
 	};
-	GLuint cubemapTexture = loadCubemap(faces);
+	GLuint skyboxTexture = loadCubemap(faces);
 
 	//skyboxShader.use();
 	//skyboxShader.setInt("skybox", 0);
@@ -168,27 +176,35 @@ int main()
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_TRUE);
+		// render the loaded model
+		nanosuitShader.use();
+		glm::mat4 nanoModel;
+		//nanoModel = glm::translate(nanoModel, glm::vec3(0.0f, -5.5f, -5.5f));
+		//nanoModel = glm::rotate(nanoModel, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 nanosuitView = camera.GetViewMatrix();
+		glm::mat4 nanosuitProjection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		nanosuitShader.setMat4("model", nanoModel);
+		nanosuitShader.setMat4("view", nanosuitView);
+		nanosuitShader.setMat4("projection", nanosuitProjection);
+		nanosuitModel.Draw(nanosuitShader);
+
+		glDepthFunc(GL_LEQUAL);
+		//glDepthMask(GL_FALSE);
 		skyboxShader.use();
-		glm::mat4 model;
-		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-		glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
-		skyboxShader.setMat4("model", model);
-		skyboxShader.setMat4("view", view);
-		skyboxShader.setMat4("projection", projection);
+		glm::mat4 skyboxModel;
+		//skyboxModel = glm::rotate(skyboxModel, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+		//skyboxModel = glm::scale(skyboxModel, glm::vec3(10.0f, 10.0f, 10.0f));
+		//skyboxModel = glm::translate(skyboxModel, glm::vec3(0.0f, 0.5f, 0.0f));
+		glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		glm::mat4 skyboxProjection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		skyboxShader.setMat4("model", skyboxModel);
+		skyboxShader.setMat4("view", skyboxView);
+		skyboxShader.setMat4("projection", skyboxProjection);
 		glBindVertexArray(skyboxVAO);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP ,cubemapTexture);
+		glBindTexture(GL_TEXTURE_CUBE_MAP , skyboxTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		//glDepthMask(GL_TRUE);
-
-		// render the loaded model
-		//glm::mat4 model;
-		//model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-		//model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-		//skyboxShader.setMat4("model", model);
-		//nanosuitModel.Draw(ourShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
