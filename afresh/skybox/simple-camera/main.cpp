@@ -15,7 +15,7 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 300.0f));
 float lastX = windowWidth / 2.0f;
 float lastY = windowHeight / 2.0f;
 bool firstMouse = true;
@@ -116,7 +116,7 @@ int main()
 	// build and compile shaders
 	// -------------------------
 	//Shader ourShader("simple_vertex_shader.vs", "simple_fragment_shader.fs");
-	Shader skyboxShader("1.model_loading.vs", "1.model_loading.fs");
+	Shader skyboxShader("skybox.vs", "skybox.fs");
 
 	// load models
 	// -----------
@@ -132,12 +132,19 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (void*)0);
 	std::vector<std::string> faces
 	{
+/*
 		"images/right.jpg",
 		"images/left.jpg",
 		"images/top.jpg",
 		"images/bottom.jpg",
 		"images/back.jpg",
-		"images/front.jpg"
+		"images/front.jpg"*/
+		"mp_blood/blood_rt.tga",
+		"mp_blood/blood_lf.tga",
+		"mp_blood/blood_up.tga",
+		"mp_blood/blood_dn.tga",
+		"mp_blood/blood_bk.tga",
+		"mp_blood/blood_ft.tga",
 	};
 	GLuint cubemapTexture = loadCubemap(faces);
 
@@ -161,17 +168,15 @@ int main()
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDepthFunc(GL_LEQUAL);
-		// don't forget to enable shader before setting uniforms
+		//glDepthFunc(GL_LEQUAL);
 		skyboxShader.use();
-
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		glm::mat4 model;
+		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-		glm::mat4 model = glm::rotate(model, (float)glfwGetTime() / 10, glm::vec3(0.0f, 1.0f, 0.0f));
-		//skyboxShader.setMat4("model", model);
-		skyboxShader.setMat4("projection", projection);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		skyboxShader.setMat4("model", model);
 		skyboxShader.setMat4("view", view);
+		skyboxShader.setMat4("projection", projection);
 		glBindVertexArray(skyboxVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP ,cubemapTexture);

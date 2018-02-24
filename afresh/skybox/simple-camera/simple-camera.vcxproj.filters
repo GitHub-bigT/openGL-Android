@@ -26,10 +26,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="1.model_loading.fs">
+    <None Include="skybox.vs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="1.model_loading.vs">
+    <None Include="skybox.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
