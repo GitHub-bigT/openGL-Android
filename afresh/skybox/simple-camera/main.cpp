@@ -136,13 +136,13 @@ int main()
 		"images/left.jpg",
 		"images/top.jpg",
 		"images/bottom.jpg",
-		"images/front.jpg",
-		"images/back.jpg"
+		"images/back.jpg",
+		"images/front.jpg"
 	};
 	GLuint cubemapTexture = loadCubemap(faces);
 
-	skyboxShader.use();
-	skyboxShader.setInt("skybox", 0);
+	//skyboxShader.use();
+	//skyboxShader.setInt("skybox", 0);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -161,13 +161,15 @@ int main()
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//glDepthMask(GL_FALSE);
+		glDepthFunc(GL_LEQUAL);
 		// don't forget to enable shader before setting uniforms
 		skyboxShader.use();
 
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
-		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		glm::mat4 model = glm::rotate(model, (float)glfwGetTime() / 10, glm::vec3(0.0f, 1.0f, 0.0f));
+		//skyboxShader.setMat4("model", model);
 		skyboxShader.setMat4("projection", projection);
 		skyboxShader.setMat4("view", view);
 		glBindVertexArray(skyboxVAO);
