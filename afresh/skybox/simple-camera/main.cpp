@@ -181,12 +181,13 @@ int main()
 		nanosuitShader.use();
 		glm::mat4 nanoModel;
 		//nanoModel = glm::translate(nanoModel, glm::vec3(0.0f, -5.5f, -5.5f));
-		//nanoModel = glm::rotate(nanoModel, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+		nanoModel = glm::rotate(nanoModel, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 nanosuitView = camera.GetViewMatrix();
 		glm::mat4 nanosuitProjection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 		nanosuitShader.setMat4("model", nanoModel);
 		nanosuitShader.setMat4("view", nanosuitView);
 		nanosuitShader.setMat4("projection", nanosuitProjection);
+		nanosuitShader.setVec3("cameraPos", camera.Position);
 		nanosuitModel.Draw(nanosuitShader);
 
 		glDepthFunc(GL_LEQUAL);
