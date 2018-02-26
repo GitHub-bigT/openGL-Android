@@ -24,8 +24,8 @@
     <ClCompile Include="std.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="1.model_loading.fs" />
-    <None Include="1.model_loading.vs" />
+    <None Include="model_loading.fs" />
+    <None Include="model_loading.vs" />
     <None Include="skybox.fs" />
     <None Include="skybox.vs" />
   </ItemGroup>

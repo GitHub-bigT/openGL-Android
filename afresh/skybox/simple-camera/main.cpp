@@ -72,6 +72,51 @@ GLfloat skyboxVertices[] =
 	1.0f, -1.0f,  1.0f
 };
 
+GLfloat cubeVertices[] =
+{// positions          // normals
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+};
+
 //callback fun
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -117,11 +162,11 @@ int main()
 	// -------------------------
 	//Shader ourShader("simple_vertex_shader.vs", "simple_fragment_shader.fs");
 	Shader skyboxShader("skybox.vs", "skybox.fs");
-	Shader nanosuitShader("1.model_loading.vs", "1.model_loading.fs");
+	Shader nanosuitShader("model_loading.vs", "model_loading.fs");
 
 	// load models
 	// -----------
-	Model nanosuitModel("nanosuit/nanosuit.obj");
+	//Model nanosuitModel("nanosuit/nanosuit.obj");
 	//skybox
 	GLuint skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -156,6 +201,18 @@ int main()
 	};
 	GLuint skyboxTexture = loadCubemap(faces);
 
+	//cube
+	GLuint cubeVAO, cubeVBO;
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (void*)(sizeof(GLfloat) * 3));
+
 	//skyboxShader.use();
 	//skyboxShader.setInt("skybox", 0);
 
@@ -176,8 +233,9 @@ int main()
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDepthMask(GL_TRUE);
+		//glDepthMask(GL_TRUE);
 		// render the loaded model
+/*
 		nanosuitShader.use();
 		glm::mat4 nanoModel;
 		//nanoModel = glm::translate(nanoModel, glm::vec3(0.0f, -5.5f, -5.5f));
@@ -188,7 +246,22 @@ int main()
 		nanosuitShader.setMat4("view", nanosuitView);
 		nanosuitShader.setMat4("projection", nanosuitProjection);
 		nanosuitShader.setVec3("cameraPos", camera.Position);
-		nanosuitModel.Draw(nanosuitShader);
+		nanosuitModel.Draw(nanosuitShader);*/
+
+		//cube
+		nanosuitShader.use();
+		glm::mat4 nanoModel;
+		//nanoModel = glm::translate(nanoModel, glm::vec3(0.0f, -5.5f, -5.5f));
+		nanoModel = glm::scale(nanoModel, glm::vec3(30.0f, 30.0f, 30.0f));
+		//nanoModel = glm::rotate(nanoModel, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 nanosuitView = camera.GetViewMatrix();
+		glm::mat4 nanosuitProjection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+		nanosuitShader.setMat4("model", nanoModel);
+		nanosuitShader.setMat4("view", nanosuitView);
+		nanosuitShader.setMat4("projection", nanosuitProjection);
+		nanosuitShader.setVec3("cameraPos", camera.Position);
+		glBindVertexArray(cubeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glDepthFunc(GL_LEQUAL);
 		//glDepthMask(GL_FALSE);

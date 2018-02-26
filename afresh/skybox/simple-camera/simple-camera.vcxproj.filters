@@ -32,10 +32,10 @@
     <None Include="skybox.fs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="1.model_loading.fs">
+    <None Include="model_loading.vs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="1.model_loading.vs">
+    <None Include="model_loading.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
