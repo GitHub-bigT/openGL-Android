@@ -14,9 +14,9 @@ uniform mat4 projection;
 void main()
 {
 	//问题：没有用法线矩阵，效果看起来差不多
-	//Normal = mat3(transpose(inverse(model))) * aNormal;
+	Normal = mat3(transpose(inverse(model))) * aNormal;
     //Position = vec3(model * vec4(aPos, 1.0));
-	Normal = aNormal;
+	//Normal = aNormal;
 	//Position = aPos;
 	//Normal = vec3(model * vec4(aNormal, 1.0));
 	Position = vec3(model * vec4(aPos, 1.0));

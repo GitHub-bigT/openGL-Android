@@ -163,10 +163,11 @@ int main()
 	//Shader ourShader("simple_vertex_shader.vs", "simple_fragment_shader.fs");
 	Shader skyboxShader("skybox.vs", "skybox.fs");
 	Shader nanosuitShader("model_loading.vs", "model_loading.fs");
+	Shader cubeShader("model_loading.vs", "cube.fs");
 
 	// load models
 	// -----------
-	//Model nanosuitModel("nanosuit/nanosuit.obj");
+	Model nanosuitModel("nanosuit/nanosuit.obj");
 	//skybox
 	GLuint skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -235,7 +236,6 @@ int main()
 
 		//glDepthMask(GL_TRUE);
 		// render the loaded model
-/*
 		nanosuitShader.use();
 		glm::mat4 nanoModel;
 		//nanoModel = glm::translate(nanoModel, glm::vec3(0.0f, -5.5f, -5.5f));
@@ -246,20 +246,20 @@ int main()
 		nanosuitShader.setMat4("view", nanosuitView);
 		nanosuitShader.setMat4("projection", nanosuitProjection);
 		nanosuitShader.setVec3("cameraPos", camera.Position);
-		nanosuitModel.Draw(nanosuitShader);*/
+		nanosuitModel.Draw(nanosuitShader);
 
 		//cube
-		nanosuitShader.use();
-		glm::mat4 nanoModel;
-		//nanoModel = glm::translate(nanoModel, glm::vec3(0.0f, -5.5f, -5.5f));
-		nanoModel = glm::scale(nanoModel, glm::vec3(30.0f, 30.0f, 30.0f));
-		//nanoModel = glm::rotate(nanoModel, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-		glm::mat4 nanosuitView = camera.GetViewMatrix();
-		glm::mat4 nanosuitProjection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
-		nanosuitShader.setMat4("model", nanoModel);
-		nanosuitShader.setMat4("view", nanosuitView);
-		nanosuitShader.setMat4("projection", nanosuitProjection);
-		nanosuitShader.setVec3("cameraPos", camera.Position);
+		cubeShader.use();
+		glm::mat4 cubeModel;
+		cubeModel = glm::translate(cubeModel, glm::vec3(-10.0f, 0.0f, 0.0f));
+		cubeModel = glm::scale(cubeModel, glm::vec3(10.0f, 10.0f, 10.0f));
+		cubeModel = glm::rotate(cubeModel, (float)glfwGetTime(), glm::vec3(0.0f, -1.0f, 0.0f));
+		glm::mat4 cubeView = camera.GetViewMatrix();
+		glm::mat4 cubeProjection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+		cubeShader.setMat4("model", cubeModel);
+		cubeShader.setMat4("view", cubeView);
+		cubeShader.setMat4("projection", cubeProjection);
+		cubeShader.setVec3("cameraPos", camera.Position);
 		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
