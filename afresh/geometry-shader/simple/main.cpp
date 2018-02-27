@@ -15,7 +15,7 @@ const int windowHeight = 600;
 GLuint shaderProgram;
 
 //common Util
-#define SHADER_DEBUG 0;
+#define SHADER_DEBUG 1;
 ShaderUtil bigTShaderUtil;
 TextFile bigTReadFileUtil;
 
@@ -155,7 +155,7 @@ void initTriangle()
 void draw_scene(GLFWwindow *window)
 {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(shaderProgram);

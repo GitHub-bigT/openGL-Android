@@ -32,6 +32,9 @@
     <None Include="simple_fragment_shader.fs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="simple_geometry_shader.gs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadFileUtil.h">
