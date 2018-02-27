@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cube.fs" />
+    <None Include="cube.vs" />
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
     <None Include="skybox.fs" />

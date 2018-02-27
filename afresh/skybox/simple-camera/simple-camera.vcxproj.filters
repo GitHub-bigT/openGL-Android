@@ -41,6 +41,9 @@
     <None Include="cube.fs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="cube.vs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">

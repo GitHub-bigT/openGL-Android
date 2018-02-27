@@ -22,7 +22,7 @@ void main()
 	//×êÊ¯	2.42
 	float ratio = 1.00f / 1.52f;
 	vec3 R = refract(I, normalize(Normal), ratio);
-	FragColor = vec4(texture(skybox, R).rgb, 1.0f);
+	gl_FragColor = vec4(texture(skybox, R).rgb, 1.0f);
     //FragColor = texture(sam, TexCoords);
 	//FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }
