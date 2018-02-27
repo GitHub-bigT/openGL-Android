@@ -263,7 +263,7 @@ int main()
 		cubeShader.setMat4("projection", cubeProjection);
 		cubeShader.setVec3("cameraPos", camera.Position);
 		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_POINTS, 0, 36);
 
 		glDepthFunc(GL_LEQUAL);
 		//glDepthMask(GL_FALSE);
