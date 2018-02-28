@@ -28,6 +28,8 @@ GLfloat triangleVertices[] =
 	-0.5f,  0.5f, // 左上
 	0.5f,  0.5f, // 右上
 	0.5f, -0.5f, // 右下
+	-0.5f,  0.5f, // 左上
+	0.5f, -0.5f, // 右下
 	-0.5f, -0.5f  // 左下
 };
 
@@ -156,15 +158,15 @@ void initTriangle()
 
 void draw_scene(GLFWwindow *window)
 {
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(shaderProgram);
 	glBindVertexArray(triangleVAO);
 
-	glEnable(GL_PROGRAM_POINT_SIZE);
-	glDrawArrays(GL_POINTS, 0, 4);
+	//glEnable(GL_PROGRAM_POINT_SIZE);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glfwSwapBuffers(window);
 }
