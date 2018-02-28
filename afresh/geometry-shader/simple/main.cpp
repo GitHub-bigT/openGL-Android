@@ -37,7 +37,7 @@ void process_input(GLFWwindow *window);
 
 //render
 void initGL();
-GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
+GLuint initShaderProgram(const char* vertexShaderSource, const char* geometryShaderSource, const char* fragShaderSource);
 void initTriangle();
 void draw_scene(GLFWwindow *window);
 
@@ -104,17 +104,19 @@ void process_input(GLFWwindow *window)
 void initGL()
 {
 	glViewport(0, 0, windowWidth, windowHeight);
-	shaderProgram = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./simple_fragment_shader.fs"));
+	shaderProgram = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./simple_geometry_shader.gs"), bigTReadFileUtil.readFile("./simple_fragment_shader.fs"));
 	initTriangle();
 }
 
-GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource)
+GLuint initShaderProgram(const char* vertexShaderSource, const char* geometryShaderSource, const char* fragShaderSource)
 {
 	bigTShaderUtil.isEnableDebug = GL_TRUE;
 	GLuint vertexShader = bigTShaderUtil.initShader(vertexShaderSource, GL_VERTEX_SHADER);
+	GLuint geometryShader = bigTShaderUtil.initShader(geometryShaderSource, GL_GEOMETRY_SHADER);
 	GLuint fragShader = bigTShaderUtil.initShader(fragShaderSource, GL_FRAGMENT_SHADER);
 	GLuint program = glCreateProgram();
 	glAttachShader(program, vertexShader);
+	glAttachShader(program, geometryShader);
 	glAttachShader(program, fragShader);
 	glLinkProgram(program);
 #if SHADER_DEBUG
@@ -155,7 +157,7 @@ void initTriangle()
 void draw_scene(GLFWwindow *window)
 {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(shaderProgram);
