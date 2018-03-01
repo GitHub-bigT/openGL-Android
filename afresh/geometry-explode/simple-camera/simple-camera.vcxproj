@@ -26,6 +26,7 @@
   <ItemGroup>
     <None Include="1.model_loading.fs" />
     <None Include="1.model_loading.vs" />
+    <None Include="explode.gs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

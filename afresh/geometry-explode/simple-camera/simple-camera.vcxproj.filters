@@ -32,6 +32,9 @@
     <None Include="1.model_loading.vs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="explode.gs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">

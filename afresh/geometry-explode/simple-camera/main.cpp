@@ -77,7 +77,7 @@ int main()
 	// build and compile shaders
 	// -------------------------
 	//Shader ourShader("simple_vertex_shader.vs", "simple_fragment_shader.fs");
-	Shader ourShader("1.model_loading.vs", "1.model_loading.fs");
+	Shader ourShader("1.model_loading.vs", "1.model_loading.fs", "explode.gs");
 
 	// load models
 	// -----------
@@ -114,6 +114,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 		ourShader.setMat4("model", model);
+		ourShader.setFloat("time", glfwGetTime());
 		nanosuitModel.Draw(ourShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
