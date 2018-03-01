@@ -25,12 +25,10 @@ GLuint triangleVAO;
 GLuint triangleVBO;
 GLfloat triangleVertices[] =
 {
-	-0.5f,  0.5f, // 左上
-	0.5f,  0.5f, // 右上
-	0.5f, -0.5f, // 右下
-	-0.5f,  0.5f, // 左上
-	0.5f, -0.5f, // 右下
-	-0.5f, -0.5f  // 左下
+	-0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // 左上
+	0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // 右上
+	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // 右下
+	-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // 左下
 };
 
 //callback fun
@@ -150,15 +148,17 @@ void initTriangle()
 	glGenBuffers(1, &triangleVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)(sizeof(GLfloat) * 2));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 
 void draw_scene(GLFWwindow *window)
 {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -166,7 +166,7 @@ void draw_scene(GLFWwindow *window)
 	glBindVertexArray(triangleVAO);
 
 	//glEnable(GL_PROGRAM_POINT_SIZE);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_POINTS, 0, 4);
 
 	glfwSwapBuffers(window);
 }
