@@ -17,7 +17,7 @@ vec3 getNormal()
 
 vec4 explode(vec4 position, vec3 normal)
 {
-	float magnitude = 10.5f;
+	float magnitude = 100.0f;
 	vec3 direction = normal * ((sin(time) + 1.0f) / 2.0f) * magnitude;
 	return position + vec4(direction, 0.0f);
 }

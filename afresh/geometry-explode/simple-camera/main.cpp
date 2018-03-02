@@ -114,7 +114,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 		ourShader.setMat4("model", model);
-		ourShader.setFloat("time", glfwGetTime());
+		ourShader.setFloat("time", glfwGetTime() * 15);
 		nanosuitModel.Draw(ourShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
