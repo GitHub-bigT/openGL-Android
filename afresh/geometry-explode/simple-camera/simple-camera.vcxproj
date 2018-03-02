@@ -24,9 +24,14 @@
     <ClCompile Include="std.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="1.model_loading.fs" />
-    <None Include="1.model_loading.vs" />
+    <None Include="common.fs" />
+    <None Include="common.vs" />
+    <None Include="explode.fs" />
+    <None Include="explode.vs" />
     <None Include="explode.gs" />
+    <None Include="normal_display.fs" />
+    <None Include="normal_display.gs" />
+    <None Include="normal_display.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

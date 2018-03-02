@@ -26,13 +26,28 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="1.model_loading.fs">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="1.model_loading.vs">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="explode.gs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="normal_display.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="normal_display.gs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="normal_display.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="explode.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="explode.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="common.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="common.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
