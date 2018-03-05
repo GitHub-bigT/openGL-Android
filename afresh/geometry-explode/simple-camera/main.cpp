@@ -108,13 +108,13 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 explodeModel;
-		explodeModel = glm::translate(explodeModel, glm::vec3(30.0f, 10.0f, 0.0f));
+		//explodeModel = glm::translate(explodeModel, glm::vec3(30.0f, 10.0f, 0.0f));
 		explodeModel = glm::scale(explodeModel, glm::vec3(1.0f, 1.0f, 1.0f));
 		explodeShader.setMat4("projection", projection);
 		explodeShader.setMat4("view", view);
 		explodeShader.setMat4("model", explodeModel);
-		explodeShader.setFloat("time", glfwGetTime() * 15);
-		nanosuitModel.Draw(explodeShader);
+		explodeShader.setFloat("time", glfwGetTime() * 10);
+		//nanosuitModel.Draw(explodeShader);
 
 		commonShader.use();
 		glm::mat4 commonModel;
