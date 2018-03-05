@@ -78,7 +78,7 @@ int main()
 	// -------------------------
 	//Shader ourShader("simple_vertex_shader.vs", "simple_fragment_shader.fs");
 	Shader commonShader("common.vs", "common.fs");
-	//Shader normalDisShader("normal_display.vs", "normal_display.gs", "normal_display.fs");
+	Shader normalDisShader("normal_display.vs", "normal_display.fs", "normal_display.gs");
 	Shader explodeShader("explode.vs", "explode.fs", "explode.gs");
 
 	// load models
@@ -116,14 +116,20 @@ int main()
 		explodeShader.setFloat("time", glfwGetTime() * 15);
 		nanosuitModel.Draw(explodeShader);
 
-		glm::mat4 commonModel;
 		commonShader.use();
+		glm::mat4 commonModel;
 		commonModel = glm::translate(commonModel, glm::vec3(-20.0f, -3.0f, 0.0f));
 		commonModel = glm::scale(commonModel, glm::vec3(4.0f, 4.0f, 4.0f));
 		commonShader.setMat4("projection", projection);
 		commonShader.setMat4("view", view);
 		commonShader.setMat4("model", commonModel);
 		nanosuitModel.Draw(commonShader);
+
+		normalDisShader.use();
+		normalDisShader.setMat4("projection", projection);
+		normalDisShader.setMat4("view", view);
+		normalDisShader.setMat4("model", commonModel);
+		nanosuitModel.Draw(normalDisShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
