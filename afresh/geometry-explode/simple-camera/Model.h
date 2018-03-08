@@ -97,6 +97,8 @@ private:
 			else
 				vertex.TexCoord = glm::vec2(0.0f, 0.0f);
 
+			vertex.randomNum = glfwGetTime() * (rand() % 40);
+
 			verVec.push_back(vertex);
 		}
 

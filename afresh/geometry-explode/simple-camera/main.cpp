@@ -109,27 +109,30 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 explodeModel;
 		//explodeModel = glm::translate(explodeModel, glm::vec3(30.0f, 10.0f, 0.0f));
-		explodeModel = glm::scale(explodeModel, glm::vec3(1.0f, 1.0f, 1.0f));
+		explodeModel = glm::scale(explodeModel, glm::vec3(2.0f, 2.0f, 2.0f));
 		explodeShader.setMat4("projection", projection);
 		explodeShader.setMat4("view", view);
 		explodeShader.setMat4("model", explodeModel);
-		explodeShader.setFloat("time", glfwGetTime() * 10);
-		//nanosuitModel.Draw(explodeShader);
+		float ss = glfwGetTime();
+		explodeShader.setFloat("time", glfwGetTime() * 2);
+		nanosuitModel.Draw(explodeShader);
 
+/*
 		commonShader.use();
 		glm::mat4 commonModel;
-		commonModel = glm::translate(commonModel, glm::vec3(-20.0f, -3.0f, 0.0f));
+		commonModel = glm::translate(commonModel, glm::vec3(0.0f, -3.0f, 0.0f));
 		commonModel = glm::scale(commonModel, glm::vec3(4.0f, 4.0f, 4.0f));
 		commonShader.setMat4("projection", projection);
 		commonShader.setMat4("view", view);
 		commonShader.setMat4("model", commonModel);
-		nanosuitModel.Draw(commonShader);
+		nanosuitModel.Draw(commonShader);*/
 
+/*
 		normalDisShader.use();
 		normalDisShader.setMat4("projection", projection);
 		normalDisShader.setMat4("view", view);
 		normalDisShader.setMat4("model", commonModel);
-		nanosuitModel.Draw(normalDisShader);
+		nanosuitModel.Draw(normalDisShader);*/
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

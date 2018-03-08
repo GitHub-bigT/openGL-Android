@@ -1,6 +1,7 @@
 #version 330 core
 
 in vec2 TexCoords[];
+in float RandomNum[];
 out vec2 gTexCoords;
 
 uniform float time;
@@ -22,7 +23,7 @@ vec4 explode(vec4 position, vec3 normal)
 	return position + vec4(direction, 0.0f);
 }
 
-void main()
+void drawExplode()
 {
 	gl_Position = explode(gl_in[0].gl_Position, getNormal());
 	gTexCoords = TexCoords[0];
@@ -37,4 +38,39 @@ void main()
 	EmitVertex();
 
 	EndPrimitive();
+}
+
+vec4 decomposition(vec4 position, float random)
+{
+	float magnitude = 3.0f;
+	if(time > random)
+	{
+		vec4 off_position = magnitude * vec4(1.0f, 0.0f, 0.0f, 0.0f) * (time - random);
+		position = position + off_position;
+	}
+	return position;
+}
+
+void drawDecomposition()
+{
+	gl_Position = decomposition(gl_in[0].gl_Position, RandomNum[0]);
+	gTexCoords = TexCoords[0];
+	EmitVertex();
+
+	gl_Position = decomposition(gl_in[1].gl_Position, RandomNum[0]);
+	gTexCoords = TexCoords[1];
+	EmitVertex();
+
+	gl_Position = decomposition(gl_in[2].gl_Position, RandomNum[0]);
+	gTexCoords = TexCoords[2];
+	EmitVertex();
+
+
+	EndPrimitive();
+}
+
+void main()
+{
+	//drawExplode();
+	drawDecomposition();
 }
