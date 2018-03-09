@@ -131,6 +131,7 @@ int main()
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow *window = glfwCreateWindow(windowWidth, windowHeight, "bigT-camera", NULL, NULL);
@@ -234,6 +235,8 @@ int main()
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//glEnable(GL_FRAMEBUFFER_SRGB);
+		glEnable(GL_MULTISAMPLE);
 		//glDepthMask(GL_TRUE);
 		// render the loaded model
 /*

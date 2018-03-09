@@ -42,7 +42,7 @@ void drawExplode()
 
 vec4 decomposition(vec4 position, float random)
 {
-	float magnitude = 3.0f;
+	float magnitude = 1.0f;
 	if(time > random)
 	{
 		vec4 off_position = magnitude * vec4(1.0f, 0.0f, 0.0f, 0.0f) * (time - random);
