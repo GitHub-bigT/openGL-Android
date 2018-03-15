@@ -1,0 +1,145 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=gb2312">
+
+    <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec2 Position;
+        attribute vec2 TexCoord;
+        varying vec2 vTextureCoord;
+        void main(void)
+        {
+            vTextureCoord = TexCoord;
+            gl_Position = vec4(Position, 0.0, 1.0);
+        }
+
+    </script>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+        precision mediump float;
+        uniform sampler2D sampler;
+        varying vec2 vTextureCoord;
+
+        void main(void)
+        {
+            gl_FragColor = texture2D(sampler, vec2(vTextureCoord.s, vTextureCoord.t));
+            //gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+        }
+
+    </script>
+
+    <script>
+        function ShaderSourceFromScript(scriptID) {
+            var shaderScript = document.getElementById(scriptID);
+            if (shaderScript == null) return "";
+
+            var sourceCode = "";
+            var child = shaderScript.firstChild;
+            while (child) {
+                if (child.nodeType == child.TEXT_NODE) sourceCode += child.textContent;
+                child = child.nextSibling;
+            }
+
+            return sourceCode;
+        }
+
+        var webgl = null;
+
+        function complieShader() {
+            var program = null;
+            var vertexShader = webgl.createShader(webgl.VERTEX_SHADER);
+            var fragmentShader = webgl.createShader(webgl.FRAGMENT_SHADER);
+
+            webgl.shaderSource(vertexShader, ShaderSourceFromScript("shader-vs"));
+            webgl.shaderSource(fragmentShader, ShaderSourceFromScript("shader-fs"));
+
+            webgl.compileShader(vertexShader);
+            webgl.compileShader(fragmentShader);
+
+            if (!webgl.getShaderParameter(vertexShader, webgl.COMPILE_STATUS)) {
+                alert("error:vertexShader");
+                return;
+            }
+            if (!webgl.getShaderParameter(fragmentShader, webgl.COMPILE_STATUS)) {
+                alert("error:fragmentShader");
+                return;
+            }
+
+            program = webgl.createProgram();
+
+            webgl.attachShader(program, vertexShader);
+            webgl.attachShader(program, fragmentShader);
+
+            webgl.linkProgram(program);
+            if (!webgl.getProgramParameter(program, webgl.LINK_STATUS)) {
+                alert("error:program");
+                return;
+            }
+            return program;
+        }
+
+        function bindVBO(program) {
+            var vertices = new Float32Array([
+                -0.5,  0.5,   0.0, 1.0,
+                -0.5, -0.5,   0.0, 0.0,
+                0.5,  0.5,   1.0, 1.0,
+                0.5, -0.5,   1.0, 0.0
+            ]);
+            var vbo = webgl.createBuffer();
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, vbo);
+            webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(vertices), webgl.STATIC_DRAW);
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, vbo);
+            var FSIZE = vertices.BYTES_PER_ELEMENT;
+            var positionHandler = webgl.getAttribLocation(program, "Position");
+            webgl.enableVertexAttribArray(positionHandler);
+            webgl.vertexAttribPointer(positionHandler, 2, webgl.FLOAT, false, FSIZE * 4, 0);
+            var texCoordHandler = webgl.getAttribLocation(program, "TexCoord");
+            webgl.enableVertexAttribArray(texCoordHandler);
+            webgl.vertexAttribPointer(texCoordHandler, 2, webgl.FLOAT, false, FSIZE * 4, FSIZE * 2);
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, null);
+            return vbo;
+        }
+
+        function bindTexture(program) {
+            var samplerHandler = webgl.getUniformLocation(program, 'sampler');
+            webgl.uniform1i(samplerHandler, 0);
+            var image = new Image();
+            image.onload = function()
+            {
+                var testTexture = webgl.createTexture();
+                webgl.activeTexture(webgl.TEXTURE0);
+                webgl.bindTexture(webgl.TEXTURE_2D, testTexture);
+                webgl.pixelStorei(webgl.UNPACK_FLIP_Y_WEBGL, true);
+                webgl.texImage2D(webgl.TEXTURE_2D, 0, webgl.RGB, webgl.RGB, webgl.UNSIGNED_BYTE, image);
+                //webgl.generateMipmap(webgl.TEXTURE_2D);
+                webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, webgl.LINEAR);
+                webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
+                //webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_S, webgl.CLAMP_TO_EDGE);
+                //webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_T, webgl.CLAMP_TO_EDGE);
+                webgl.drawArrays(webgl.TRIANGLE_STRIP, 0, 4);
+            };
+            image.src = "aaa.jpg";
+        }
+
+        function Init() {
+            var GLCanvas = document.getElementById('GLCanvas');
+            //webgl = GLCanvas.getContext("experimental-webgl");
+            webgl = GLCanvas.getContext('webgl');
+
+            //while (true)
+            {
+                webgl.clearColor(1.0, 1.0, 0.0, 1.0);
+                webgl.clear(webgl.COLOR_BUFFER_BIT);
+                webgl.viewport(0, 0, GLCanvas.clientWidth, GLCanvas.clientHeight);
+                var program = complieShader();
+                webgl.useProgram(program);
+                bindVBO(program);
+                bindTexture(program);
+                webgl.drawArrays(webgl.TRIANGLE_STRIP, 0, 4);
+            }
+        }
+    </script>
+</head>
+<body onload='Init()'>
+<canvas id="GLCanvas" style="border:1px solid red;" width='600px' height='450px'></canvas>
+</body>
+</html>
