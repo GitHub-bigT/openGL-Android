@@ -15,7 +15,7 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 10.0f, 200.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = windowWidth / 2.0f;
 float lastY = windowHeight / 2.0f;
 bool firstMouse = true;
@@ -23,17 +23,6 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-//Triangle
-#define TRIANGLE_DEBUG 0;
-GLuint triangleVAO;
-GLuint triangleVBO;
-GLfloat triangleVertices[] =
-{
-	-0.5f, -0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	0.0f,  0.5f, 0.0f
-};
 
 //callback fun
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -76,13 +65,7 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-	//Shader ourShader("simple_vertex_shader.vs", "simple_fragment_shader.fs");
-	Shader ourShader("1.model_loading.vs", "1.model_loading.fs");
 	Shader depthShader("depth.vs", "depth.fs");
-
-	// load models
-	// -----------
-	//Model nanosuitModel("nanosuit/nanosuit.obj");
 
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
@@ -132,22 +115,6 @@ int main()
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// don't forget to enable shader before setting uniforms
-		ourShader.use();
-
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
-
-		// render the loaded model
-		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-		ourShader.setMat4("model", model);
-		//nanosuitModel.Draw(ourShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
