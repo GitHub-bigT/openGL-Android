@@ -36,6 +36,7 @@ void renderCube();
 void renderQuad();
 
 unsigned int planeVAO;
+unsigned int cubeTexture;
 
 int main()
 {
@@ -78,13 +79,13 @@ int main()
 	//plane
 	float planeVertices[] = {
 		// positions            // normals         // texcoords
-		-0.5f, -0.5f,  0.0f,  0.0f, 1.0f, 0.0f,  1.0f,  0.0f,
-		0.5f, -0.5f,  0.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-		-0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+		-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
 
-		0.5f, -0.5f,  0.0f,  0.0f, 1.0f, 0.0f,  1.0f,  0.0f,
-		-0.5f, 0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
-		0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f
+		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+		25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 10.0f
 	};
 	// plane VAO
 	unsigned int planeVBO;
@@ -102,8 +103,8 @@ int main()
 	glBindVertexArray(0);
 
 	unsigned int woodTexture = loadTexture("image/wood.png");
+	cubeTexture = loadTexture("image/cube2.jpg");
 
-/*
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
 	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
@@ -121,7 +122,7 @@ int main()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -148,7 +149,7 @@ int main()
 		depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);*/
 
 
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, windowWidth, windowHeight);
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -173,11 +174,16 @@ int main()
 void renderScene(const Shader &shader)
 {
 	// floor
-	
+	glm::mat4 model;
+	shader.setMat4("model", model);
+	glm::mat4 view = camera.GetViewMatrix();
+	shader.setMat4("view", view);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+	shader.setMat4("projection", projection);
 	glBindVertexArray(planeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindTexture(GL_TEXTURE_2D, cubeTexture);
 	// cubes
-/*
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
 	model = glm::scale(model, glm::vec3(0.5f));
@@ -193,12 +199,81 @@ void renderScene(const Shader &shader)
 	model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(0.25));
 	shader.setMat4("model", model);
-	renderCube();*/
+	renderCube();
 }
+
+unsigned int cubeVAO = 0;
+unsigned int cubeVBO = 0;
 
 void renderCube()
 {
-
+	// initialize (if necessary)
+	if (cubeVAO == 0)
+	{
+		float vertices[] = {
+			// back face
+			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+			1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+			1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+			// front face
+			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+			1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+			1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+			-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			// left face
+			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+			-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+			// right face
+			1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+			1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+			1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
+			1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+			1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+			1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+			// bottom face
+			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+			1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+			1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+			1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+			// top face
+			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+			1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+			1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+			1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+			-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+		};
+		glGenVertexArrays(1, &cubeVAO);
+		glGenBuffers(1, &cubeVBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(cubeVAO);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
 }
 
 void renderQuad()
