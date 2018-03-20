@@ -31,6 +31,11 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 //util
 unsigned int loadTexture(char const * path);
+void renderScene(const Shader &shader);
+void renderCube();
+void renderQuad();
+
+unsigned int planeVAO;
 
 int main()
 {
@@ -67,21 +72,21 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-	Shader depthShader("depth.vs", "depth.fs");
+	Shader basicShader("1.model_loading.vs", "1.model_loading.fs");
+	//Shader depthShader("depth.vs", "depth.fs");
 
 	//plane
 	float planeVertices[] = {
 		// positions            // normals         // texcoords
-		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-		-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+		-0.5f, -0.5f,  0.0f,  0.0f, 1.0f, 0.0f,  1.0f,  0.0f,
+		0.5f, -0.5f,  0.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+		-0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
 
-		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-		25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 10.0f
+		0.5f, -0.5f,  0.0f,  0.0f, 1.0f, 0.0f,  1.0f,  0.0f,
+		-0.5f, 0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+		0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f
 	};
 	// plane VAO
-	unsigned int planeVAO;
 	unsigned int planeVBO;
 	glGenVertexArrays(1, &planeVAO);
 	glGenBuffers(1, &planeVBO);
@@ -98,6 +103,7 @@ int main()
 
 	unsigned int woodTexture = loadTexture("image/wood.png");
 
+/*
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
 	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
@@ -115,7 +121,7 @@ int main()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -130,6 +136,7 @@ int main()
 		processInput(window);
 
 		//depth map
+/*
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -138,14 +145,18 @@ int main()
 		glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 		depthShader.use();
-		depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+		depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);*/
 
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, windowWidth, windowHeight);
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		basicShader.use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, woodTexture);
+		renderScene(basicShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -157,6 +168,42 @@ int main()
 	glfwTerminate();
 
 	return 0;
+}
+
+void renderScene(const Shader &shader)
+{
+	// floor
+	
+	glBindVertexArray(planeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	// cubes
+/*
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
+	model = glm::scale(model, glm::vec3(0.5f));
+	shader.setMat4("model", model);
+	renderCube();
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+	model = glm::scale(model, glm::vec3(0.5f));
+	shader.setMat4("model", model);
+	renderCube();
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
+	model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+	model = glm::scale(model, glm::vec3(0.25));
+	shader.setMat4("model", model);
+	renderCube();*/
+}
+
+void renderCube()
+{
+
+}
+
+void renderQuad()
+{
+
 }
 
 // utility function for loading a 2D texture from file
