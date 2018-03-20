@@ -37,6 +37,7 @@ void renderQuad();
 
 unsigned int planeVAO;
 unsigned int cubeTexture;
+unsigned int woodTexture;
 
 int main()
 {
@@ -85,7 +86,7 @@ int main()
 
 		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
 		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-		25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 10.0f
+		25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
 	};
 	// plane VAO
 	unsigned int planeVBO;
@@ -102,8 +103,8 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glBindVertexArray(0);
 
-	unsigned int woodTexture = loadTexture("image/wood.png");
-	cubeTexture = loadTexture("image/cube2.jpg");
+	woodTexture = loadTexture("image/wood.png");
+	cubeTexture = loadTexture("image/cube3.jpg");
 
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
@@ -156,7 +157,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		basicShader.use();
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, woodTexture);
+		glBindTexture(GL_TEXTURE_2D, cubeTexture);
 		renderScene(basicShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -182,7 +183,7 @@ void renderScene(const Shader &shader)
 	shader.setMat4("projection", projection);
 	glBindVertexArray(planeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindTexture(GL_TEXTURE_2D, cubeTexture);
+	glBindTexture(GL_TEXTURE_2D, woodTexture);
 	// cubes
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
