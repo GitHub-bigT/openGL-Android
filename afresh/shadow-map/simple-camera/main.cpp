@@ -15,7 +15,7 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 3.0f, 10.0f));
 float lastX = windowWidth / 2.0f;
 float lastY = windowHeight / 2.0f;
 bool firstMouse = true;
@@ -78,7 +78,8 @@ int main()
 	//Shader depthShader("depth.vs", "depth.fs");
 
 	//plane
-	float planeVertices[] = {
+	float planeVertices[] = 
+	{
 		// positions            // normals         // texcoords
 		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
 		-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
@@ -104,7 +105,7 @@ int main()
 	glBindVertexArray(0);
 
 	woodTexture = loadTexture("image/wood.png");
-	cubeTexture = loadTexture("image/cube3.jpg");
+	cubeTexture = loadTexture("image/cube2.jpg");
 
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
@@ -138,26 +139,15 @@ int main()
 		processInput(window);
 
 		//depth map
-/*
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		GLfloat near_plane = 1.0f, far_plane = 7.5f;
-		glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-		glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-		depthShader.use();
-		depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);*/
 
-
+		//normal
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, windowWidth, windowHeight);
-
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		basicShader.use();
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, cubeTexture);
+		glBindTexture(GL_TEXTURE_2D, woodTexture);
 		renderScene(basicShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -184,6 +174,8 @@ void renderScene(const Shader &shader)
 	glBindVertexArray(planeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, woodTexture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, cubeTexture);
 	// cubes
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
