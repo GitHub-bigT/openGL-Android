@@ -38,6 +38,12 @@
     <None Include="depth.fs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="debug_quad.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="debug_quad.fs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">

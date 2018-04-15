@@ -15,7 +15,7 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 3.0f, 10.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = windowWidth / 2.0f;
 float lastY = windowHeight / 2.0f;
 bool firstMouse = true;
@@ -75,7 +75,8 @@ int main()
 	// build and compile shaders
 	// -------------------------
 	Shader basicShader("1.model_loading.vs", "1.model_loading.fs");
-	//Shader depthShader("depth.vs", "depth.fs");
+	Shader depthShader("depth.vs", "depth.fs");
+	Shader debugDepthQuad("debug_quad.vs", "debug_quad.fs");
 
 	//plane
 	float planeVertices[] = 
@@ -104,27 +105,32 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glBindVertexArray(0);
 
+	// Light source
+	glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 	woodTexture = loadTexture("image/wood.png");
-	cubeTexture = loadTexture("image/cube2.jpg");
+	//cubeTexture = loadTexture("image/cube2.jpg");
 
+	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
-	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	// - Create depth texture
 	GLuint depthMap;
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -139,8 +145,35 @@ int main()
 		processInput(window);
 
 		//depth map
+		glm::mat4 lightProjection, lightView;
+		glm::mat4 lightSpaceMatrix;
+		GLfloat near_plane = 1.0f, far_plane = 7.5f;
+		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+		lightView = glm::lookAt(lightPos, glm::vec3(1.0f), glm::vec3(0.0, 1.0, 0.0));
+		lightSpaceMatrix = lightProjection * lightView;
+		depthShader.use();
+		glUniformMatrix4fv(glGetUniformLocation(depthShader.ID, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		renderScene(depthShader);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// Reset viewport
+		glViewport(0, 0, windowWidth, windowHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Render Depth map to quad
+		debugDepthQuad.use();
+		glUniform1f(glGetUniformLocation(debugDepthQuad.ID, "near_plane"), near_plane);
+		glUniform1f(glGetUniformLocation(debugDepthQuad.ID, "far_plane"), far_plane);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		renderQuad();
 
 		//normal
+/*
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, windowWidth, windowHeight);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -148,7 +181,7 @@ int main()
 		basicShader.use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, woodTexture);
-		renderScene(basicShader);
+		renderScene(basicShader);*/
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -162,42 +195,63 @@ int main()
 	return 0;
 }
 
+GLuint quadVAO = 0;
+GLuint quadVBO;
+void renderQuad()
+{
+	if (quadVAO == 0)
+	{
+		GLfloat quadVertices[] = {
+			// Positions        // Texture Coords
+			-1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+			1.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+		};
+		// Setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+}
+
 void renderScene(const Shader &shader)
 {
 	// floor
 	glm::mat4 model;
-	shader.setMat4("model", model);
-	glm::mat4 view = camera.GetViewMatrix();
-	shader.setMat4("view", view);
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
-	shader.setMat4("projection", projection);
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glBindVertexArray(planeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindTexture(GL_TEXTURE_2D, woodTexture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, cubeTexture);
+	glBindVertexArray(0);
 	// cubes
+/*
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
-	model = glm::scale(model, glm::vec3(0.5f));
-	shader.setMat4("model", model);
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	renderCube();
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
-	model = glm::scale(model, glm::vec3(0.5f));
-	shader.setMat4("model", model);
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	renderCube();
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
-	model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-	model = glm::scale(model, glm::vec3(0.25));
-	shader.setMat4("model", model);
-	renderCube();
+	model = glm::rotate(model, 60.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+	model = glm::scale(model, glm::vec3(0.5));
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	renderCube();*/
 }
 
-unsigned int cubeVAO = 0;
-unsigned int cubeVBO = 0;
-
+GLuint cubeVAO = 0;
+GLuint cubeVBO = 0;
 void renderCube()
 {
 	// initialize (if necessary)
@@ -267,11 +321,6 @@ void renderCube()
 	glBindVertexArray(cubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
-}
-
-void renderQuad()
-{
-
 }
 
 // utility function for loading a 2D texture from file
