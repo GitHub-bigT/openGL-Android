@@ -15,7 +15,7 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 float lastX = windowWidth / 2.0f;
 float lastY = windowHeight / 2.0f;
 bool firstMouse = true;
@@ -75,20 +75,20 @@ int main()
 	// build and compile shaders
 	// -------------------------
 	Shader basicShader("1.model_loading.vs", "1.model_loading.fs");
-	Shader depthShader("depth.vs", "depth.fs");
-	Shader debugDepthQuad("debug_quad.vs", "debug_quad.fs");
+	//Shader depthShader("depth.vs", "depth.fs");
+	//Shader debugDepthQuad("debug_quad.vs", "debug_quad.fs");
 
 	//plane
 	float planeVertices[] = 
 	{
 		// positions            // normals         // texcoords
-		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-		-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+		25.0f, 0.0f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+		-25.0f, 0.0f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+		-25.0f, 0.0f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
 
-		25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-		-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-		25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
+		25.0f, 0.0f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+		-25.0f, 0.0f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+		25.0f, 0.0f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
 	};
 	// plane VAO
 	unsigned int planeVBO;
@@ -106,10 +106,11 @@ int main()
 	glBindVertexArray(0);
 
 	// Light source
-	glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+	//glm::vec3 lightPos(0.0f, 1.0f, 25.0f);
 	woodTexture = loadTexture("image/wood.png");
 	//cubeTexture = loadTexture("image/cube2.jpg");
 
+/*
 	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
@@ -130,7 +131,7 @@ int main()
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);*/
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -145,12 +146,12 @@ int main()
 		processInput(window);
 
 		//depth map
+/*
 		glm::mat4 lightProjection, lightView;
 		glm::mat4 lightSpaceMatrix;
-		GLfloat near_plane = 1.0f, far_plane = 7.5f;
-		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-		lightView = glm::lookAt(lightPos, glm::vec3(1.0f), glm::vec3(0.0, 1.0, 0.0));
-		lightSpaceMatrix = lightProjection * lightView;
+		GLfloat near_plane = 0.1f, far_plane = 50.0f;
+		lightProjection = glm::ortho(0.0f, 50.0f, 0.0f, 50.0f, near_plane, far_plane);
+		lightSpaceMatrix = lightProjection * camera.GetViewMatrix();
 		depthShader.use();
 		glUniformMatrix4fv(glGetUniformLocation(depthShader.ID, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
@@ -162,26 +163,30 @@ int main()
 
 		// Reset viewport
 		glViewport(0, 0, windowWidth, windowHeight);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
 
 		// Render Depth map to quad
+/*
 		debugDepthQuad.use();
 		glUniform1f(glGetUniformLocation(debugDepthQuad.ID, "near_plane"), near_plane);
 		glUniform1f(glGetUniformLocation(debugDepthQuad.ID, "far_plane"), far_plane);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
-		renderQuad();
+		renderQuad();*/
 
 		//normal
-/*
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, windowWidth, windowHeight);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		basicShader.use();
+		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(basicShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(basicShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, woodTexture);
-		renderScene(basicShader);*/
+		renderScene(basicShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -228,12 +233,12 @@ void renderScene(const Shader &shader)
 {
 	// floor
 	glm::mat4 model;
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	//glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+/*
 	glBindVertexArray(planeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
+	glBindVertexArray(0);*/
 	// cubes
-/*
 	model = glm::mat4();
 	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -247,7 +252,7 @@ void renderScene(const Shader &shader)
 	model = glm::rotate(model, 60.0f, glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 	model = glm::scale(model, glm::vec3(0.5));
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	renderCube();*/
+	renderCube();
 }
 
 GLuint cubeVAO = 0;
