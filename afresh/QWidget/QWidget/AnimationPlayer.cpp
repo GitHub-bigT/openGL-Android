@@ -53,7 +53,7 @@ void main()\n\
 	//color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n\
 }\n";
 
-AnimationPlayer::AnimationPlayer(QWidget *w, HWND h, int fr, QVector<QImage> &v)
+AnimationPlayer::AnimationPlayer(QWidget *w, HWND h, QVector<QImage> &v, int fr)
 {
 	this->isRun = true;
 	this->mWinDC = NULL;
@@ -146,7 +146,7 @@ int AnimationPlayer::setupPixelFormat(HDC hDC)
 	return pixelIdx;
 }
 
-void AnimationPlayer::GLInfo() {
+void AnimationPlayer::printGLInfo() {
 	printf("InitGLEW SUCCESS\n");
 	printf("\nOpenGL vendor: %s\n", glGetString(GL_VENDOR));
 	printf("OpenGL renderer: %s\n", glGetString(GL_RENDERER));
@@ -234,7 +234,7 @@ bool AnimationPlayer::initGLEW()
 	if (isOpenDebugInfo && err != GLEW_OK)
 		printf("GLEW Error: %s\n", glewGetErrorString(err));
 	if (isOpenDebugInfo)
-		GLInfo();
+		printGLInfo();
 	return ret;
 }
 
@@ -293,6 +293,8 @@ void AnimationPlayer::run()
 	glUseProgram(mProgramId);
 	float mBgColor = 0.0f;
 	int textureIndex = 0;
+	if (mFrameRate == 0)
+		mFrameRate = 60;
 	while (isRun)
 	{
 		FILETIME renderTimer;
@@ -305,6 +307,7 @@ void AnimationPlayer::run()
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBindVertexArray(mVaoId);
 		GLuint texId = mImageTextureArray.at(textureIndex);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texId);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glFinish();
@@ -320,4 +323,19 @@ void AnimationPlayer::run()
 		if (textureIndex > mImageTextureArray.size() - 1)
 			textureIndex = 0;
 	}
+	releaseGL();
+}
+
+void AnimationPlayer::releaseGL()
+{
+	glDeleteBuffers(1, &mVaoId);
+	glDeleteBuffers(1, &mVboId);
+	glDeleteBuffers(1, &mEboId);
+	glDeleteProgram(mProgramId);
+	for (int i = 0; i < mImageTextureArray.size(); i++)
+	{
+		GLuint t = mImageTextureArray.at(i);
+		glDeleteTextures(1, &t);
+	}
+	wglMakeCurrent(mWinDC, NULL);
 }

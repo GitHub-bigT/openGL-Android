@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	QWidget *w = createQWidget();
 	HWND hwnd = (HWND)w->winId();
 	QVector<QImage> v = createQImageArray();
-	//AnimationPlayer ap(w, hwnd, 30, v);
+	//AnimationPlayer ap(w, hwnd, v, 60);
 	AnimationPlayer ap;
 	ap.setWidget(w);
 	ap.setHWND(hwnd);
@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
 	//ap.setOpenDebugInfo(true);
 	//ap.setOpenShaderDebugInfo(true);
 	ap.start();
-	//Sleep(10 * 1000);
-	//ap.stop();
+	Sleep(10 * 1000);
+	ap.stop();
 
 	return a.exec();
 }

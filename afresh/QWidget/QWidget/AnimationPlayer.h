@@ -11,7 +11,7 @@
 class AnimationPlayer : public QThread
 {
 public:
-	AnimationPlayer(QWidget *w, HWND h, int fr, QVector<QImage> &v);
+	AnimationPlayer(QWidget *w, HWND h, QVector<QImage> &v, int fr = 60);
 	AnimationPlayer();
 	~AnimationPlayer();
 	void setWidget(QWidget *w);
@@ -40,9 +40,10 @@ private:
 	void initImageTextureArray();
 	GLuint initShader(const char* shaderSource, GLenum shaderType);
 	GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
-	void GLInfo();
-	int setupPixelFormat(HDC hDC);
+	void printGLInfo();
 	void run();
+	void releaseGL();
+	int setupPixelFormat(HDC hDC);
 	void timer_start(FILETIME *start);
 	int64_t timer_elapsed_msec(FILETIME *start);
 	int64_t timer_elapsed_usec(FILETIME *start);
