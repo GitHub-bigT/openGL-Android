@@ -5,8 +5,10 @@
 #include <QVector>
 #include <windows.h>
 #include <stdint.h>
-#include "GL/glew.h"
-#include "GL/wglew.h"
+#include <assert.h>
+#define GLEW_STATIC
+#include "glew.h"
+#include "wglew.h"
 
 class AnimationPlayer : public QThread
 {
@@ -31,15 +33,16 @@ private:
 	GLuint mVaoId, mVboId, mEboId;
 	QVector<QImage> mImageArray;
 	QVector<GLuint> mImageTextureArray;
-	int mFrameRate, mWidth, mHeight;
+	int mFrameRate, mGLSLVersion;
 	bool isRun, isOpenDebugInfo, isOpenShaderDebugInfo;
 
 private:
+	int getGLSLVersion();
 	bool initGLEW();
 	void initGL();
 	void initImageTextureArray();
 	GLuint initShader(const char* shaderSource, GLenum shaderType);
-	GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
+	GLuint initShaderProgram();
 	void printGLInfo();
 	void run();
 	void releaseGL();

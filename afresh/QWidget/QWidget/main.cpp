@@ -14,7 +14,7 @@ QWidget* createQWidget()
 	//format.setSwapInterval(10);
 	//format.setDepthBufferSize(0);
 	//format.setStencilBufferSize(0);
-	format.setVersion(4, 3);
+	format.setVersion(4, 5);
 	format.setProfile(QSurfaceFormat::CoreProfile);
 	format.setRenderableType(QSurfaceFormat::OpenGL);
 	format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
@@ -35,7 +35,8 @@ QVector<QImage> createQImageArray()
 	QVector<QImage> v;
 	for (int i = 0; i < 30; i++)
 	{
-		QString name = QString::asprintf("video/%02d.png", i);
+		//QString name = QString::asprintf("startup/%02d.jpg", i);//[1 ~ 69]
+		QString name = QString::asprintf("video/%02d.png", i);//[0 ~ 29]
 		QImage image(name);
 		v.push_back(image);
 	}
@@ -52,13 +53,14 @@ int main(int argc, char *argv[])
 	AnimationPlayer ap;
 	ap.setWidget(w);
 	ap.setHWND(hwnd);
-	ap.setFrameRate(60);
+	ap.setFrameRate(30);
 	ap.setImageArray(v);
 	//ap.setOpenDebugInfo(true);
 	//ap.setOpenShaderDebugInfo(true);
 	ap.start();
-	Sleep(10 * 1000);
-	ap.stop();
+	//Sleep(10 * 1000);
+	//ap.stop();
+	//w->close();
 
 	return a.exec();
 }

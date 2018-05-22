@@ -1,5 +1,7 @@
 #include "AnimationPlayer.h"
 
+#define STRINGIZE(s)           #s
+
 static    PIXELFORMATDESCRIPTOR pfd =
 {
 	sizeof(PIXELFORMATDESCRIPTOR),    //上述格式描述符的大小
@@ -33,25 +35,28 @@ static GLuint indices[] =
 	0, 1, 2, 0, 2, 3
 };
 
-const char* vertexShader = "#version 430 core\n\
-layout(location = 0) in vec3 iPos;\n\
-layout(location = 1) in vec2 iTexCoord;\n\
-out vec2 oTexCoord;\n\
-void main()\n\
-{\n\
-gl_Position = vec4(iPos.x, iPos.y, iPos.z, 1.0f);\n\
-oTexCoord = vec2(iTexCoord.x, 1 - iTexCoord.y);\n\
-}\n";
+static const char vertexShader[] = "#" STRINGIZE(
+version %d\n
+attribute vec3 iv_Pos;\n
+attribute vec2 iv_TexCoord; \n
+varying vec2 ov_TexCoord; \n
+void main()\n
+{\n
+gl_Position = vec4(iv_Pos.x, iv_Pos.y, iv_Pos.z, 1.0f); \n
+ov_TexCoord = vec2(iv_TexCoord.x, 1 - iv_TexCoord.y); \n
+}\n
+);
 
-const char* fragmentShader = "#version 430 core\n\
-in vec2 oTexCoord;\n\
-uniform sampler2D s_texture;\n\
-out vec4 color;\n\
-void main()\n\
-{\n\
-	color = texture(s_texture, oTexCoord);\n\
-	//color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n\
-}\n";
+static const char fragmentShader[] = "#" STRINGIZE(
+version %d\n
+varying vec2 ov_TexCoord; \n
+uniform sampler2D s_texture; \n
+void main()\n
+{\n
+	gl_FragColor = texture(s_texture, ov_TexCoord); \n
+	//color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n
+}\n
+);
 
 AnimationPlayer::AnimationPlayer(QWidget *w, HWND h, QVector<QImage> &v, int fr)
 {
@@ -62,11 +67,10 @@ AnimationPlayer::AnimationPlayer(QWidget *w, HWND h, QVector<QImage> &v, int fr)
 	this->mVboId = 0;
 	this->mEboId = 0;
 	this->mProgramId = 0;
+	this->mGLSLVersion = 0;
 	this->mHWND = h;
 	this->mWidget = w;
 	this->mImageArray = v;
-	this->mWidth = w->width();
-	this->mHeight = w->height();
 	this->mFrameRate = fr;
 	this->isOpenDebugInfo = false;
 	this->isOpenShaderDebugInfo = false;
@@ -81,6 +85,7 @@ AnimationPlayer::AnimationPlayer()
 	this->mVboId = 0;
 	this->mEboId = 0;
 	this->mProgramId = 0;
+	this->mGLSLVersion = 0;
 	this->isOpenDebugInfo = false;
 	this->isOpenShaderDebugInfo = false;
 }
@@ -92,8 +97,6 @@ AnimationPlayer::~AnimationPlayer()
 void AnimationPlayer::setWidget(QWidget *w)
 {
 	this->mWidget = w;
-	this->mWidth = w->width();
-	this->mHeight = w->height();
 }
 
 void AnimationPlayer::setHWND(HWND &h)
@@ -121,10 +124,86 @@ void AnimationPlayer::setOpenShaderDebugInfo(bool b)
 	this->isOpenShaderDebugInfo = b;
 }
 
+int AnimationPlayer::getGLSLVersion()
+{
+	char *glsl_version_str = strdup((const char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+	// Skip past the first period.
+	char *ptr = strchr(glsl_version_str, '.');
+	assert(ptr != NULL);
+	++ptr;
+
+	// Now cut the string off at the next period or space, whatever comes first
+	// (unless the string ends first).
+	while (*ptr && *ptr != '.' && *ptr != ' ') {
+		++ptr;
+	}
+	*ptr = '\0';
+
+	// Now we have something on the form X.YY. We convert it to a float, and hope
+	// that if it's inexact (e.g. 1.30), atof() will round the same way the
+	// compiler will.
+	float glsl_version = atof(glsl_version_str);
+	free(glsl_version_str);
+
+	int version = 0;
+	if (glsl_version > 4.45)
+	{
+		version = 450;
+	}
+	else if (glsl_version > 4.35)
+	{
+		version = 440;
+	}
+	else if (glsl_version > 4.25)
+	{
+		version = 430;
+	}
+	else if (glsl_version > 4.15)
+	{
+		version = 420;
+	}
+	else if (glsl_version > 4.05)
+	{
+		version = 410;
+	}
+	else if (glsl_version > 3.95)
+	{
+		version = 400;
+	}
+	else if (glsl_version > 3.25)
+	{
+		version = 330;
+	}
+	else if (glsl_version > 1.45)
+	{
+		version = 150;
+	}
+	else if (glsl_version > 1.35)
+	{
+		version = 140;
+	}
+	else if (glsl_version > 1.25)
+	{
+		version = 130;
+	}
+	else if (glsl_version > 1.15)
+	{
+		version = 120;
+	}
+	else
+	{
+		if (isOpenDebugInfo)
+			printf("GLSL version %.03f too low!\n", glsl_version);
+	}
+
+	return version;
+}
+
 void AnimationPlayer::stop()
 {
 	isRun = false;
-	mWidget->close();
+	wait(3000);
 }
 
 int AnimationPlayer::setupPixelFormat(HDC hDC)
@@ -151,6 +230,7 @@ void AnimationPlayer::printGLInfo() {
 	printf("\nOpenGL vendor: %s\n", glGetString(GL_VENDOR));
 	printf("OpenGL renderer: %s\n", glGetString(GL_RENDERER));
 	printf("OpenGL version: %s\n", glGetString(GL_VERSION));
+	printf("OpenGL GLSL version: %d\n", mGLSLVersion);
 }
 
 void AnimationPlayer::timer_start(FILETIME *start)
@@ -199,14 +279,23 @@ GLuint AnimationPlayer::initShader(const char* shaderSource, GLenum shaderType)
 	return shader;
 }
 
-GLuint AnimationPlayer::initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource)
+GLuint AnimationPlayer::initShaderProgram()
 {
-	GLuint vertexShader = initShader(vertexShaderSource, GL_VERTEX_SHADER);
-	GLuint fragShader = initShader(fragShaderSource, GL_FRAGMENT_SHADER);
+	char *vs, *fs;
+	vs = (char*)malloc(sizeof(vertexShader) + 32);
+	sprintf(vs, vertexShader, mGLSLVersion);
+	fs = (char*)malloc(sizeof(fragmentShader) + 32);
+	sprintf(fs, fragmentShader, mGLSLVersion);
+	GLuint v = initShader(vs, GL_VERTEX_SHADER);
+	GLuint f = initShader(fs, GL_FRAGMENT_SHADER);
 	GLuint program = glCreateProgram();
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragShader);
+	glAttachShader(program, v);
+	glAttachShader(program, f);
 	glLinkProgram(program);
+	free(vs);
+	free(fs);
+	glDeleteShader(v);
+	glDeleteShader(f);
 	if (isOpenShaderDebugInfo)
 	{
 		int  success;
@@ -222,14 +311,14 @@ GLuint AnimationPlayer::initShaderProgram(const char* vertexShaderSource, const 
 			printf("LINK PROGRAM SUCCESS\n");
 		}
 	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragShader);
+
 	return program;
 }
 
 bool AnimationPlayer::initGLEW()
 {
 	bool ret = true;
+	mGLSLVersion = getGLSLVersion();
 	GLenum err = glewInit();
 	if (isOpenDebugInfo && err != GLEW_OK)
 		printf("GLEW Error: %s\n", glewGetErrorString(err));
@@ -245,7 +334,7 @@ void AnimationPlayer::initGL()
 	mWinRC = wglCreateContext(mWinDC);
 	wglMakeCurrent(mWinDC, mWinRC);
 	bool ret = initGLEW();
-	mProgramId = initShaderProgram(vertexShader, fragmentShader);
+	mProgramId = initShaderProgram();
 
 	glGenVertexArrays(1, &mVaoId);
 	glBindVertexArray(mVaoId);
@@ -257,10 +346,12 @@ void AnimationPlayer::initGL()
 	glGenBuffers(1, &mVboId);
 	glBindBuffer(GL_ARRAY_BUFFER, mVboId);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*)(sizeof(GL_FLOAT) * 3));
-	glEnableVertexAttribArray(1);
+	int vLoc = glGetAttribLocation(mProgramId, "iv_Pos");
+	glVertexAttribPointer(vLoc, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*)0);
+	glEnableVertexAttribArray(vLoc);
+	int tLoc = glGetAttribLocation(mProgramId, "iv_TexCoord");
+	glVertexAttribPointer(tLoc, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*)(sizeof(GL_FLOAT) * 3));
+	glEnableVertexAttribArray(tLoc);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
@@ -270,6 +361,9 @@ void AnimationPlayer::initImageTextureArray()
 	for (int i = 0; i < mImageArray.size(); i++)
 	{
 		QImage image = mImageArray.at(i);
+		QImage::Format f = image.format();
+		QImage temp = image.convertToFormat(QImage::Format_RGBA8888);
+		
 		unsigned int texture;
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -278,8 +372,9 @@ void AnimationPlayer::initImageTextureArray()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(),
-			0, GL_RGBA, GL_UNSIGNED_BYTE, image.constBits());
+ 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, temp.width(), temp.height(),
+ 			0, GL_RGBA, GL_UNSIGNED_BYTE, temp.constBits());
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 		mImageTextureArray.push_back(texture);
 	}
@@ -289,7 +384,6 @@ void AnimationPlayer::run()
 {
 	initGL();
 	initImageTextureArray();
-	glViewport(0, 0, mWidth, mHeight);
 	glUseProgram(mProgramId);
 	float mBgColor = 0.0f;
 	int textureIndex = 0;
@@ -297,6 +391,10 @@ void AnimationPlayer::run()
 		mFrameRate = 60;
 	while (isRun)
 	{
+		LPRECT rect = (LPRECT)malloc(sizeof(RECT));
+		GetWindowRect(mHWND, rect);
+		glViewport(0, 0, rect->right - rect->left, rect->top - rect->bottom);
+		free(rect);
 		FILETIME renderTimer;
 		timer_start(&renderTimer);
 		if (mBgColor < 0.5)
