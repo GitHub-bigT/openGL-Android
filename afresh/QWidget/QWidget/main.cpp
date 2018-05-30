@@ -30,17 +30,14 @@ QWidget* createQWidget()
 	return w;
 }
 
-QVector<QImage> createQImageArray()
+void createQImageArray(QVector<QImage> &v)
 {
-	QVector<QImage> v;
 	for (int i = 0; i < 30; i++)
 	{
-		//QString name = QString::asprintf("startup/%02d.jpg", i);//[1 ~ 69]
-		QString name = QString::asprintf("video/%02d.png", i);//[0 ~ 29]
+		QString name = QString::asprintf("video/%02d.png", i);
 		QImage image(name);
 		v.push_back(image);
 	}
-	return v;
 }
 
 int main(int argc, char *argv[])
@@ -48,7 +45,8 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	QWidget *w = createQWidget();
 	HWND hwnd = (HWND)w->winId();
-	QVector<QImage> v = createQImageArray();
+	QVector<QImage> v;
+	createQImageArray(v);
 	//AnimationPlayer ap(w, hwnd, v, 60);
 	AnimationPlayer ap;
 	ap.setWidget(w);
@@ -58,9 +56,10 @@ int main(int argc, char *argv[])
 	//ap.setOpenDebugInfo(true);
 	//ap.setOpenShaderDebugInfo(true);
 	ap.start();
-	//Sleep(10 * 1000);
-	//ap.stop();
-	//w->close();
+	Sleep(5 * 1000);
+	ap.stop();
+	w->close();
+	v.clear();
 
 	return a.exec();
 }

@@ -70,7 +70,7 @@ AnimationPlayer::AnimationPlayer(QWidget *w, HWND h, QVector<QImage> &v, int fr)
 	this->mGLSLVersion = 0;
 	this->mHWND = h;
 	this->mWidget = w;
-	this->mImageArray = v;
+	this->mImageArray = &v;
 	this->mFrameRate = fr;
 	this->isOpenDebugInfo = false;
 	this->isOpenShaderDebugInfo = false;
@@ -111,7 +111,7 @@ void AnimationPlayer::setFrameRate(int fr)
 
 void AnimationPlayer::setImageArray(QVector<QImage> &v)
 {
-	this->mImageArray = v;
+	this->mImageArray = &v;
 }
 
 void AnimationPlayer::setOpenDebugInfo(bool b)
@@ -358,10 +358,10 @@ void AnimationPlayer::initGL()
 
 void AnimationPlayer::initImageTextureArray()
 {
-	for (int i = 0; i < mImageArray.size(); i++)
+	for (int i = 0; i < mImageArray->size(); i++)
 	{
-		QImage image = mImageArray.at(i);
-		QImage::Format f = image.format();
+		QImage image = mImageArray->at(i);
+		//QImage::Format f = image.format();
 		QImage temp = image.convertToFormat(QImage::Format_RGBA8888);
 		
 		unsigned int texture;
@@ -404,7 +404,11 @@ void AnimationPlayer::run()
 		glClearColor(mBgColor, mBgColor, mBgColor, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBindVertexArray(mVaoId);
-		GLuint texId = mImageTextureArray.at(textureIndex);
+		GLuint texId = 0;
+		if (mImageTextureArray.size() > 0)
+		{
+			texId = mImageTextureArray.at(textureIndex);
+		}
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texId);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -435,5 +439,6 @@ void AnimationPlayer::releaseGL()
 		GLuint t = mImageTextureArray.at(i);
 		glDeleteTextures(1, &t);
 	}
+	mImageTextureArray.clear();
 	wglMakeCurrent(mWinDC, NULL);
 }

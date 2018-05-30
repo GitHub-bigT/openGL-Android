@@ -31,7 +31,7 @@ private:
 	HGLRC mWinRC;
 	GLuint mProgramId;
 	GLuint mVaoId, mVboId, mEboId;
-	QVector<QImage> mImageArray;
+	QVector<QImage> *mImageArray;
 	QVector<GLuint> mImageTextureArray;
 	int mFrameRate, mGLSLVersion;
 	bool isRun, isOpenDebugInfo, isOpenShaderDebugInfo;
