@@ -4,6 +4,8 @@
 //gl
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 //inner
 #include "ShaderUtil.h"
 #include "ReadFileUtil.h"
@@ -25,9 +27,13 @@ GLuint triangleVAO;
 GLuint triangleVBO;
 GLfloat triangleVertices[] =
 {
-	-0.5f, -0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	0.0f,  0.5f, 0.0f
+	-1.0f, -1.0f, 1.0f,
+	0.0f, 1.0f, 1.0f,
+	1.0f,  -1.0f, 1.0f
+/*
+	-400.0f, -300.0f, -10.0f,
+	0.0f, 300.0f, -10.0f,
+	400.0f,  -300.0f, -10.0f*/
 };
 
 //callback fun
@@ -158,6 +164,20 @@ void draw_scene(GLFWwindow *window)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(shaderProgram);
+/*
+	glm::mat4 model;
+	model = glm::scale(model, glm::vec3(800.0f, 600.0f, 1.0f));
+	GLuint mPosi = glGetUniformLocation(shaderProgram, "model");
+	glUniformMatrix4fv(mPosi, 1, GL_FALSE, &model[0][0]);*/
+
+	//
+	//glm::mat4 projectopn1 = glm::perspective(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1000.0f);
+	//glm::mat4 ortho = glm::orthoRH(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+	glm::mat4 projection = glm::frustumRH(-1.0f, 1.0f, -1.0f, 1.0f, 9.9f, 10.0f);
+	//glm::mat4 projection1 = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.0f, 1000.0f);
+
+	GLuint pPosi = glGetUniformLocation(shaderProgram, "projection");
+	glUniformMatrix4fv(pPosi, 1, GL_FALSE, &projection[0][0]);
 	glBindVertexArray(triangleVAO);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
