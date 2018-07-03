@@ -104,7 +104,9 @@ int main()
 		ourShader.use();
 
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+		glm::mat4 projection = glm::perspectiveFovLH(glm::radians(45.0f), (float)windowWidth, (float)windowHeight, 0.1f, 1000.0f);
+		float z = -projection[3][2] / projection[2][2];
+		//glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
