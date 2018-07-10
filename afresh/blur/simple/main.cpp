@@ -16,8 +16,8 @@
 #include "ReadFileUtil.h"
 
 //const
-const int windowWidth = 960;
-const int windowHeight = 600;
+const int windowWidth = 800;
+const int windowHeight = 200;
 float PI = 3.141592653589793;
 //common property
 GLuint shaderProgram;
@@ -51,7 +51,7 @@ void initGL();
 GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
 void initTriangle();
 void initTexture();
-void gaussianBlur(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int sigma);
+void gaussianBlur(unsigned char *scl, int w, int h, int ch, int sigma);
 void draw_scene(GLFWwindow *window);
 
 int main()
@@ -114,187 +114,6 @@ int64_t timer_elapsed_msec(FILETIME *start)
 	return elapsed / 10000;
 }
 
-void GaussianBlur(unsigned char* img, int w, int h, int channels, int radius)
-{
-	radius = glm::min(glm::max(1, radius), 248);
-	unsigned int kernelSize = 1 + radius * 2;
-	unsigned int* kernel = (unsigned int*)malloc(kernelSize * sizeof(unsigned int));
-	memset(kernel, 0, kernelSize * sizeof(unsigned int));
-	int(*mult)[256] = (int(*)[256])malloc(kernelSize * 256 * sizeof(int));
-	memset(mult, 0, kernelSize * 256 * sizeof(int));
-
-	int xStart = 0;
-	int yStart = 0;
-	w = xStart + w - glm::max(0, (xStart + w) - w);
-	h = yStart + h - glm::max(0, (yStart + h) - h);
-	int imageSize = w*h;
-	int widthstep = w*channels;
-	if (channels == 3 || channels == 4)
-	{
-		unsigned char *    CacheImg = nullptr;
-		CacheImg = (unsigned char *)malloc(sizeof(unsigned char) * imageSize * 6);
-		if (CacheImg == nullptr) return;
-		unsigned char *    rCache = CacheImg;
-		unsigned char *    gCache = CacheImg + imageSize;
-		unsigned char *    bCache = CacheImg + imageSize * 2;
-		unsigned char *    r2Cache = CacheImg + imageSize * 3;
-		unsigned char *    g2Cache = CacheImg + imageSize * 4;
-		unsigned char *    b2Cache = CacheImg + imageSize * 5;
-		int sum = 0;
-		for (int K = 1; K < radius; K++) {
-			unsigned int szi = radius - K;
-			kernel[radius + K] = kernel[szi] = szi*szi;
-			sum += kernel[szi] + kernel[szi];
-			for (int j = 0; j < 256; j++) {
-				mult[radius + K][j] = mult[szi][j] = kernel[szi] * j;
-			}
-		}
-		kernel[radius] = radius*radius;
-		sum += kernel[radius];
-		for (int j = 0; j < 256; j++) {
-			mult[radius][j] = kernel[radius] * j;
-		}
-		for (int Y = 0; Y < h; ++Y) {
-			unsigned char*     LinePS = img + Y*widthstep;
-			unsigned char*     LinePR = rCache + Y*w;
-			unsigned char*     LinePG = gCache + Y*w;
-			unsigned char*     LinePB = bCache + Y*w;
-			for (int X = 0; X < w; ++X) {
-				int     p2 = X*channels;
-				LinePR[X] = LinePS[p2];
-				LinePG[X] = LinePS[p2 + 1];
-				LinePB[X] = LinePS[p2 + 2];
-			}
-		}
-		int kernelsum = 0;
-		for (int K = 0; K < kernelSize; K++) {
-			kernelsum += kernel[K];
-		}
-		float fkernelsum = 1.0f / kernelsum;
-		for (int Y = yStart; Y < h; Y++) {
-			int heightStep = Y * w;
-			unsigned char*     LinePR = rCache + heightStep;
-			unsigned char*     LinePG = gCache + heightStep;
-			unsigned char*     LinePB = bCache + heightStep;
-			for (int X = xStart; X < w; X++) {
-				int cb = 0;
-				int cg = 0;
-				int cr = 0;
-				for (int K = 0; K < kernelSize; K++) {
-					unsigned    int     readPos = ((X - radius + K + w) % w);
-					int * pmult = mult[K];
-					cr += pmult[LinePR[readPos]];
-					cg += pmult[LinePG[readPos]];
-					cb += pmult[LinePB[readPos]];
-				}
-				unsigned int p = heightStep + X;
-				r2Cache[p] = cr* fkernelsum;
-				g2Cache[p] = cg* fkernelsum;
-				b2Cache[p] = cb* fkernelsum;
-			}
-		}
-		for (int X = xStart; X < w; X++) {
-			int WidthComp = X*channels;
-			int WidthStep = w*channels;
-			unsigned char*     LinePS = img + X*channels;
-			unsigned char*     LinePR = r2Cache + X;
-			unsigned char*     LinePG = g2Cache + X;
-			unsigned char*     LinePB = b2Cache + X;
-			for (int Y = yStart; Y < h; Y++) {
-				int cb = 0;
-				int cg = 0;
-				int cr = 0;
-				for (int K = 0; K < kernelSize; K++) {
-					unsigned int   readPos = ((Y - radius + K + h) % h) * w;
-					int * pmult = mult[K];
-					cr += pmult[LinePR[readPos]];
-					cg += pmult[LinePG[readPos]];
-					cb += pmult[LinePB[readPos]];
-				}
-				int    p = Y*WidthStep;
-				LinePS[p] = (unsigned char)(cr * fkernelsum);
-				LinePS[p + 1] = (unsigned char)(cg * fkernelsum);
-				LinePS[p + 2] = (unsigned char)(cb* fkernelsum);
-
-
-			}
-		}
-		free(CacheImg);
-	}
-	else if (channels == 1)
-	{
-		unsigned char *    CacheImg = nullptr;
-		CacheImg = (unsigned char *)malloc(sizeof(unsigned char) * imageSize * 2);
-		if (CacheImg == nullptr) return;
-		unsigned char *    rCache = CacheImg;
-		unsigned char *    r2Cache = CacheImg + imageSize;
-
-		int sum = 0;
-		for (int K = 1; K < radius; K++) {
-			unsigned int szi = radius - K;
-			kernel[radius + K] = kernel[szi] = szi*szi;
-			sum += kernel[szi] + kernel[szi];
-			for (int j = 0; j < 256; j++) {
-				mult[radius + K][j] = mult[szi][j] = kernel[szi] * j;
-			}
-		}
-		kernel[radius] = radius*radius;
-		sum += kernel[radius];
-		for (int j = 0; j < 256; j++) {
-			mult[radius][j] = kernel[radius] * j;
-		}
-		for (int Y = 0; Y < h; ++Y) {
-			unsigned char*     LinePS = img + Y*widthstep;
-			unsigned char*     LinePR = rCache + Y*w;
-			for (int X = 0; X < w; ++X) {
-				LinePR[X] = LinePS[X];
-			}
-		}
-		int kernelsum = 0;
-		for (int K = 0; K < kernelSize; K++) {
-			kernelsum += kernel[K];
-		}
-		float fkernelsum = 1.0f / kernelsum;
-		for (int Y = yStart; Y < h; Y++) {
-			int heightStep = Y * w;
-			unsigned char*     LinePR = rCache + heightStep;
-			for (int X = xStart; X < w; X++) {
-				int cb = 0;
-				int cg = 0;
-				int cr = 0;
-				for (int K = 0; K < kernelSize; K++) {
-					unsigned    int     readPos = ((X - radius + K + w) % w);
-					int * pmult = mult[K];
-					cr += pmult[LinePR[readPos]];
-				}
-				unsigned int p = heightStep + X;
-				r2Cache[p] = cr * fkernelsum;
-			}
-		}
-		for (int X = xStart; X < w; X++) {
-			int WidthComp = X*channels;
-			int WidthStep = w*channels;
-			unsigned char*     LinePS = img + X*channels;
-			unsigned char*     LinePR = r2Cache + X;
-			for (int Y = yStart; Y < h; Y++) {
-				int cb = 0;
-				int cg = 0;
-				int cr = 0;
-				for (int K = 0; K < kernelSize; K++) {
-					unsigned int   readPos = ((Y - radius + K + h) % h) * w;
-					int * pmult = mult[K];
-					cr += pmult[LinePR[readPos]];
-				}
-				int    p = Y*WidthStep;
-				LinePS[p] = (unsigned char)(cr* fkernelsum);
-			}
-		}
-		free(CacheImg);
-	}
-	free(kernel);
-	free(mult);
-}
-
 std::vector<float> boxesForGauss(int sigma, int n)  // standard deviation, number of boxes
 {
 	float wIdeal = sqrt((12 * sigma*sigma / n) + 2);  // Ideal averaging filter w 
@@ -313,24 +132,24 @@ std::vector<float> boxesForGauss(int sigma, int n)  // standard deviation, numbe
 }
 
 //standard gaussian
-void gaussianBlur(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int sigma)
+void gaussianBlur(unsigned char *scl, int w, int h, int ch, int sigma)
 {
 	int radius = ceil(sigma * 2.57);
-	for (int imageRow = 0; imageRow < h; imageRow++)
+	for (int i = 0; i < h; i++)
 	{
-		for (int imageColWithChannel = 0; imageColWithChannel < w*ch; imageColWithChannel += ch)
+		for (int j = 0; j < w*ch; j += ch)
 		{
 			glm::vec3 color = glm::vec3(0.0f);
 			float allWeights = 0.0f;
-			for (int kernelRow = imageRow - radius; kernelRow < imageRow + radius + 1; kernelRow++)
+			for (int ix = i - radius; ix < i + radius + 1; ix++)
 			{
-				for (int kernelColWithChannel = imageColWithChannel - radius*ch; kernelColWithChannel < imageColWithChannel + (radius + 1)*ch; kernelColWithChannel += ch)
+				for (int iy = j - radius*ch; iy < j + (radius + 1)*ch; iy += ch)
 				{
-					int dsq = (kernelColWithChannel / ch - imageColWithChannel / ch)*(kernelColWithChannel / ch - imageColWithChannel / ch) + (kernelRow - imageRow)*(kernelRow - imageRow);//x^2 + y^2
+					int dsq = (iy / ch - j / ch)*(iy / ch - j / ch) + (ix - i)*(ix - i);//x^2 + y^2
 					float weight = exp(-dsq / (2 * sigma * sigma)) / (PI * 2 * sigma * sigma);//gaussian function: 1/(2*pi*sgima^2) * e^(-(x^2+y^2)/(2*sigma^2))
 
-					int x = glm::min((w - 1) * ch, glm::max(0, kernelColWithChannel));
-					int y = glm::min(h - 1, glm::max(0, kernelRow));
+					int x = glm::min((w - 1) * ch, glm::max(0, iy));
+					int y = glm::min(h - 1, glm::max(0, ix));
 
 					color.r += scl[y*w*ch + x] * weight;
 					color.g += scl[y*w*ch + x + 1] * weight;
@@ -339,9 +158,9 @@ void gaussianBlur(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, 
 					allWeights += weight;
 				}
 			}
-			tcl[imageRow*w*ch + imageColWithChannel] = glm::round(color.r / allWeights);
-			tcl[imageRow*w*ch + imageColWithChannel + 1] = glm::round(color.g / allWeights);
-			tcl[imageRow*w*ch + imageColWithChannel + 2] = glm::round(color.b / allWeights);
+			scl[i*w*ch + j] = glm::round(color.r / allWeights);
+			scl[i*w*ch + j + 1] = glm::round(color.g / allWeights);
+			scl[i*w*ch + j + 2] = glm::round(color.b / allWeights);
 		}
 	}
 }
@@ -349,26 +168,26 @@ void gaussianBlur(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, 
 //algorithm2
 void boxBlur_2(unsigned char *scl, int w, int h, int ch, int r)
 {
-	for (int imageRow = 0; imageRow < h; imageRow++)
+	for (int i = 0; i < h; i++)
 	{
-		for (int imageColWithChannel = 0; imageColWithChannel < w*ch; imageColWithChannel += ch)
+		for (int j = 0; j < w*ch; j += ch)
 		{
-			glm::vec3 color = glm::vec3(0.0f);
-			for (int kernelRow = imageRow - r; kernelRow < imageRow + r + 1; kernelRow++)
+			glm::vec3 val = glm::vec3(0.0f);
+			for (int ix = i - r; ix < i + r + 1; ix++)
 			{
-				for (int kernelColWithChannel = imageColWithChannel - r*ch; kernelColWithChannel < imageColWithChannel + (r + 1)*ch; kernelColWithChannel += ch)
+				for (int iy = j - r*ch; iy < j + (r + 1)*ch; iy += ch)
 				{
-					int x = glm::min((w - 1) * ch, glm::max(0, kernelColWithChannel));
-					int y = glm::min(h - 1, glm::max(0, kernelRow));
+					int x = glm::min((w - 1) * ch, glm::max(0, iy));
+					int y = glm::min(h - 1, glm::max(0, ix));
 
-					color.r += scl[y*w*ch + x];
-					color.g += scl[y*w*ch + x + 1];
-					color.b += scl[y*w*ch + x + 2];
+					val.r += scl[y*w*ch + x];
+					val.g += scl[y*w*ch + x + 1];
+					val.b += scl[y*w*ch + x + 2];
 				}
 			}
-			scl[imageRow*w*ch + imageColWithChannel] = color.r / ((r + r + 1)*(r + r + 1));
-			scl[imageRow*w*ch + imageColWithChannel + 1] = color.g / ((r + r + 1)*(r + r + 1));
-			scl[imageRow*w*ch + imageColWithChannel + 2] = color.b / ((r + r + 1)*(r + r + 1));
+			scl[i*w*ch + j] = val.r / ((r + r + 1)*(r + r + 1));
+			scl[i*w*ch + j + 1] = val.g / ((r + r + 1)*(r + r + 1));
+			scl[i*w*ch + j + 2] = val.b / ((r + r + 1)*(r + r + 1));
 		}
 	}
 }
@@ -437,7 +256,7 @@ void boxBlurH_4(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, in
 {
 	float iarr = 1.0f / (r + r + 1.0f);
 	for (int i = 0; i < h; i++) {
-		int ti = i*w*ch;//middle
+		int ti = i*w*ch;//middle index
 		int li = ti;//left index
 		int ri = ti + r*ch;//right index
 		glm::vec3 fv = glm::vec3(scl[ti], scl[ti + 1], scl[ti + 2]);//first value
@@ -468,9 +287,9 @@ void boxBlurH_4(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, in
 			val.g += scl[ri + 1] - scl[li + 1];
 			val.b += scl[ri + 2] - scl[li + 2];
 
-			tcl[ti] = glm::round(val.r*iarr);
-			tcl[ti + 1] = glm::round(val.g*iarr);
-			tcl[ti + 2] = glm::round(val.b*iarr);
+			tcl[ti] = val.r*iarr;
+			tcl[ti + 1] = val.g*iarr;
+			tcl[ti + 2] = val.b*iarr;
 
 			ri += ch;
 			li += ch;
@@ -600,7 +419,7 @@ void initTexture()
 	// 加载并生成纹理
 	int w, h, ch;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load("D:/Resource/desktop/192x120.jpg", &w, &h, &ch, 0);
+	unsigned char *data = stbi_load("D:/Resource/desktop/800x200.png", &w, &h, &ch, 0);
 	//0x08729ba0
 	if (data)
 	{
@@ -616,20 +435,20 @@ void initTexture()
 		//down sample
 		FILETIME ft;
 		timer_start(&ft);
-		int radius = 10;
-		//800x200, radius=5, time=18660 blur,calc weight
+		int radius = 5;
+		//800x200, radius=5, time=17778 blur,calc weight
 		//800x200, radius=5, time=12059 blur,no calc weight
-		//800x200, radius=5, time=5343 blur2
+		//800x200, radius=5, time=5002 blur2
 		//800x200, radius=5, time=592 blur3
-		//800x200, radius=5, time=102 blur4
-		unsigned char *new_data = new unsigned char[w * h * ch];
-		gaussianBlur4(data, new_data, w, h, ch, radius);
-		//GaussianBlur(data, w, h, ch, radius);
+		//800x200, radius=5, time=12 blur4
+		//unsigned char *new_data = new unsigned char[w * h * ch];
+		//gaussianBlur4(data, new_data, w, h, ch, radius);
+		//gaussianBlur(data, w, h, ch, radius);
 		int time = timer_elapsed_msec(&ft);
 		printf("%dx%d, radius=%d, time=%d\n", w, h, radius, time);
 		glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, data);
 		stbi_image_free(data);
-		delete[] new_data;
+		//delete[] new_data;
 	}
 	else
 	{
