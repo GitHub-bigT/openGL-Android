@@ -16,11 +16,12 @@
 #include "ReadFileUtil.h"
 
 //const
-const int windowWidth = 800;
-const int windowHeight = 200;
+const int windowWidth = 960;
+const int windowHeight = 600;
 float PI = 3.141592653589793;
 //common property
-GLuint shaderProgram;
+GLuint sGaussianShader;
+GLuint sBoxShader;
 
 //common Util
 #define SHADER_DEBUG 0;
@@ -32,6 +33,8 @@ TextFile bigTReadFileUtil;
 GLuint triangleVAO;
 GLuint triangleVBO;
 GLuint triangleTex;
+GLuint processTex;
+GLuint texFbo;
 GLfloat triangleVertices[] =
 {
 	-1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
@@ -51,7 +54,7 @@ void initGL();
 GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
 void initTriangle();
 void initTexture();
-void gaussianBlur(unsigned char *scl, int w, int h, int ch, int sigma);
+void initTexFbo();
 void draw_scene(GLFWwindow *window);
 
 int main()
@@ -100,6 +103,16 @@ int main()
 	return 0;
 }
 
+void check_error()
+{
+	int err = glGetError();
+	if (err != GL_NO_ERROR)
+	{
+		printf("GL error 0x%x at %s:%d\n", err, __FILE__, __LINE__);
+		/*abort();*/
+	}
+}
+
 void timer_start(FILETIME *start)
 {
 	GetSystemTimeAsFileTime(start);
@@ -114,7 +127,7 @@ int64_t timer_elapsed_msec(FILETIME *start)
 	return elapsed / 10000;
 }
 
-std::vector<float> boxesForGauss(int sigma, int n)  // standard deviation, number of boxes
+std::vector<int> boxesForGauss(int sigma, int n)  // standard deviation, number of boxes
 {
 	float wIdeal = sqrt((12 * sigma*sigma / n) + 2);  // Ideal averaging filter w 
 	int wl = floor(wIdeal);
@@ -125,14 +138,14 @@ std::vector<float> boxesForGauss(int sigma, int n)  // standard deviation, numbe
 	int m = round(mIdeal);
 	// var sigmaActual = Math.sqrt( (m*wl*wl + (n-m)*wu*wu - n)/12 );
 
-	std::vector<float> sizes;
+	std::vector<int> sizes;
 	for (int i = 0; i < n; i++)
 		sizes.push_back(i < m ? wl : wu);
 	return sizes;
 }
 
 //standard gaussian
-void gaussianBlur(unsigned char *scl, int w, int h, int ch, int sigma)
+void gaussianBlur(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int sigma)
 {
 	int radius = ceil(sigma * 2.57);
 	for (int i = 0; i < h; i++)
@@ -158,15 +171,15 @@ void gaussianBlur(unsigned char *scl, int w, int h, int ch, int sigma)
 					allWeights += weight;
 				}
 			}
-			scl[i*w*ch + j] = glm::round(color.r / allWeights);
-			scl[i*w*ch + j + 1] = glm::round(color.g / allWeights);
-			scl[i*w*ch + j + 2] = glm::round(color.b / allWeights);
+			tcl[i*w*ch + j] = glm::round(color.r / allWeights);
+			tcl[i*w*ch + j + 1] = glm::round(color.g / allWeights);
+			tcl[i*w*ch + j + 2] = glm::round(color.b / allWeights);
 		}
 	}
 }
 
 //algorithm2
-void boxBlur_2(unsigned char *scl, int w, int h, int ch, int r)
+void boxBlur_2(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int r)
 {
 	for (int i = 0; i < h; i++)
 	{
@@ -185,22 +198,22 @@ void boxBlur_2(unsigned char *scl, int w, int h, int ch, int r)
 					val.b += scl[y*w*ch + x + 2];
 				}
 			}
-			scl[i*w*ch + j] = val.r / ((r + r + 1)*(r + r + 1));
-			scl[i*w*ch + j + 1] = val.g / ((r + r + 1)*(r + r + 1));
-			scl[i*w*ch + j + 2] = val.b / ((r + r + 1)*(r + r + 1));
+			tcl[i*w*ch + j] = val.r / ((r + r + 1)*(r + r + 1));
+			tcl[i*w*ch + j + 1] = val.g / ((r + r + 1)*(r + r + 1));
+			tcl[i*w*ch + j + 2] = val.b / ((r + r + 1)*(r + r + 1));
 		}
 	}
 }
 
-void gaussianBlur2(unsigned char *scl, int w, int h, int ch, int r) {
-	std::vector<float> bxs = boxesForGauss(r, 3);
-	boxBlur_2(scl, w, h, ch, (bxs[0] - 1) / 2);
-	boxBlur_2(scl, w, h, ch, (bxs[1] - 1) / 2);
-	boxBlur_2(scl, w, h, ch, (bxs[2] - 1) / 2);
+void gaussianBlur2(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int r) {
+	std::vector<int> bxs = boxesForGauss(r, 3);
+	boxBlur_2(scl, tcl, w, h, ch, (bxs[0] - 1) / 2);
+	boxBlur_2(tcl, scl, w, h, ch, (bxs[1] - 1) / 2);
+	boxBlur_2(scl, tcl, w, h, ch, (bxs[2] - 1) / 2);
 }
 
 //algorithm3
-void boxBlurH_3(unsigned char *scl, int w, int h, int ch, int r)
+void boxBlurH_3(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int r)
 {
 	for (int i = 0; i < h; i++)
 		for (int j = 0; j < w * ch; j += ch)
@@ -213,13 +226,13 @@ void boxBlurH_3(unsigned char *scl, int w, int h, int ch, int r)
 				color.g += scl[i*w*ch + x + 1];
 				color.b += scl[i*w*ch + x + 2];
 			}
-			scl[i*w*ch + j] = color.r / (r + r + 1);
-			scl[i*w*ch + j + 1] = color.g / (r + r + 1);
-			scl[i*w*ch + j + 2] = color.b / (r + r + 1);
+			tcl[i*w*ch + j] = color.r / (r + r + 1);
+			tcl[i*w*ch + j + 1] = color.g / (r + r + 1);
+			tcl[i*w*ch + j + 2] = color.b / (r + r + 1);
 		}
 }
 
-void boxBlurT_3(unsigned char *scl, int w, int h, int ch, int r)
+void boxBlurT_3(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int r)
 {
 	for (int i = 0; i < h; i++)
 		for (int j = 0; j < w*ch; j += ch)
@@ -232,23 +245,24 @@ void boxBlurT_3(unsigned char *scl, int w, int h, int ch, int r)
 				color.g += scl[y*w*ch + j + 1];
 				color.b += scl[y*w*ch + j + 2];
 			}
-			scl[i*w*ch + j] = color.r / (r + r + 1);
-			scl[i*w*ch + j + 1] = color.g / (r + r + 1);
-			scl[i*w*ch + j + 2] = color.b / (r + r + 1);
+			tcl[i*w*ch + j] = color.r / (r + r + 1);
+			tcl[i*w*ch + j + 1] = color.g / (r + r + 1);
+			tcl[i*w*ch + j + 2] = color.b / (r + r + 1);
 		}
 }
 
-void boxBlur_3(unsigned char *scl, int w, int h, int ch, int r)
+void boxBlur_3(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int r)
 {
-	boxBlurH_3(scl, w, h, ch, r);
-	boxBlurT_3(scl, w, h, ch, r);
+	memcpy(tcl, scl, w*h*ch);
+	boxBlurH_3(tcl, scl, w, h, ch, r);
+	boxBlurT_3(scl, tcl, w, h, ch, r);
 }
 
-void gaussianBlur3(unsigned char *scl, int w, int h, int ch, int r) {
-	std::vector<float> bxs = boxesForGauss(r, 3);
-	boxBlur_3(scl, w, h, ch, (bxs[0] - 1) / 2);
-	boxBlur_3(scl, w, h, ch, (bxs[1] - 1) / 2);
-	boxBlur_3(scl, w, h, ch, (bxs[2] - 1) / 2);
+void gaussianBlur3(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int r) {
+	std::vector<int> bxs = boxesForGauss(r, 3);
+	boxBlur_3(scl, tcl, w, h, ch, (bxs[0] - 1) / 2);
+	boxBlur_3(tcl, scl, w, h, ch, (bxs[1] - 1) / 2);
+	boxBlur_3(scl, tcl, w, h, ch, (bxs[2] - 1) / 2);
 }
 
 //algorithm4
@@ -379,7 +393,7 @@ void boxBlur_4(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int
 
 void gaussianBlur4(unsigned char *scl, unsigned char *tcl, int w, int h, int ch, int r)
 {
-	std::vector<float> bxs = boxesForGauss(r, 3);
+	std::vector<int> bxs = boxesForGauss(r, 3);
 	boxBlur_4(scl, tcl, w, h, ch, (bxs[0] - 1) / 2);
 	boxBlur_4(tcl, scl, w, h, ch, (bxs[1] - 1) / 2);
 	boxBlur_4(scl, tcl, w, h, ch, (bxs[2] - 1) / 2);
@@ -401,10 +415,36 @@ void process_input(GLFWwindow *window)
 //render
 void initGL()
 {
-	glViewport(0, 0, windowWidth, windowHeight);
-	shaderProgram = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./simple_fragment_shader.fs"));
+	sGaussianShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./StandardGaussian.fs"));
+	sBoxShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlur.fs"));
 	initTriangle();
 	initTexture();
+	initTexFbo();
+}
+
+void initTexFbo()
+{
+	glGenFramebuffers(1, &texFbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, texFbo);
+	glGenTextures(1, &processTex);
+	glBindTexture(GL_TEXTURE_2D, processTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 192, 120, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, processTex, 0);
+
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 192, 120);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void initTexture()
@@ -412,14 +452,14 @@ void initTexture()
 	glGenTextures(1, &triangleTex);
 	glBindTexture(GL_TEXTURE_2D, triangleTex);
 	// 为当前绑定的纹理对象设置环绕、过滤方式
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// 加载并生成纹理
 	int w, h, ch;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load("D:/Resource/desktop/800x200.png", &w, &h, &ch, 0);
+	unsigned char *data = stbi_load("D:/Resource/desktop/192x120.jpg", &w, &h, &ch, 0);
 	//0x08729ba0
 	if (data)
 	{
@@ -443,7 +483,6 @@ void initTexture()
 		//800x200, radius=5, time=12 blur4
 		//unsigned char *new_data = new unsigned char[w * h * ch];
 		//gaussianBlur4(data, new_data, w, h, ch, radius);
-		//gaussianBlur(data, w, h, ch, radius);
 		int time = timer_elapsed_msec(&ft);
 		printf("%dx%d, radius=%d, time=%d\n", w, h, radius, time);
 		glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, data);
@@ -503,22 +542,48 @@ void initTriangle()
 	glBindVertexArray(0);
 }
 
+void dump_texture(GLuint texture_id, int *pWidth, int *pHeight)
+{
+	glBindTexture(GL_TEXTURE_2D, texture_id);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, pWidth);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, pHeight);
+	uint8_t *pix = (uint8_t*)malloc(*pWidth * *pHeight * 4);
+	char buff[128];
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+	sprintf(buff, "dump_%dx%d.rgba", *pWidth, *pHeight);
+	FILE *fp = fopen(buff, "wb");
+	fwrite(pix, 1, *pWidth * *pHeight * 4, fp);
+	fclose(fp);
+	free(pix);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void draw_scene(GLFWwindow *window)
 {
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	static float sigmaSquare = 10.0f;
-	sigmaSquare += 0.03f;
-	//printf("sigmaSquare = %f\n", sigmaSquare);
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+	glBindVertexArray(triangleVAO);
 
-	glUseProgram(shaderProgram);
-	glUniform1f(glGetUniformLocation(shaderProgram, "gaussian_width"), 960.0f);
-	glUniform1f(glGetUniformLocation(shaderProgram, "gaussian_height"), 600.0f);
+	//pass 1
+	glViewport(0, 0, 192, 120);
+	glBindFramebuffer(GL_FRAMEBUFFER, texFbo);
+	glUseProgram(sBoxShader);
+	glBindTexture(GL_TEXTURE_2D, triangleTex);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//int width = 0, height = 0;
+	//dump_texture(processTex, &width, &height);
+
+	//pass 2
+	//glUniform1f(glGetUniformLocation(shaderProgram, "gaussian_width"), windowWidth);
+	//glUniform1f(glGetUniformLocation(shaderProgram, "gaussian_height"), windowHeight);
 	//glUniform1f(glGetUniformLocation(shaderProgram, "sigmaSquarea"), 15.0f);//15.609950
 	//glUniform1i(glGetUniformLocation(shaderProgram, "gaussian_radius"), 7);
-	glBindVertexArray(triangleVAO);
-	glBindTexture(GL_TEXTURE_2D, triangleTex);
+	glViewport(0, 0, windowWidth, windowHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(sGaussianShader);
+	glBindTexture(GL_TEXTURE_2D, processTex);//processTex
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glfwSwapBuffers(window);

@@ -24,7 +24,8 @@
     <ClCompile Include="ShaderUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="simple_fragment_shader.fs" />
+    <None Include="BoxGaussianBlur.fs" />
+    <None Include="StandardGaussian.fs" />
     <None Include="simple_vertex_shader.vs" />
   </ItemGroup>
   <ItemGroup>

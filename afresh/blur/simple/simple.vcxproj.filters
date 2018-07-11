@@ -29,7 +29,10 @@
     <None Include="simple_vertex_shader.vs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="simple_fragment_shader.fs">
+    <None Include="BoxGaussianBlur.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="StandardGaussian.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
