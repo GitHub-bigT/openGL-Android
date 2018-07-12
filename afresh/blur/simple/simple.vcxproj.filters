@@ -35,6 +35,15 @@
     <None Include="StandardGaussian.fs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="BoxGaussianBlurH.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="BoxGaussianBlurV.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="DownSample.fs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadFileUtil.h">

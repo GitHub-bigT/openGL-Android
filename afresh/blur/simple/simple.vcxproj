@@ -25,6 +25,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BoxGaussianBlur.fs" />
+    <None Include="BoxGaussianBlurH.fs" />
+    <None Include="BoxGaussianBlurV.fs" />
+    <None Include="DownSample.fs" />
     <None Include="StandardGaussian.fs" />
     <None Include="simple_vertex_shader.vs" />
   </ItemGroup>
