@@ -74,7 +74,6 @@ void initTexture();
 FBO getFbo();
 void deleteFbo(FBO &fbo);
 void draw_scene(GLFWwindow *window);
-void BoxGaussianBlurGPU(GLuint &tex);
 
 int main()
 {
@@ -641,11 +640,6 @@ void dump_texture(GLuint texture_id, int *pWidth, int *pHeight)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void BoxGaussianBlurGPU(GLuint &tex)
-{
-
-}
-
 void draw_scene(GLFWwindow *window)
 {
 	//GLint maxAttach = 0;
@@ -682,7 +676,7 @@ void draw_scene(GLFWwindow *window)
 	glBindTexture(GL_TEXTURE_2D, 0);*/
 
 	//gaussian, algorithm3
-	std::vector<int> bxs = boxesForGauss(7.0f, 3);
+	std::vector<int> bxs = boxesForGauss(radius, 3);
 	for (int i = 0; i < bxs.size(); i++)
 	{
 		//H
