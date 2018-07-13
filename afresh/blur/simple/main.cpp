@@ -15,25 +15,6 @@
 #include "ShaderUtil.h"
 #include "ReadFileUtil.h"
 
-//const
-const int windowWidth = 960;
-const int windowHeight = 600;
-float PI = 3.141592653589793;
-//common property
-GLuint sDownSampleShader;
-GLuint sGaussianShader;
-GLuint sBoxShader;
-GLuint sBoxHShader;
-GLuint sBoxVShader;
-GLfloat radius = 0.0f;
-
-//common Util
-#define SHADER_DEBUG 0;
-ShaderUtil bigTShaderUtil;
-TextFile bigTReadFileUtil;
-
-//Triangle
-#define TRIANGLE_DEBUG 0;
 struct FBO
 {
 	GLuint fbo;
@@ -46,11 +27,34 @@ struct FBO
 		rbo = 0;
 	}
 };
-FBO processFbos[3];
+
+//const
+const int windowWidth = 960;
+const int windowHeight = 600;
+const int multiple = 8;
+float PI = 3.141592653589793;
+//common property
+GLuint sDownSampleShader;
+GLuint sGaussianShader;
+GLuint sBoxShader;
+GLuint sBoxHShader;
+GLuint sBoxVShader;
+GLfloat radius = 0.0f;
+
+//common Util
+#define SHADER_DEBUG 1;
+ShaderUtil bigTShaderUtil;
+TextFile bigTReadFileUtil;
+
+//Triangle
+FBO gaussianFbos[3];
+std::vector<FBO> downSampleVec;
 GLuint triangleVAO;
 GLuint triangleVBO;
-GLuint triangleTex;
+GLuint rawTex;
 GLuint processTex;
+int rawImageWidth, rawImageHeight, rawImageChannels;
+int processImageWidth, processImageHeight, processImageChannels;
 
 GLfloat triangleVertices[] =
 {
@@ -72,6 +76,7 @@ GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderS
 void initTriangle();
 void initTexture();
 FBO getFbo();
+void dowmSample(unsigned char *scl, unsigned char *tcl, int mul);
 void deleteFbo(FBO &fbo);
 void draw_scene(GLFWwindow *window);
 
@@ -127,18 +132,17 @@ int main()
 		triangleVBO = 0;
 	}
 
-	if (glIsTexture(triangleTex))
+	if (glIsTexture(rawTex))
 	{
-		glDeleteTextures(1, &triangleTex);
-		triangleTex = 0;
+		glDeleteTextures(1, &rawTex);
+		rawTex = 0;
 	}
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < sizeof(gaussianFbos) / sizeof(FBO); i++)
 	{
-		deleteFbo(processFbos[i]);
+		deleteFbo(gaussianFbos[i]);
 	}
 
-	delete[] processFbos;
 	//release glfw
 	glfwTerminate();
 
@@ -477,9 +481,9 @@ void initGL()
 	sBoxVShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlurV.fs"));
 	initTriangle();
 	initTexture();
-	for (int i = 0; i < sizeof(processFbos) / sizeof(FBO); i++)
+	for (int i = 0; i < sizeof(gaussianFbos) / sizeof(FBO); i++)
 	{
-		processFbos[i] = getFbo();
+		gaussianFbos[i] = getFbo();
 	}
 }
 
@@ -491,7 +495,7 @@ FBO getFbo()
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo.fbo);
 	glGenTextures(1, &fbo.tex);
 	glBindTexture(GL_TEXTURE_2D, fbo.tex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 192, 120, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rawImageWidth / multiple, rawImageHeight / multiple, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -500,7 +504,7 @@ FBO getFbo()
 
 	glGenRenderbuffers(1, &fbo.rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, fbo.rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 192, 120);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, rawImageWidth / multiple, rawImageHeight / multiple);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo.rbo);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -529,31 +533,49 @@ void deleteFbo(FBO &fbo)
 	}
 }
 
+void dowmSample(unsigned char *scl, unsigned char *tcl, int mul)
+{
+	for (int i = 0; i < processImageHeight; i++)
+	{
+		for (int j = 0; j < processImageWidth * processImageChannels; j += processImageChannels)
+		{
+			tcl[i*processImageWidth*processImageChannels + j] = scl[mul*i*rawImageWidth*rawImageChannels + mul*j];
+			tcl[i*processImageWidth*processImageChannels + j + 1] = scl[mul*i*rawImageWidth*rawImageChannels + mul*j + 1];
+			tcl[i*processImageWidth*processImageChannels + j + 2] = scl[mul*i*rawImageWidth*rawImageChannels + mul*j + 2];
+		}
+	}
+}
+
 void initTexture()
 {
-	glGenTextures(1, &triangleTex);
-	glBindTexture(GL_TEXTURE_2D, triangleTex);
+	glGenTextures(1, &rawTex);
+	glBindTexture(GL_TEXTURE_2D, rawTex);
 	// 为当前绑定的纹理对象设置环绕、过滤方式
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// 加载并生成纹理
-	int w, h, ch;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load("D:/Resource/desktop/192x120.jpg", &w, &h, &ch, 0);
+	unsigned char *data = stbi_load("D:/Resource/desktop/1920x1200.jpg", &rawImageWidth, &rawImageHeight, &rawImageChannels, 0);
+	//processImageWidth = rawImageWidth / multiple;
+	//processImageHeight = rawImageHeight / multiple;
+	//processImageChannels = rawImageChannels;
+	//unsigned char *process_data = new unsigned char[processImageWidth * processImageHeight * processImageChannels];
+	//FILETIME ft;
+	//timer_start(&ft);
+	//dowmSample(data, process_data, multiple);
+	//int downsampleTime = timer_elapsed_msec(&ft);
+	//printf("down sample time = %d, width: %d -> %d, height: %d -> %d\n", downsampleTime, rawImageWidth, processImageWidth, rawImageHeight, processImageHeight);
+
 	//0x08729ba0
 	if (data)
 	{
 		GLint format = 0;
-		if (ch == 4)
-		{
+		if (rawImageChannels == 4)
 			format = GL_RGBA;
-		}
-		if (ch == 3)
-		{
+		if (rawImageChannels == 3)
 			format = GL_RGB;
-		}
 		//down sample
 		FILETIME ft;
 		timer_start(&ft);
@@ -566,8 +588,9 @@ void initTexture()
 		//unsigned char *new_data = new unsigned char[w * h * ch];
 		//gaussianBlur4(data, new_data, w, h, ch, radius);
 		int time = timer_elapsed_msec(&ft);
-		printf("%dx%d, radius=%d, time=%d\n", w, h, radius, time);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, data);
+		printf("%dx%d, radius=%d, time=%d\n", rawImageWidth, rawImageHeight, radius, time);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, rawImageWidth, rawImageHeight, 0, format, GL_UNSIGNED_BYTE, data);
+		//delete[] process_data;
 		stbi_image_free(data);
 		//delete[] new_data;
 	}
@@ -646,65 +669,75 @@ void draw_scene(GLFWwindow *window)
 	//glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxAttach);
 	FILETIME ft;
 	timer_start(&ft);
+
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBindVertexArray(triangleVAO);
 
-	//pass 1
-	glViewport(0, 0, 192, 120);
-	glBindFramebuffer(GL_FRAMEBUFFER, processFbos[0].fbo);
-	//down sample
-	glUseProgram(sDownSampleShader);
-	glBindTexture(GL_TEXTURE_2D, triangleTex);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	//gaussian, algorithm2
-/*
-	glUseProgram(sBoxShader);
-	std::vector<int> bxs = boxesForGauss(40.8f, 3);
-	for (int i = 0; i < bxs.size(); i++)
+	if (true)//radius > 0.05
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, processFbos[(i+1)%2].fbo);
-		glBindTexture(GL_TEXTURE_2D, processFbos[i % 2].tex);
-		glUniform1i(glGetUniformLocation(sBoxShader, "gaussian_width"), windowWidth);
-		glUniform1i(glGetUniformLocation(sBoxShader, "gaussian_height"), windowHeight);
-		glUniform1i(glGetUniformLocation(sBoxShader, "r"), (bxs[i] - 1) / 2);
+		//pass 1
+		glViewport(0, 0, rawImageWidth / multiple, rawImageHeight / multiple);
+		glBindFramebuffer(GL_FRAMEBUFFER, gaussianFbos[0].fbo);
+		//down sample
+		glUseProgram(sDownSampleShader);
+		glUniform1i(glGetUniformLocation(sDownSampleShader, "mul"), multiple);
+		glBindTexture(GL_TEXTURE_2D, rawTex);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);*/
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		processTex = gaussianFbos[0].tex;
 
-	//gaussian, algorithm3
-	std::vector<int> bxs = boxesForGauss(radius, 3);
-	for (int i = 0; i < bxs.size(); i++)
-	{
-		//H
-		glBindFramebuffer(GL_FRAMEBUFFER, processFbos[1].fbo);
-		if (i == 0)
+		//gaussian, algorithm2
+	/*
+		glUseProgram(sBoxShader);
+		std::vector<int> bxs = boxesForGauss(40.8f, 3);
+		for (int i = 0; i < bxs.size(); i++)
 		{
-			glBindTexture(GL_TEXTURE_2D, processFbos[0].tex);
+			glBindFramebuffer(GL_FRAMEBUFFER, processFbos[(i+1)%2].fbo);
+			glBindTexture(GL_TEXTURE_2D, processFbos[i % 2].tex);
+			glUniform1i(glGetUniformLocation(sBoxShader, "gaussian_width"), windowWidth);
+			glUniform1i(glGetUniformLocation(sBoxShader, "gaussian_height"), windowHeight);
+			glUniform1i(glGetUniformLocation(sBoxShader, "r"), (bxs[i] - 1) / 2);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
-		else
+		glBindTexture(GL_TEXTURE_2D, 0);*/
+
+		//gaussian, algorithm3
+		/*std::vector<int> bxs = boxesForGauss(radius, 3);
+		for (int i = 0; i < bxs.size(); i++)
 		{
-			glBindTexture(GL_TEXTURE_2D, processFbos[2].tex);
+			//H
+			glBindFramebuffer(GL_FRAMEBUFFER, gaussianFbos[1].fbo);
+			if (i == 0)
+			{
+				glBindTexture(GL_TEXTURE_2D, processTex);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_2D, gaussianFbos[2].tex);
+			}
+			glUseProgram(sBoxHShader);
+			glUniform1i(glGetUniformLocation(sBoxHShader, "gaussian_width"), windowWidth);
+			glUniform1i(glGetUniformLocation(sBoxHShader, "gaussian_height"), windowHeight);
+			glUniform1i(glGetUniformLocation(sBoxHShader, "r"), (bxs[i] - 1) / 2);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			//V
+			glBindFramebuffer(GL_FRAMEBUFFER, gaussianFbos[2].fbo);
+			glBindTexture(GL_TEXTURE_2D, gaussianFbos[1].tex);
+			glUseProgram(sBoxVShader);
+			glUniform1i(glGetUniformLocation(sBoxVShader, "gaussian_width"), windowWidth);
+			glUniform1i(glGetUniformLocation(sBoxVShader, "gaussian_height"), windowHeight);
+			glUniform1i(glGetUniformLocation(sBoxVShader, "r"), (bxs[i] - 1) / 2);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
-		glUseProgram(sBoxHShader);
-		glUniform1i(glGetUniformLocation(sBoxHShader, "gaussian_width"), windowWidth);
-		glUniform1i(glGetUniformLocation(sBoxHShader, "gaussian_height"), windowHeight);
-		glUniform1i(glGetUniformLocation(sBoxHShader, "r"), (bxs[i] - 1) / 2);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		//V
-		glBindFramebuffer(GL_FRAMEBUFFER, processFbos[2].fbo);
-		glBindTexture(GL_TEXTURE_2D, processFbos[1].tex);
-		glUseProgram(sBoxVShader);
-		glUniform1i(glGetUniformLocation(sBoxVShader, "gaussian_width"), windowWidth);
-		glUniform1i(glGetUniformLocation(sBoxVShader, "gaussian_height"), windowHeight);
-		glUniform1i(glGetUniformLocation(sBoxVShader, "r"), (bxs[i] - 1) / 2);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		processTex = gaussianFbos[2].tex;
+		glBindTexture(GL_TEXTURE_2D, 0);*/
 	}
-	processTex = 2;
-	glBindTexture(GL_TEXTURE_2D, 0);
+	else
+	{
+		processTex = rawTex;
+	}
 
 	//pass 2
 	glViewport(0, 0, windowWidth, windowHeight);
@@ -712,7 +745,7 @@ void draw_scene(GLFWwindow *window)
 	glUseProgram(sGaussianShader);
 	glUniform1f(glGetUniformLocation(sGaussianShader, "gaussian_width"), windowWidth);
 	glUniform1f(glGetUniformLocation(sGaussianShader, "gaussian_height"), windowHeight);
-	glBindTexture(GL_TEXTURE_2D, processFbos[processTex].tex);//processTex
+	glBindTexture(GL_TEXTURE_2D, processTex);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	int renderTime = timer_elapsed_msec(&ft);
