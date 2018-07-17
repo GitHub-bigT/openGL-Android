@@ -4,7 +4,7 @@ uniform float gaussian_width;
 uniform float gaussian_height;
 uniform sampler2D tex;
 float PI = 3.141592653589793;
-float sigma = 0.0f;
+float sigma = 4.0f;
 
 in vec2 uv;
 out vec4 FragColor;
@@ -13,14 +13,7 @@ vec4 GaussianBlur();
 
 void main()
 {
-	if(sigma > 0)
-	{
-		FragColor = GaussianBlur();
-	}
-	else
-	{
-		FragColor = texture(tex, uv);
-	}	
+	FragColor = GaussianBlur();
 	//FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }
 

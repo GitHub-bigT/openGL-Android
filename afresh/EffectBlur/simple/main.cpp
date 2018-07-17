@@ -20,22 +20,27 @@ struct FBO
 	GLuint fbo;
 	GLuint tex;
 	GLuint rbo;
+	int width;
+	int height;
 	FBO()
 	{
 		fbo = 0;
 		tex = 0;
 		rbo = 0;
+		width = 0;
+		height = 0;
 	}
 };
 
 //const
 const int windowWidth = 960;
 const int windowHeight = 600;
-const int multiple = 8;
+int multiple = 1;
 float PI = 3.141592653589793;
 //common property
 GLuint sDownSampleShader;
-GLuint sGaussianShader;
+GLuint sStandardGaussianShader;
+GLuint sSimpleShader;
 GLuint sBoxShader;
 GLuint sBoxHShader;
 GLuint sBoxVShader;
@@ -48,11 +53,12 @@ TextFile bigTReadFileUtil;
 
 //Triangle
 FBO gaussianFbos[3];
-std::vector<FBO> downSampleVec;
 GLuint triangleVAO;
 GLuint triangleVBO;
 GLuint rawTex;
 GLuint processTex;
+FBO downSampleFbo;
+FBO gaussianFbo;
 int rawImageWidth, rawImageHeight, rawImageChannels;
 int processImageWidth, processImageHeight, processImageChannels;
 
@@ -75,7 +81,7 @@ void initGL();
 GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderSource);
 void initTriangle();
 void initTexture();
-FBO getFbo();
+FBO getFbo(int w, int h);
 void dowmSample(unsigned char *scl, unsigned char *tcl, int mul);
 void deleteFbo(FBO &fbo);
 void draw_scene(GLFWwindow *window);
@@ -142,6 +148,10 @@ int main()
 	{
 		deleteFbo(gaussianFbos[i]);
 	}
+
+	deleteFbo(gaussianFbo);
+
+	deleteFbo(downSampleFbo);
 
 	//release glfw
 	glfwTerminate();
@@ -457,58 +467,62 @@ void process_input(GLFWwindow *window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
-		radius += 1.2f;
-		printf("radius=%f\n", radius);
+		multiple += 1;
+		printf("multiple=%d\n", multiple);
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
-		radius -= 1.2f;
-		if (radius < 0.0f)
+		multiple -= 1;
+		if (multiple < 1)
 		{
-			radius = 0.0f;
+			multiple = 1;
 		}
-		printf("radius=%f\n", radius);
+		printf("multiple=%d\n", multiple);
 	}
 }
 
 //render
 void initGL()
 {
-	sDownSampleShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./DownSample.fs"));
-	sGaussianShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./StandardGaussian.fs"));
-	sBoxShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlur.fs"));
-	sBoxHShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlurH.fs"));
-	sBoxVShader = initShaderProgram(bigTReadFileUtil.readFile("./simple_vertex_shader.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlurV.fs"));
+	sDownSampleShader = initShaderProgram(bigTReadFileUtil.readFile("./Simple.vs"), bigTReadFileUtil.readFile("./DownSample.fs"));
+	sStandardGaussianShader = initShaderProgram(bigTReadFileUtil.readFile("./Simple.vs"), bigTReadFileUtil.readFile("./StandardGaussian.fs"));
+	sSimpleShader = initShaderProgram(bigTReadFileUtil.readFile("./Simple.vs"), bigTReadFileUtil.readFile("./Simple.fs"));
+	//sBoxShader = initShaderProgram(bigTReadFileUtil.readFile("./Simple.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlur.fs"));
+	//sBoxHShader = initShaderProgram(bigTReadFileUtil.readFile("./Simple.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlurH.fs"));
+	//sBoxVShader = initShaderProgram(bigTReadFileUtil.readFile("./Simple.vs"), bigTReadFileUtil.readFile("./BoxGaussianBlurV.fs"));
 	initTriangle();
 	initTexture();
+
 	for (int i = 0; i < sizeof(gaussianFbos) / sizeof(FBO); i++)
 	{
-		gaussianFbos[i] = getFbo();
+		gaussianFbos[i] = getFbo(rawImageWidth / multiple, rawImageHeight / multiple);
 	}
 }
 
-FBO getFbo()
+FBO getFbo(int w, int h)
 {
 	FBO fbo;
-
+	fbo.width = w;
+	fbo.height = h;
 	glGenFramebuffers(1, &fbo.fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo.fbo);
 	glGenTextures(1, &fbo.tex);
 	glBindTexture(GL_TEXTURE_2D, fbo.tex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rawImageWidth / multiple, rawImageHeight / multiple, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo.tex, 0);
 
+/*
 	glGenRenderbuffers(1, &fbo.rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, fbo.rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, rawImageWidth / multiple, rawImageHeight / multiple);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo.rbo);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;*/
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return fbo;
@@ -565,8 +579,6 @@ void initTexture()
 	//FILETIME ft;
 	//timer_start(&ft);
 	//dowmSample(data, process_data, multiple);
-	//int downsampleTime = timer_elapsed_msec(&ft);
-	//printf("down sample time = %d, width: %d -> %d, height: %d -> %d\n", downsampleTime, rawImageWidth, processImageWidth, rawImageHeight, processImageHeight);
 
 	//0x08729ba0
 	if (data)
@@ -577,20 +589,24 @@ void initTexture()
 		if (rawImageChannels == 3)
 			format = GL_RGB;
 		//down sample
-		FILETIME ft;
-		timer_start(&ft);
-		int radius = 5;
+		//FILETIME ft;
+		//timer_start(&ft);
+		//int radius = 5;
 		//800x200, radius=5, time=17778 blur,calc weight
 		//800x200, radius=5, time=12059 blur,no calc weight
 		//800x200, radius=5, time=5002 blur2
 		//800x200, radius=5, time=592 blur3
 		//800x200, radius=5, time=12 blur4
-		//unsigned char *new_data = new unsigned char[w * h * ch];
-		//gaussianBlur4(data, new_data, w, h, ch, radius);
-		int time = timer_elapsed_msec(&ft);
-		printf("%dx%d, radius=%d, time=%d\n", rawImageWidth, rawImageHeight, radius, time);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, rawImageWidth, rawImageHeight, 0, format, GL_UNSIGNED_BYTE, data);
+		//240x150, radius=5, downsample + gaussian time=2~4 blur4
+		//unsigned char *new_data = new unsigned char[processImageWidth * processImageHeight * processImageChannels];
+		//gaussianBlur4(process_data, new_data, processImageWidth, processImageHeight, processImageChannels, 5.0f);
+		//int time = timer_elapsed_msec(&ft);
+		//printf("%dx%d, radius=%d, time=%d\n", rawImageWidth, rawImageHeight, radius, time);
+		//glTexImage2D(GL_TEXTURE_2D, 0, format, processImageWidth, processImageHeight, 0, format, GL_UNSIGNED_BYTE, new_data);
+		//int downsampleGauTime = timer_elapsed_msec(&ft);
+		//printf("downsample + gaussian time = %d, width: %d -> %d, height: %d -> %d\n", downsampleGauTime, rawImageWidth, processImageWidth, rawImageHeight, processImageHeight);
 		//delete[] process_data;
+		glTexImage2D(GL_TEXTURE_2D, 0, format, rawImageWidth, rawImageHeight, 0, format, GL_UNSIGNED_BYTE, data);
 		stbi_image_free(data);
 		//delete[] new_data;
 	}
@@ -674,19 +690,25 @@ void draw_scene(GLFWwindow *window)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBindVertexArray(triangleVAO);
 
-	if (true)//radius > 0.05
+	if (multiple > 1)//radius > 0.05
 	{
+		deleteFbo(downSampleFbo);
+		downSampleFbo = getFbo(rawImageWidth / multiple, rawImageHeight / multiple);
+
+		deleteFbo(gaussianFbo);
+		gaussianFbo = getFbo(rawImageWidth / multiple, rawImageHeight / multiple);
+
 		//pass 1
-		glViewport(0, 0, rawImageWidth / multiple, rawImageHeight / multiple);
-		glBindFramebuffer(GL_FRAMEBUFFER, gaussianFbos[0].fbo);
-		//down sample
+		//down sample + gaussian blur
 		glUseProgram(sDownSampleShader);
-		glUniform1i(glGetUniformLocation(sDownSampleShader, "mul"), multiple);
+
+		glViewport(0, 0, downSampleFbo.width, downSampleFbo.height);
+		glBindFramebuffer(GL_FRAMEBUFFER, downSampleFbo.fbo);
 		glBindTexture(GL_TEXTURE_2D, rawTex);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		processTex = gaussianFbos[0].tex;
+		processTex = downSampleFbo.tex;
 
 		//gaussian, algorithm2
 	/*
@@ -703,20 +725,17 @@ void draw_scene(GLFWwindow *window)
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);*/
 
-		//gaussian, algorithm3
-		/*std::vector<int> bxs = boxesForGauss(radius, 3);
+		//gaussian, algorithm3W
+	/*
+		std::vector<int> bxs = boxesForGauss(radius, 3);
 		for (int i = 0; i < bxs.size(); i++)
 		{
 			//H
 			glBindFramebuffer(GL_FRAMEBUFFER, gaussianFbos[1].fbo);
 			if (i == 0)
-			{
 				glBindTexture(GL_TEXTURE_2D, processTex);
-			}
 			else
-			{
 				glBindTexture(GL_TEXTURE_2D, gaussianFbos[2].tex);
-			}
 			glUseProgram(sBoxHShader);
 			glUniform1i(glGetUniformLocation(sBoxHShader, "gaussian_width"), windowWidth);
 			glUniform1i(glGetUniformLocation(sBoxHShader, "gaussian_height"), windowHeight);
@@ -733,6 +752,20 @@ void draw_scene(GLFWwindow *window)
 		}
 		processTex = gaussianFbos[2].tex;
 		glBindTexture(GL_TEXTURE_2D, 0);*/
+
+		//standard gaussian
+		glUseProgram(sStandardGaussianShader);
+		glUniform1f(glGetUniformLocation(sStandardGaussianShader, "gaussian_width"), gaussianFbo.width);
+		glUniform1f(glGetUniformLocation(sStandardGaussianShader, "gaussian_height"), gaussianFbo.height);
+		glViewport(0, 0, gaussianFbo.width, gaussianFbo.height);
+		glBindFramebuffer(GL_FRAMEBUFFER, gaussianFbo.fbo);
+		glBindTexture(GL_TEXTURE_2D, processTex);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		processTex = gaussianFbo.tex;
+
+
 	}
 	else
 	{
@@ -742,9 +775,7 @@ void draw_scene(GLFWwindow *window)
 	//pass 2
 	glViewport(0, 0, windowWidth, windowHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glUseProgram(sGaussianShader);
-	glUniform1f(glGetUniformLocation(sGaussianShader, "gaussian_width"), windowWidth);
-	glUniform1f(glGetUniformLocation(sGaussianShader, "gaussian_height"), windowHeight);
+	glUseProgram(sSimpleShader);
 	glBindTexture(GL_TEXTURE_2D, processTex);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 

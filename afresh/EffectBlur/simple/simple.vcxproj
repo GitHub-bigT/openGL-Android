@@ -28,8 +28,9 @@
     <None Include="BoxGaussianBlurH.fs" />
     <None Include="BoxGaussianBlurV.fs" />
     <None Include="DownSample.fs" />
+    <None Include="Simple.fs" />
+    <None Include="Simple.vs" />
     <None Include="StandardGaussian.fs" />
-    <None Include="simple_vertex_shader.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadFileUtil.h" />
