@@ -23,13 +23,13 @@ GLuint m_RawTex;
 GLuint m_MaskTex;
 FILETIME m_FileTime;
 float m_CurrentTime;
-int m_TimeCycle;
+float m_TimeCycle;
 GLfloat m_Vertices[] =
 {
-	-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//5,6,7.左下
-	-1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,//13,14,15.左上
-	1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,//21,22,23.右上
-	1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f//29,30,31.右下
+	-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,//5,6,7.左下
+	-1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,//13,14,15.左上
+	1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,//21,22,23.右上
+	1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f//29,30,31.右下
 };
 
 GLint m_VerticesEbos[] = 
@@ -93,7 +93,6 @@ int main()
 	//initGL
 	initGL();
 
-	srand((unsigned)time(NULL));
 	m_CurrentTime = 0;
 	m_TimeCycle = 10;
 	timer_start(&m_FileTime);
@@ -282,39 +281,20 @@ GLuint initTexture(char *imageName)
 
 void draw_scene(GLFWwindow *window)
 {
+	//m_CurrentTime = glfwGetTime();
 	m_CurrentTime = timer_elapsed_msec(&m_FileTime) / 1000.0f;
-	float change = (int)m_CurrentTime % m_TimeCycle + (m_CurrentTime - (int)m_CurrentTime);
-	float color = 0.0f;
-	if (change > (m_TimeCycle / 2.0f))
-	{
-		color = (1.0f - (change * 2 - m_TimeCycle) / (float)m_TimeCycle);
-	}
-	else
-	{
-		color = change * 2 / (float)m_TimeCycle;
-	}
-	printf("change = %f, color = %f\n", change, color);
-	m_Vertices[5] = color;
-	m_Vertices[13] = color;
-	m_Vertices[21] = color;
-	m_Vertices[29] = color;
-	glBindBuffer(GL_ARRAY_BUFFER, m_QuadVbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	float proportion = glm::mod(m_CurrentTime, m_TimeCycle);
+	float angle = proportion / m_TimeCycle * 360.0f;
+	printf("change = %f, angle = %f\n", proportion, angle);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(m_Program);
-	float r = rand() / double(RAND_MAX);
-	float g = rand() / double(RAND_MAX);
-	float b = rand() / double(RAND_MAX);
 	glUniform1i(glGetUniformLocation(m_Program, "rawTex"), 0);
 	glUniform1i(glGetUniformLocation(m_Program, "maskTex"), 10);
-	glUniform1f(glGetUniformLocation(m_Program, "r"), r);
-	glUniform1f(glGetUniformLocation(m_Program, "g"), g);
-	glUniform1f(glGetUniformLocation(m_Program, "b"), b);
+	glUniform1f(glGetUniformLocation(m_Program, "angle"), angle);
 	glBindVertexArray(m_QuadVao);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_RawTex);

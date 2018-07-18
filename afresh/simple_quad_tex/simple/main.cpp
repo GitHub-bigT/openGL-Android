@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include<ctime>
 
 //gl
 #include <glad/glad.h>
@@ -18,24 +17,15 @@ const int m_WindowHeight = 600;
 GLuint m_Program;
 GLuint m_QuadVao;
 GLuint m_QuadVbo;
-GLuint m_QuadEbo;
 GLuint m_RawTex;
-GLuint m_MaskTex;
-FILETIME m_FileTime;
-float m_CurrentTime;
-int m_TimeCycle;
 GLfloat m_Vertices[] =
 {
-	-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,//5,6,7.左下
-	-1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,//13,14,15.左上
-	1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,//21,22,23.右上
-	1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f//29,30,31.右下
-};
-
-GLint m_VerticesEbos[] = 
-{
-	0, 1, 3,
-	1, 2, 3
+	-1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+	-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+	1.0f,  -1.0f, 1.0f, 1.0f, 0.0f,
+	-1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+	1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+	1.0f,  -1.0f, 1.0f, 1.0f, 0.0f
 };
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -44,24 +34,10 @@ char* readFile(char* filePath);
 
 void initGL();
 void initQuad();
-GLuint initTexture(char *imageName);
+void initTexture();
 GLuint initShader(const char* shaderSource, GLenum shaderType);
 GLuint initProgram(const char* vertexShaderSource, const char* fragShaderSource);
 void draw_scene(GLFWwindow *window);
-
-void timer_start(FILETIME *start)
-{
-	GetSystemTimeAsFileTime(start);
-}
-
-int64_t timer_elapsed_msec(FILETIME *start)
-{
-	FILETIME now;
-	GetSystemTimeAsFileTime(&now);
-	int64_t elapsed = ((((int64_t)now.dwHighDateTime) << 32) + (int64_t)now.dwLowDateTime) -
-		((((int64_t)start->dwHighDateTime) << 32) + (int64_t)start->dwLowDateTime);
-	return elapsed / 10000;
-}
 
 int main()
 {
@@ -92,11 +68,6 @@ int main()
 
 	//initGL
 	initGL();
-
-	srand((unsigned)time(NULL));
-	m_CurrentTime = 0;
-	m_TimeCycle = 10;
-	timer_start(&m_FileTime);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -176,8 +147,7 @@ void initGL()
 	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
 	m_Program = initProgram(readFile("./Simple.vs"), readFile("./Simple.fs"));
 	initQuad();
-	m_RawTex = initTexture("./1920x1200.jpg");
-	m_MaskTex = initTexture("./mask.png");
+	initTexture();
 }
 
 GLuint initShader(const char* shaderSource, GLenum shaderType)
@@ -232,27 +202,19 @@ void initQuad()
 
 	glGenBuffers(1, &m_QuadVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_QuadVbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_DYNAMIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)(sizeof(GLfloat) * 3));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)(sizeof(GLfloat) * 5));
-	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &m_QuadEbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_QuadEbo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_VerticesEbos), m_VerticesEbos, GL_STATIC_DRAW);
 	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-GLuint initTexture(char *imageName)
+void initTexture()
 {
-	GLuint tex = 0;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
+	glGenTextures(1, &m_RawTex);
+	glBindTexture(GL_TEXTURE_2D, m_RawTex);
 	// 为当前绑定的纹理对象设置环绕、过滤方式
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -261,7 +223,7 @@ GLuint initTexture(char *imageName)
 	// 加载并生成纹理
 	stbi_set_flip_vertically_on_load(true);
 	int w, h, ch;
-	unsigned char *data = stbi_load(imageName, &w, &h, &ch, 0);
+	unsigned char *data = stbi_load("./1920x1200.jpg", &w, &h, &ch, 0);
 	if (data)
 	{
 		GLint format = 0;
@@ -277,50 +239,19 @@ GLuint initTexture(char *imageName)
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
-	return tex;
 }
 
 void draw_scene(GLFWwindow *window)
 {
-	m_CurrentTime = timer_elapsed_msec(&m_FileTime) / 1000.0f;
-	float change = (int)m_CurrentTime % m_TimeCycle + (m_CurrentTime - (int)m_CurrentTime);
-	float color = 0.0f;
-	if (change > (m_TimeCycle / 2.0f))
-	{
-		color = (1.0f - (change * 2 - m_TimeCycle) / (float)m_TimeCycle);
-	}
-	else
-	{
-		color = change * 2 / (float)m_TimeCycle;
-	}
-	printf("change = %f, color = %f\n", change, color);
-	m_Vertices[5] = color;
-	m_Vertices[13] = color;
-	m_Vertices[21] = color;
-	m_Vertices[29] = color;
-	glBindBuffer(GL_ARRAY_BUFFER, m_QuadVbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(m_Program);
-	float r = rand() / double(RAND_MAX);
-	float g = rand() / double(RAND_MAX);
-	float b = rand() / double(RAND_MAX);
-	glUniform1i(glGetUniformLocation(m_Program, "rawTex"), 0);
-	glUniform1i(glGetUniformLocation(m_Program, "maskTex"), 10);
-	glUniform1f(glGetUniformLocation(m_Program, "r"), r);
-	glUniform1f(glGetUniformLocation(m_Program, "g"), g);
-	glUniform1f(glGetUniformLocation(m_Program, "b"), b);
+
 	glBindVertexArray(m_QuadVao);
-	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_RawTex);
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, m_MaskTex);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glfwSwapBuffers(window);
 }

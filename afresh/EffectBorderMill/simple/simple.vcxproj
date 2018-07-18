@@ -23,6 +23,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Line.fs" />
+    <None Include="Line.vs" />
     <None Include="Simple.fs" />
     <None Include="Simple.vs" />
   </ItemGroup>

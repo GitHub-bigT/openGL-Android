@@ -29,5 +29,11 @@
     <None Include="Simple.vs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Line.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Line.fs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,5 +1,8 @@
 #version 330 core
+
 out vec4 FragColor;
+
+vec4 GaussianBlur();
 
 void main()
 {
