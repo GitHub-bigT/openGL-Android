@@ -10,9 +10,20 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#include "Camera.h"
+
 //const
 const int m_WindowWidth = 960;
 const int m_WindowHeight = 600;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+float lastX = m_WindowWidth / 2.0f;
+float lastY = m_WindowHeight / 2.0f;
+bool firstMouse = true;
+
+// timing
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 GLuint m_Program;
 GLuint m_QuadVao;
@@ -30,6 +41,7 @@ GLfloat m_Vertices[] =
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void process_input(GLFWwindow *window);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 char* readFile(char* filePath);
 
 void initGL();
@@ -58,6 +70,7 @@ int main()
 
 	//registe callback
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	//init glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -71,6 +84,12 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
+		// per-frame time logic
+		// --------------------
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		//event
 		glfwPollEvents();
 		process_input(window);
@@ -117,9 +136,35 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void process_input(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
 		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
 	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 char* readFile(char* filePath)
@@ -146,6 +191,44 @@ void initGL()
 {
 	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
 	m_Program = initProgram(readFile("./Simple.vs"), readFile("./Simple.fs"));
+	//SRT
+	glUseProgram(m_Program);
+	glm::mat4 model;
+	//model = glm::scale(model, glm::vec3((float)m_WindowWidth*1.5f, 1.0f, 1.0f));
+	//model = glm::scale(model, glm::vec3(1.0f, (float)m_WindowHeight*1.5f, 1.0f));
+	//model = glm::scale(model, glm::vec3(1.0f, 1.0f, -200.0f));
+	//model = glm::rotate(model, glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));//z +20
+	//model = glm::rotate(model, glm::radians(-20.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//model = glm::rotate(model, glm::radians(-20.0f), glm::vec3(0.0f, 1.0f, 0.0f));//y +20
+	//model = glm::rotate(model, glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(-20.0f), glm::vec3(1.0f, 0.0f, 0.0f));//x +20
+	//model = glm::rotate(model, glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	//model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));//z +45, y +45
+	//model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	//model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));//z +45, x +45
+	//model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	//model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));//y +45, x +45
+	//model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	//model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::translate(model, glm::vec3((float)m_WindowWidth / (float)m_WindowHeight, 0.0f, 0.0f));
+	glUniformMatrix4fv(glGetUniformLocation(m_Program, "model"), 1, GL_FALSE, &model[0][0]);
+	//
+	glm::mat4 view;
+	//view = camera.GetViewMatrix();
+	glUniformMatrix4fv(glGetUniformLocation(m_Program, "view"), 1, GL_FALSE, &view[0][0]);
+
+	//glm::mat4 ortho;
+	//glm::mat4 ortho = glm::orthoRH((float)-m_WindowWidth, (float)m_WindowWidth, (float)-m_WindowHeight, (float)m_WindowHeight, 0.1f, 100.0f);
+	//glm::mat4 ortho = glm::orthoRH(-(float)m_WindowWidth / (float)m_WindowHeight, (float)m_WindowWidth / (float)m_WindowHeight, -1.0f, 1.0f, -1.0f, 1.0f);
+	//glm::mat4 projection = glm::frustumRH((float)-m_WindowWidth, (float)m_WindowWidth, (float)-m_WindowHeight, (float)m_WindowHeight, 100.0f, 200.0f);
+	//glm::mat4 projection = glm::perspective(45.0f, (float)m_WindowWidth / (float)m_WindowHeight, 10.0f, 100.0f);
+
+	//glUniformMatrix4fv(glGetUniformLocation(m_Program, "projection"), 1, GL_FALSE, &projection[0][0]);
+
 	initQuad();
 	initTexture();
 }
@@ -192,6 +275,7 @@ GLuint initProgram(const char* vertexShaderSource, const char* fragShaderSource)
 	//delete shader
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragShader);
+
 	return program;
 }
 
@@ -201,14 +285,23 @@ void initQuad()
 	glBindVertexArray(m_QuadVao);
 
 	glGenBuffers(1, &m_QuadVbo);
+	bool b1 = glIsBuffer(m_QuadVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_QuadVbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (void*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(1);
+	bool b2 = glIsBuffer(m_QuadVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	bool b3 = glIsBuffer(m_QuadVbo);
 	glBindVertexArray(0);
+
+/*
+	GLuint vbo2[2];
+	glGenBuffers(100, vbo2);
+	bool b4 = glIsBuffer(m_QuadVbo);
+	int a = 0;*/
 }
 
 void initTexture()
@@ -223,7 +316,8 @@ void initTexture()
 	// 加载并生成纹理
 	stbi_set_flip_vertically_on_load(true);
 	int w, h, ch;
-	unsigned char *data = stbi_load("./1920x1200.jpg", &w, &h, &ch, 0);
+	//unsigned char *data = stbi_load("./600x800.jpg", &w, &h, &ch, 0);
+	unsigned char *data = stbi_load("D:/Resource/透明/menu_choices.png", &w, &h, &ch, 0);
 	if (data)
 	{
 		GLint format = 0;
@@ -244,11 +338,11 @@ void initTexture()
 void draw_scene(GLFWwindow *window)
 {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glUseProgram(m_Program);
-
+	glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindVertexArray(m_QuadVao);
 	glBindTexture(GL_TEXTURE_2D, m_RawTex);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

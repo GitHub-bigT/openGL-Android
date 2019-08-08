@@ -27,13 +27,17 @@ GLuint triangleVAO;
 GLuint triangleVBO;
 GLfloat triangleVertices[] =
 {
-	-1.0f, -1.0f, 1.0f,
-	0.0f, 1.0f, 1.0f,
+	-0.5f, 1.0f, 0.0f,
+	-1.0f, 0.0f, 0.0f,
+	0.0f,  0.0f, 0.0f
+};
+
+GLuint triangleVBO2;
+GLfloat triangleVertices2[] =
+{
+	0.5f, 0.0f, 1.0f,
+	0.0f, -1.0f, 1.0f,
 	1.0f,  -1.0f, 1.0f
-/*
-	-400.0f, -300.0f, -10.0f,
-	0.0f, 300.0f, -10.0f,
-	400.0f,  -300.0f, -10.0f*/
 };
 
 //callback fun
@@ -52,7 +56,7 @@ int main()
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 	GLFWwindow *window = glfwCreateWindow(windowWidth, windowHeight, "bigT-triangle", NULL, NULL);
 	if (window == NULL)
@@ -145,15 +149,25 @@ GLuint initShaderProgram(const char* vertexShaderSource, const char* fragShaderS
 
 void initTriangle()
 {
-	glGenVertexArrays(1, &triangleVAO);
-	glBindVertexArray(triangleVAO);
-
 	glGenBuffers(1, &triangleVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &triangleVBO2);
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices2), triangleVertices2, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenVertexArrays(1, &triangleVAO);
+	glBindVertexArray(triangleVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ARRAY_BUFFER, triangleVBO2);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	//glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 }
 
@@ -173,14 +187,27 @@ void draw_scene(GLFWwindow *window)
 	//
 	//glm::mat4 projectopn1 = glm::perspective(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1000.0f);
 	//glm::mat4 ortho = glm::orthoRH(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-	glm::mat4 projection = glm::frustumRH(-1.0f, 1.0f, -1.0f, 1.0f, 9.9f, 10.0f);
+	//glm::mat4 projection = glm::frustumRH(-1.0f, 1.0f, -1.0f, 1.0f, 9.9f, 10.0f);
 	//glm::mat4 projection1 = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.0f, 1000.0f);
+	glm::mat4 trans;
+	trans = glm::translate(trans, glm::vec3(2.0f, 2.0f, 0.0f));
 
-	GLuint pPosi = glGetUniformLocation(shaderProgram, "projection");
-	glUniformMatrix4fv(pPosi, 1, GL_FALSE, &projection[0][0]);
+	//GLuint pPosi = glGetUniformLocation(shaderProgram, "projection");
+	//glUniformMatrix4fv(pPosi, 1, GL_FALSE, &projection[0][0]);
 	glBindVertexArray(triangleVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+// 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+// 	glEnableVertexAttribArray(0);
+// 	glDrawArrays(GL_TRIANGLES, 0, 3);
+// 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+// 
+// 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO2);
+// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+// 	glEnableVertexAttribArray(0);
+// 	glDrawArrays(GL_TRIANGLES, 0, 3);
+// 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glfwSwapBuffers(window);
 }

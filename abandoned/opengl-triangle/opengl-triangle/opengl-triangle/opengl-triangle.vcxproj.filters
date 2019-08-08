@@ -21,6 +21,12 @@
     <None Include="fragment_shader.frag">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="fs.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="vs.vert">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTShader.h">

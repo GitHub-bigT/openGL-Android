@@ -26,6 +26,9 @@
     <None Include="Simple.fs" />
     <None Include="Simple.vs" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8970C470-B46C-4B1B-B412-769197455F35}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

@@ -3,18 +3,19 @@ d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
 c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
   d:\code\practise\opengl-company\3rd\glfw-3.2.1.bin.win32\include\glfw\glfw3.h(98): note: see previous definition of 'APIENTRY'
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(95): warning C4244: 'initializing': conversion from 'int64_t' to 'int', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(126): warning C4244: 'initializing': conversion from 'int64_t' to 'int', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(96): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(39): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(39): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(88): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(89): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(127): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(157): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(158): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(161): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(163): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(165): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(166): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(170): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(188): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(141): warning C4244: 'argument': conversion from 'GLfloat' to 'GLsizei', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(226): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(227): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(230): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(232): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(234): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(235): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(239): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\opengl-triangle\main.cpp(257): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
   opengl-triangle.vcxproj -> D:\Code\practise\opengl-company\abandoned\opengl-triangle\opengl-triangle\Debug\opengl-triangle.exe

@@ -1,0 +1,15 @@
+﻿  main.cpp
+d:\code\practise\opengl-company\lightscattering\util\shader.h(174): warning C4101: 'infoLog': unreferenced local variable
+d:\code\practise\opengl-company\lightscattering\util\shader.h(173): warning C4101: 'success': unreferenced local variable
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(225): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(258): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(259): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(777): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(778): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(781): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(782): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(784): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(785): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+d:\code\practise\opengl-company\lightscattering\lightscattering\main.cpp(803): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+  LightScattering.vcxproj -> D:\Code\practise\opengl-company\LightScattering\Debug\LightScattering.exe
+  LightScattering.vcxproj -> D:\Code\practise\opengl-company\LightScattering\Debug\LightScattering.pdb (Full PDB)
